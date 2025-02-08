@@ -12,6 +12,9 @@ namespace WinformKTX
         public SqlConnection GetConnection() //
         {
             SqlConnection con = new SqlConnection();
+            //con.ConnectionString = "Data Source=TRONG\\SQLEXPRESS03;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"; 
+            con.ConnectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+=======
             //con.ConnectionString = "Data Source=TRONG\\SQLEXPRESS03;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
             con.ConnectionString = "Data Source=LAPTOP-SI5JBDIU\\SQLEXPRESS01;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
             return con;
