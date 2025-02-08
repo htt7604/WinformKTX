@@ -14,7 +14,8 @@ namespace WinformKTX
 {
     public partial class QuanLiSinhVien : Form
     {
-        private string connectionString = "Data Source=LAPTOP-SI5JBDIU\\SQLEXPRESS01;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"; // Thay bằng chuỗi kết nối của bạn
+        //private string connectionString = "Data Source=LAPTOP-SI5JBDIU\\SQLEXPRESS01;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"; // Thay bằng chuỗi kết nối của bạn
+        KetnoiCSDL ketnoi = new KetnoiCSDL();
         public QuanLiSinhVien()
         {
             InitializeComponent();
@@ -67,7 +68,7 @@ namespace WinformKTX
         //}
         private void LoadData()
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -268,8 +269,7 @@ namespace WinformKTX
 
         private void comboBoxMaPhong_ThayDoiMaPhong(object sender, EventArgs e)
         {
-            using (var conn = new SqlConnection(connectionString))
-            {
+            using (SqlConnection conn = ketnoi.GetConnection())
                 try
                 {
                     conn.Open();
@@ -279,8 +279,8 @@ namespace WinformKTX
                 {
                     MessageBox.Show("Lỗi khi thay đổi mã phòng: " + ex.Message);
                 }
-            }
         }
+
         // Sự kiện khi click vào một ô trong DataGridView
         private void dataGridViewQLSV_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -327,7 +327,7 @@ namespace WinformKTX
         }
         private void UpdateStudentInfo()
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -802,7 +802,7 @@ namespace WinformKTX
 
         private void DeleteStudent()
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -937,7 +937,7 @@ namespace WinformKTX
 
         private void buttonDangNoiTru_Click(object sender, EventArgs e)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -978,7 +978,7 @@ namespace WinformKTX
 
         private void buttonChuaNoiTru_Click(object sender, EventArgs e)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1018,7 +1018,7 @@ namespace WinformKTX
         }
         private void buttonChoGiaHan_Click(object sender, EventArgs e)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1059,7 +1059,7 @@ namespace WinformKTX
 
         private void buttonHetThoiGianNoiTru_Click(object sender, EventArgs e)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1109,7 +1109,7 @@ namespace WinformKTX
                 return;
             }
 
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1156,7 +1156,7 @@ namespace WinformKTX
         }
         private void UpdateLabelChiSo(int filteredCount)
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1189,7 +1189,7 @@ namespace WinformKTX
                 return;
             }
 
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1303,7 +1303,7 @@ namespace WinformKTX
         // Hàm kiểm tra và bật/tắt nút Xác nhận nội trú
         private void CheckButtonXacNhanNoiTruAll()
         {
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
@@ -1336,7 +1336,7 @@ namespace WinformKTX
                 return;
             }
 
-            using (var conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
