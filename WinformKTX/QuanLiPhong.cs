@@ -21,21 +21,6 @@ namespace WinformKTX
         //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
         KetnoiCSDL ketnoi = new KetnoiCSDL();
 
-
-
-        public QuanLiPhong()
-        {
-            InitializeComponent();
-
-        //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
-        KetnoiCSDL ketnoi = new KetnoiCSDL();
-        public QuanLiPhong()
-        {
-            InitializeComponent();
-
-        private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
-
-
         public QuanLiPhong()
         {
             InitializeComponent();
