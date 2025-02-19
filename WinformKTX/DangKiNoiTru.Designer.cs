@@ -241,13 +241,13 @@
             txtLoaiphong.Font = new Font("Segoe UI", 10F);
             txtLoaiphong.ForeColor = Color.Black;
             txtLoaiphong.ItemHeight = 30;
-            txtLoaiphong.Items.AddRange(new object[] { "Nam", "Nữ" });
             txtLoaiphong.Location = new Point(702, 180);
             txtLoaiphong.Name = "txtLoaiphong";
             txtLoaiphong.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtLoaiphong.Size = new Size(300, 36);
             txtLoaiphong.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtLoaiphong.TabIndex = 149;
+            txtLoaiphong.Click += TxtLoaiphong_SelectedIndexChanged;
             // 
             // label10
             // 
@@ -421,6 +421,7 @@
             txtTenphong.Size = new Size(300, 36);
             txtTenphong.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtTenphong.TabIndex = 150;
+            txtTenphong.Click += TxtTenphong_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -525,6 +526,7 @@
             txtTang.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtTang.TabIndex = 151;
             txtTang.SelectedIndexChanged += txtTang_SelectedIndexChanged_1;
+            txtTang.Click += TxtTang_SelectedIndexChanged;
             // 
             // txtNgaybatdaunoitru
             // 
@@ -582,6 +584,7 @@
             comboBoxGioitinh.Size = new Size(300, 36);
             comboBoxGioitinh.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             comboBoxGioitinh.TabIndex = 154;
+            comboBoxGioitinh.Click += ComboBoxGioitinh_SelectedIndexChanged;
             // 
             // DateTimeNgaySinh
             // 

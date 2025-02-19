@@ -91,99 +91,315 @@ namespace WinformKTX
         //}
 
 
+        //private void ComboBoxGioitinh_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (comboBoxGioitinh.SelectedItem == null) return;
+
+        //    string gender = comboBoxGioitinh.SelectedItem.ToString();
+        //    txtLoaiphong.Text = gender;
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        conn.Open();
+        //        string query = @"
+        //    SELECT DISTINCT T.TEN_TANG 
+        //    FROM TANG T
+        //    JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+        //    WHERE LP.TEN_LOAI_PHONG = @Gender";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@Gender", gender);
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                txtTang.Items.Clear();
+        //                while (reader.Read())
+        //                {
+        //                    txtTang.Items.Add(reader["TEN_TANG"].ToString());
+        //                }
+        //            }
+        //        }
+        //    }
+        //    txtTang.SelectedIndex = -1;
+        //    txtTenphong.Items.Clear();
+        //}
+
         private void ComboBoxGioitinh_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxGioitinh.SelectedItem == null) return;
+            if (comboBoxGioitinh.SelectedItem == null)
+            {
+                return;
+            }
 
-            string gender = comboBoxGioitinh.SelectedItem.ToString();
-            txtLoaiphong.Text = gender;
+            string gioiTinh = comboBoxGioitinh.SelectedItem.ToString();
 
             using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
                 string query = @"
-            SELECT DISTINCT T.TEN_TANG 
-            FROM TANG T
-            JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
-            WHERE LP.TEN_LOAI_PHONG = @Gender";
+            SELECT DISTINCT MA_LOAI_PHONG, TEN_LOAI_PHONG
+            FROM LOAI_PHONG
+            WHERE TEN_LOAI_PHONG = @GioiTinh";  // Chỉ lọc theo tên loại phòng
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Gender", gender);
+                    cmd.Parameters.AddWithValue("@GioiTinh", gioiTinh);
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        txtTang.Items.Clear();
-                        while (reader.Read())
-                        {
-                            txtTang.Items.Add(reader["TEN_TANG"].ToString());
-                        }
-                    }
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+
+                    txtLoaiphong.DataSource = table;
+                    txtLoaiphong.DisplayMember = "TEN_LOAI_PHONG"; // Hiển thị tên loại phòng
+                    txtLoaiphong.ValueMember = "MA_LOAI_PHONG";   // Lấy mã loại phòng
+                    txtLoaiphong.SelectedIndex = -1;
+
+                    ComboBoxSogiuong.DataSource = null; // Xóa danh sách giường khi thay đổi giới tính
                 }
             }
-            txtTang.SelectedIndex = -1;
-            txtTenphong.Items.Clear();
         }
+
+        //private void TxtLoaiphong_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    txtTang.SelectedIndex = -1;
+        //    txtTenphong.Items.Clear();
+        //}
 
         private void TxtLoaiphong_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtTang.SelectedIndex = -1;
-            txtTenphong.Items.Clear();
-        }
-
-        private void TxtTang_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (txtTang.SelectedItem == null) return;
-
-            using (SqlConnection conn = kn.GetConnection())
+            try
             {
-                conn.Open();
-                string query = @"
-            SELECT TEN_PHONG 
-            FROM PHONG 
-            WHERE MA_TANG = (SELECT MA_TANG FROM TANG WHERE TEN_TANG = @Tang)
-            AND SO_GIUONG_CON_TRONG > 0"; // Chỉ lấy phòng còn giường trống
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                // Kiểm tra nếu chưa chọn loại phòng
+                if (txtLoaiphong.SelectedValue == null)
                 {
-                    cmd.Parameters.AddWithValue("@Tang", txtTang.SelectedItem.ToString());
+                    return;
+                }
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                // Lấy giá trị thực tế từ SelectedValue
+                object selectedValue = txtLoaiphong.SelectedValue;
+                string selectedMaLoaiPhong;
+
+                if (selectedValue is DataRowView dataRowView)
+                {
+                    selectedMaLoaiPhong = dataRowView["MA_LOAI_PHONG"].ToString();
+                }
+                else
+                {
+                    selectedMaLoaiPhong = selectedValue.ToString();
+                }
+
+                // Chuyển đổi mã loại phòng sang kiểu số nguyên
+                int maLoaiPhong;
+                if (!int.TryParse(selectedMaLoaiPhong, out maLoaiPhong))
+                {
+                    MessageBox.Show("Mã loại phòng không hợp lệ.");
+                    return;
+                }
+
+                using (SqlConnection conn = kn.GetConnection())
+                {
+                    conn.Open();
+
+                    // Truy vấn danh sách tầng theo mã loại phòng được chọn
+                    string query = @"
+                SELECT DISTINCT T.MA_TANG, T.TEN_TANG
+                FROM TANG T
+                JOIN PHONG P ON T.MA_TANG = P.MA_TANG
+                WHERE T.MA_LOAI_PHONG = @MaLoaiPhong";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        txtTenphong.Items.Clear();
-                        while (reader.Read())
-                        {
-                            txtTenphong.Items.Add(reader["TEN_PHONG"].ToString());
-                        }
+                        cmd.Parameters.AddWithValue("@MaLoaiPhong", maLoaiPhong);
+
+                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+
+                        // Gán dữ liệu cho combobox tầng
+                        txtTang.DataSource = table;
+                        txtTang.DisplayMember = "TEN_TANG"; // Hiển thị tên tầng
+                        txtTang.ValueMember = "MA_TANG";    // Xử lý logic theo mã tầng
+                        txtTang.SelectedIndex = -1; // Không chọn sẵn giá trị đầu tiên
                     }
                 }
             }
-            txtTenphong.SelectedIndex = -1;
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tải danh sách tầng: " + ex.Message);
+            }
         }
+
+        //private void TxtTang_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (txtTang.SelectedItem == null) return;
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        conn.Open();
+        //        string query = @"
+        //    SELECT TEN_PHONG 
+        //    FROM PHONG 
+        //    WHERE MA_TANG = (SELECT MA_TANG FROM TANG WHERE TEN_TANG = @Tang)
+        //    AND SO_GIUONG_CON_TRONG > 0"; // Chỉ lấy phòng còn giường trống
+
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@Tang", txtTang.SelectedItem.ToString());
+
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                txtTenphong.Items.Clear();
+        //                while (reader.Read())
+        //                {
+        //                    txtTenphong.Items.Add(reader["TEN_PHONG"].ToString());
+        //                }
+        //            }
+        //        }
+        //    }
+        //    txtTenphong.SelectedIndex = -1;
+        //}
+
+        private void TxtTang_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (txtTang.SelectedValue == null) { return; }
+            using (SqlConnection conn = kn.GetConnection())
+            {
+                conn.Open();
+
+                string query = @"
+                SELECT MA_PHONG, TEN_PHONG 
+                FROM PHONG 
+                WHERE MA_TANG = @MaTang 
+                AND SO_GIUONG_CON_TRONG > 0";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    //if (comboBoxMaTang.SelectedValue == null)
+                    //{
+                    //    MessageBox.Show("Vui lòng chọn tầng hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //    return;
+                    //}
+
+                    // Lấy giá trị thực tế từ DataRowView nếu cần
+                    var selectedValue = txtTang.SelectedValue;
+                    if (selectedValue is DataRowView rowView)
+                    {
+                        selectedValue = rowView["MA_TANG"];
+                    }
+
+                    // Chuyển thành kiểu số nguyên trước khi truyền vào SQL
+                    cmd.Parameters.AddWithValue("@MaTang", Convert.ToInt32(selectedValue));
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+
+                        if (table.Rows.Count == 0)
+                        {
+                            txtTenphong.DataSource = null;
+                            MessageBox.Show("Không có phòng nào còn giường trống trong tầng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
+                        txtTenphong.DataSource = table;
+                        txtTenphong.DisplayMember = "TEN_PHONG";
+                        txtTenphong.ValueMember = "MA_PHONG";
+                        txtTenphong.SelectedIndex = -1;
+
+                        ComboBoxSogiuong.DataSource = null; // Xóa danh sách giường khi thay đổi tầng
+                    }
+                }
+            }
+
+        }
+
+        //private void TxtTenphong_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (txtTenphong.SelectedItem == null) return;
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        conn.Open();
+        //        string query = @"
+        //    SELECT COUNT(*) 
+        //    FROM GIUONG 
+        //    WHERE MA_PHONG = (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong)
+        //    AND TINH_TRANG_GIUONG = N'Trống'";
+
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@TenPhong", txtTenphong.SelectedItem.ToString());
+        //            object result = cmd.ExecuteScalar();
+        //            ComboBoxSogiuong.Text = result != null ? result.ToString() : "Không có dữ liệu";
+        //        }
+        //    }
+        //}
 
         private void TxtTenphong_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (txtTenphong.SelectedItem == null) return;
+            if (txtTenphong.SelectedValue == null)
+            {
+                return;
+            }
 
             using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
-                string query = @"
-            SELECT COUNT(*) 
-            FROM GIUONG 
-            WHERE MA_PHONG = (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong)
-            AND TINH_TRANG_GIUONG = N'Trống'";
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                // Lấy mã phòng được chọn
+                object selectedValue = txtTenphong.SelectedValue;
+                string selectedMaPhong = selectedValue is DataRowView dataRowView ? dataRowView["MA_PHONG"].ToString() : selectedValue.ToString();
+
+                if (!int.TryParse(selectedMaPhong, out int maPhong))
                 {
-                    cmd.Parameters.AddWithValue("@TenPhong", txtTenphong.SelectedItem.ToString());
-                    object result = cmd.ExecuteScalar();
-                    ComboBoxSogiuong.Text = result != null ? result.ToString() : "Không có dữ liệu";
+                    MessageBox.Show("Mã phòng không hợp lệ.");
+                    return;
+                }
+
+                
+
+                // Load danh sách giường còn trống hoặc giường hiện tại của sinh viên
+                string queryGiuong = @"
+                        SELECT MA_GIUONG, TEN_GIUONG
+                        FROM GIUONG 
+                        WHERE MA_PHONG = @MaPhong 
+                        AND TINH_TRANG_GIUONG = N'Trống'"; // Giữ giường hiện tại nếu có
+
+                using (SqlCommand cmd = new SqlCommand(queryGiuong, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+
+                        //if (table.Rows.Count == 0)
+                        //{
+                        //    comboBoxMaGiuong.DataSource = null;
+                        //    MessageBox.Show("Không có giường nào trống trong phòng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        //    return;
+                        //}
+
+                        ComboBoxSogiuong.DataSource = table;
+                        ComboBoxSogiuong.DisplayMember = "TEN_GIUONG";
+                        ComboBoxSogiuong.ValueMember = "MA_GIUONG";
+
+                        //// Nếu sinh viên đã có giường, đặt lại giá trị
+                        //if (!string.IsNullOrEmpty(maGiuongHienTai))
+                        //{
+                        //    comboBoxMaGiuong.SelectedValue = maGiuongHienTai;
+                        //}
+                        //else
+                        //{
+                        //    comboBoxMaGiuong.SelectedIndex = -1;
+                        //}
+                    }
                 }
             }
         }
-
-
 
 
 
@@ -194,6 +410,37 @@ namespace WinformKTX
         {
             if (txtTenphong.SelectedItem == null || txtThoigiannoitru.SelectedItem == null) return;
 
+            // Lấy giá trị thực tế từ SelectedValue
+            object selectedValue = txtLoaiphong.SelectedValue;
+            string selectedMaLoaiPhong;
+
+            if (selectedValue is DataRowView dataRowView)
+            {
+                selectedMaLoaiPhong = dataRowView["MA_LOAI_PHONG"].ToString();
+            }
+            else
+            {
+                selectedMaLoaiPhong = selectedValue.ToString();
+            }
+
+            // Chuyển đổi mã loại phòng sang kiểu số nguyên
+            int maLoaiPhong;
+            if (!int.TryParse(selectedMaLoaiPhong, out maLoaiPhong))
+            {
+                MessageBox.Show("Mã loại phòng không hợp lệ.");
+                return;
+            }
+
+            // Lấy mã phòng được chọn
+            object selectedValue1 = txtTenphong.SelectedValue;
+            string selectedMaPhong = selectedValue is DataRowView dataRowView1 ? dataRowView1["MA_PHONG"].ToString() : selectedValue1.ToString();
+
+            if (!int.TryParse(selectedMaPhong, out int maPhong))
+            {
+                MessageBox.Show("Mã phòng không hợp lệ.");
+                return;
+            }
+
             using (SqlConnection conn = kn.GetConnection())
             {
                 try
@@ -201,11 +448,12 @@ namespace WinformKTX
                     conn.Open();
                     string query = "SELECT distinct LOAI_PHONG.GIA_PHONG FROM PHONG " +
                         "join LOAI_PHONG on LOAI_PHONG.MA_LOAI_PHONG = PHONG.MA_LOAI_PHONG " +
-                        "WHERE PHONG.TEN_PHONG = @TenPhong and PHONG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG";
+                        "WHERE PHONG.MA_PHONG = @MaPhong and PHONG.MA_LOAI_PHONG = @MaLoaiPhong";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@TenPhong", txtTenphong.SelectedItem.ToString());
+                        cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        cmd.Parameters.AddWithValue("@MaLoaiPhong", maLoaiPhong);
 
                         object result = cmd.ExecuteScalar();
 
@@ -313,31 +561,71 @@ namespace WinformKTX
                 string giuongQuery = "SELECT TOP 1 MA_GIUONG FROM GIUONG WHERE TEN_GIUONG = @TEN_GIUONG";
                 using (SqlCommand giuongCmd = new SqlCommand(giuongQuery, conn))
                 {
-                    giuongCmd.Parameters.AddWithValue("@TEN_GIUONG", ComboBoxSogiuong.SelectedItem.ToString());
-                    var maGiuong = giuongCmd.ExecuteScalar();
-                    if (maGiuong == null)
+                    // Lấy giá trị thực tế từ SelectedValue
+                    object selectedValue = ComboBoxSogiuong.SelectedValue;
+                    string selectedSOGIUONG;
+
+                    if (selectedValue is DataRowView dataRowView)
                     {
-                        MessageBox.Show("Không tìm thấy giường!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        selectedSOGIUONG = dataRowView["MA_GIUONG"].ToString();
+                    }
+                    else
+                    {
+                        selectedSOGIUONG = selectedValue.ToString();
+                    }
+
+                    // Chuyển đổi mã loại phòng sang kiểu số nguyên
+                    int maGIUONG;
+                    if (!int.TryParse(selectedSOGIUONG, out maGIUONG))
+                    {
+                        MessageBox.Show("Mã giường không hợp lệ.");
                         return;
                     }
+                    //var maGiuong = giuongCmd.ExecuteScalar();
+                    //if (maGiuong == null)
+                    //{
+                    //    MessageBox.Show("Không tìm thấy giường!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //    return;
+                    //}
                 }
 
-                string query = @"
-                        INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU, NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU) 
-                        OUTPUT INSERTED.MA_NOI_TRU
-                        VALUES (@MSSV, 
-                            (SELECT TOP 1 MA_PHONG FROM PHONG WHERE TEN_PHONG = @TENPHONG), 
-                            (SELECT TOP 1 MA_GIUONG FROM GIUONG WHERE TEN_GIUONG = @TEN_GIUONG), 
-                            @NGAYDANGKY, @NGAYBATDAU, @NGAYKETTHUC, N'Đã đăng ký')";
+                //string query = @"
+                //        INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU, NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU) 
+                //        OUTPUT INSERTED.MA_NOI_TRU
+                //        VALUES (@MSSV, 
+                //            (SELECT TOP 1 MA_PHONG FROM PHONG WHERE TEN_PHONG = @TENPHONG), 
+                //            (SELECT TOP 1 MA_GIUONG FROM GIUONG WHERE TEN_GIUONG = @TEN_GIUONG), 
+                //            @NGAYDANGKY, @NGAYBATDAU, @NGAYKETTHUC, N'Đã đăng ký')";
 
+
+                string query = @"
+                        INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU,NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU)
+                    VALUES (@MSSV, @MaPhong, @MaGiuong, @NGAYDANGKY, @NgayBatDau, @NgayKetThuc, N'Đã đăng ký')";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    //cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
+                    //cmd.Parameters.AddWithValue("@TENPHONG", txtTenphong.SelectedItem.ToString());
+                    //cmd.Parameters.AddWithValue("@TEN_GIUONG", ComboBoxSogiuong.SelectedItem.ToString());
+                    //cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
+                    //cmd.Parameters.AddWithValue("@NGAYBATDAU", DateTime.Now);
+                    //cmd.Parameters.AddWithValue("@NGAYKETTHUC", ngayKetThuc);
+
+                    // Gắn giá trị từ TextBox vào tham số
                     cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
-                    cmd.Parameters.AddWithValue("@TENPHONG", txtTenphong.SelectedItem.ToString());
-                    cmd.Parameters.AddWithValue("@TEN_GIUONG", ComboBoxSogiuong.SelectedItem.ToString());
+                    //cmd.Parameters.AddWithValue("@HoTenSV", textBoxHoTenSV.Text);
+                    //cmd.Parameters.AddWithValue("@CCCD", textBoxCccd.Text);
+                    //cmd.Parameters.AddWithValue("@NgaySinh", dateTimePickerNgaySinh.Value);
+                    //cmd.Parameters.AddWithValue("@GioiTinh", comboBoxGioiTinh.Text);
+                    //cmd.Parameters.AddWithValue("@SdtSV", textBoxSdtSV.Text);
+                    //cmd.Parameters.AddWithValue("@SdtNguoiThan", textBoxSdtNguoiThan.Text);
+                    //cmd.Parameters.AddWithValue("@QueQuan", textBoxQueQuan.Text);
+                    //cmd.Parameters.AddWithValue("@Email", textBoxEmail.Text);
+                    cmd.Parameters.AddWithValue("@MaPhong", txtTenphong.SelectedValue);
+                    cmd.Parameters.AddWithValue("@MaGiuong", ComboBoxSogiuong.SelectedValue);
                     cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@NGAYBATDAU", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@NGAYKETTHUC", ngayKetThuc);
+                    cmd.Parameters.AddWithValue("@NgayBatDau", DateTime.Now);
+                    cmd.Parameters.AddWithValue("@NgayKetThuc", ngayKetThuc);
+                    //cmd.Parameters.AddWithValue("@TrangThai", comboBoxTrangThaiNoiTru.Text);
 
                     int maNoiTru = Convert.ToInt32(cmd.ExecuteScalar()); // Lấy MA_NOI_TRU mới nhất từ câu lệnh OUTPUT INSERTED
 
