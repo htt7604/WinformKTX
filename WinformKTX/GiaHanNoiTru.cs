@@ -202,6 +202,18 @@ namespace WinformKTX
                 {
                     conn.Open();
 
+                    // Kiểm tra số lần vi phạm
+                    string checkViPhamQuery = "SELECT COUNT(*) FROM VI_PHAM WHERE MSSV = @MaSV";
+                    SqlCommand cmdCheckViPham = new SqlCommand(checkViPhamQuery, conn);
+                    cmdCheckViPham.Parameters.AddWithValue("@MaSV", txtMasinhvien.Text);
+                    int soLanViPham = (int)cmdCheckViPham.ExecuteScalar();
+
+                    if (soLanViPham >= 3)
+                    {
+                        MessageBox.Show($"Sinh viên có mã số sinh viên {txtMasinhvien.Text} không thể gia hạn do vi phạm nội quy ký túc xá vượt quá số lần quy định.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     // Lấy ngày kết thúc nội trú hiện tại
                     string getDateQuery = "SELECT NGAY_KET_THUC_NOI_TRU FROM NOI_TRU WHERE MSSV = @MaSV";
                     SqlCommand cmdGetDate = new SqlCommand(getDateQuery, conn);
