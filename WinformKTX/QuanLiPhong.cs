@@ -17,29 +17,12 @@ namespace WinformKTX
 {
     public partial class QuanLiPhong : Form
     {
-
         //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
         KetnoiCSDL ketnoi = new KetnoiCSDL();
 
-
-
         public QuanLiPhong()
         {
             InitializeComponent();
-
-        //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
-        KetnoiCSDL ketnoi = new KetnoiCSDL();
-        public QuanLiPhong()
-        {
-            InitializeComponent();
-
-        private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
-
-
-        public QuanLiPhong()
-        {
-            InitializeComponent();
-
             LoadData();
         }
 
@@ -85,7 +68,6 @@ namespace WinformKTX
             int soGiuong = int.Parse(txtsogiuong.Text);
             string tinhTrangPhong = "Chưa cập nhật";
             string tenPhong = $"{maPhong}T{soTang}";
-
 
             using (SqlConnection conn = ketnoi.GetConnection())
             {
@@ -146,14 +128,7 @@ namespace WinformKTX
         }
         private void LoadData()
         {
-
             using (SqlConnection conn = ketnoi.GetConnection())
-
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
-
             {
                 string query = "SELECT MA_PHONG, MA_LOAI_PHONG, MA_TANG, TEN_PHONG, SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG, TINH_TRANG_PHONG FROM PHONG";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -191,15 +166,7 @@ namespace WinformKTX
                 return;
             }
 
-
             using (SqlConnection conn = ketnoi.GetConnection())
-
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
-
-
             {
                 string updateQuery = "UPDATE PHONG SET TINH_TRANG_PHONG = @TinhTrang, SO_GIUONG_CON_TRONG = @SoGiuongConTrong WHERE TEN_PHONG = @TenPhong";
 
@@ -246,11 +213,7 @@ namespace WinformKTX
             string tenPhong = txtmasophong1.Text.Trim();
             string maTang = txtsotang1.Text.Trim();
 
-
             using (SqlConnection conn = ketnoi.GetConnection())
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
             {
                 string query;
 
@@ -258,12 +221,12 @@ namespace WinformKTX
                 {
                     query = "SELECT MA_PHONG, MA_LOAI_PHONG, MA_TANG, TEN_PHONG, SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG, TINH_TRANG_PHONG FROM PHONG";
                 }
-                else if (!string.IsNullOrEmpty(maTang)) // Nếu nhập số tầng, tìm theo tầng
+                else if (!string.IsNullOrEmpty(maTang)) 
                 {
                     query = "SELECT MA_PHONG, MA_LOAI_PHONG, MA_TANG, TEN_PHONG, SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG, TINH_TRANG_PHONG " +
                             "FROM PHONG WHERE MA_TANG = @MaTang";
                 }
-                else // Nếu nhập tên phòng, tìm theo tên phòng
+                else 
                 {
                     query = "SELECT MA_PHONG, MA_LOAI_PHONG, MA_TANG, TEN_PHONG, SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG, TINH_TRANG_PHONG " +
                             "FROM PHONG WHERE TEN_PHONG = @TenPhong";
@@ -319,14 +282,7 @@ namespace WinformKTX
                 return;
             }
 
-
             using (SqlConnection conn = ketnoi.GetConnection())
-
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
-
             {
                 string checkQuery = "SELECT COUNT(*) FROM PHONG WHERE TEN_PHONG = @TenPhong";
                 string deleteQuery = "DELETE FROM PHONG WHERE TEN_PHONG = @TenPhong";
@@ -516,15 +472,13 @@ namespace WinformKTX
                     MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
-            // Cập nhật số lượng sau khi lọc
             UpdateSoluong("AND P.SO_GIUONG_CON_TRONG > 0");
         }
 
 
         private void btnphongtrong_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = ketnoi.GetConnection()) // Thay bằng phương thức kết nối thực tế của bạn
+            using (SqlConnection conn = ketnoi.GetConnection()) 
             {
                 try
                 {
@@ -571,7 +525,7 @@ namespace WinformKTX
 
         private void btnphongchuacapnhat_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = ketnoi.GetConnection()) // Thay bằng phương thức kết nối thực tế của bạn
+            using (SqlConnection conn = ketnoi.GetConnection()) 
             {
                 try
                 {
@@ -617,7 +571,7 @@ namespace WinformKTX
 
         private void btnphongkhongthesudung_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = ketnoi.GetConnection()) // Thay bằng phương thức kết nối thực tế của bạn
+            using (SqlConnection conn = ketnoi.GetConnection()) 
             {
                 try
                 {
@@ -668,7 +622,7 @@ namespace WinformKTX
 
         private void btntatcaphong_Click(object sender, EventArgs e)
         {
-            using (SqlConnection conn = ketnoi.GetConnection()) // Thay bằng phương thức kết nối thực tế của bạn
+            using (SqlConnection conn = ketnoi.GetConnection()) 
             {
                 try
                 {
@@ -714,11 +668,8 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-
-                    // Đếm tổng số phòng trong bảng PHONG
                     string totalQuery = "SELECT COUNT(*) FROM PHONG";
 
-                    // Đếm số phòng theo điều kiện lọc (nếu có)
                     string filteredQuery = $@"
                 SELECT COUNT(*) 
                 FROM PHONG P 
