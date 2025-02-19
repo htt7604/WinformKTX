@@ -1,4 +1,6 @@
-﻿using System;
+﻿using abc.HoanThanh;
+using abc.HoanThanh.ThongKeViPham;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -102,7 +104,7 @@ namespace WinFormsAppKTX
 
         private void QuanLiViPham_Click(object sender, EventArgs e)
         {
-            QuanLiViPham quanLiViPham = new QuanLiViPham();
+            ViPham quanLiViPham = new ViPham();
             quanLiViPham.TopLevel = false;
             quanLiViPham.FormBorderStyle = FormBorderStyle.None;
             quanLiViPham.Dock = DockStyle.Fill;
@@ -124,13 +126,13 @@ namespace WinFormsAppKTX
 
         private void ThongKe_Click(object sender, EventArgs e)
         {
-            ThongKe thongKe = new ThongKe();
-            thongKe.TopLevel = false;
-            thongKe.FormBorderStyle = FormBorderStyle.None;
-            thongKe.Dock = DockStyle.Fill;
+            MainThongKe mainThongKe = new MainThongKe();
+            mainThongKe.TopLevel = false;
+            mainThongKe.FormBorderStyle = FormBorderStyle.None;
+            mainThongKe.Dock = DockStyle.Fill;
             panelDisplay.Controls.Clear();
-            panelDisplay.Controls.Add(thongKe);
-            thongKe.Show();
+            panelDisplay.Controls.Add(mainThongKe);
+            mainThongKe.Show();
         }
 
         private void btnMinisize_Click(object sender, EventArgs e)
