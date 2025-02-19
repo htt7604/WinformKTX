@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
 using System.Windows.Forms;
@@ -13,11 +11,83 @@ namespace WinformKTX
         {
             InitializeComponent();
             txtThoigiangiahan.SelectedIndexChanged += TxtThoigiangiahan_SelectedIndexChanged;
+            guna2Button1Doiphong.Click += guna2Button1Doiphong_Click; // Thêm sự kiện Click
+
         }
 
         KetnoiCSDL kn = new KetnoiCSDL();
 
         // 1. Tra cứu thông tin nội trú
+        //private void btnTracuunoitru_Click(object sender, EventArgs e)
+        //{
+        //    if (string.IsNullOrWhiteSpace(txtMasinhvien.Text))
+        //    {
+        //        MessageBox.Show("Vui lòng nhập mã sinh viên!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        return;
+        //    }
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //                SELECT NOI_TRU.MSSV, SINH_VIEN.HOTEN_SV, NOI_TRU.MA_PHONG, PHONG.TEN_PHONG, NOI_TRU.NGAY_BAT_DAU_NOI_TRU, NOI_TRU.NGAY_KET_THUC_NOI_TRU, NOI_TRU.TRANG_THAI_NOI_TRU 
+        //                FROM NOI_TRU JOIN PHONG ON PHONG.MA_PHONG = NOI_TRU.MA_PHONG JOIN SINH_VIEN ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+        //                WHERE NOI_TRU.MSSV = @MaSV";
+
+        //            SqlCommand cmd = new SqlCommand(query, conn);
+        //            cmd.Parameters.AddWithValue("@MaSV", txtMasinhvien.Text);
+
+        //            SqlDataAdapter da = new SqlDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            da.Fill(dt);
+
+        //            if (dt.Rows.Count == 0)
+        //            {
+        //                MessageBox.Show("Không tìm thấy thông tin nội trú!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //            }
+        //            else
+        //            {
+        //                string trangThai = dt.Rows[0]["TRANG_THAI_NOI_TRU"].ToString();
+        //                if (trangThai == "Đã nội trú")
+        //                {
+        //                    dataGridView1.DataSource = dt;
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("Sinh viên chưa nội trú!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //                }
+
+        //                // Đổi tên cột hiển thị trên DataGridView////
+
+
+        //                dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+        //                dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ Và Tên";
+        //                dataGridView1.Columns["MA_PHONG"].HeaderText = "Mã Phòng";
+        //                dataGridView1.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+        //                dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+        //                dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+        //                dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+
+        //                //dataGridView1Dien_nuoc.Columns["CHI_SO_NUOC_CU"].HeaderText = "Chí Số Nước Cũ";
+        //                //dataGridView1Dien_nuoc.Columns["CHI_SO_NUOC_MOI"].HeaderText = "Chỉ Số Nước Mới";
+        //                //dataGridView1Dien_nuoc.Columns["SO_NUOC_DA_SU_DUNG"].HeaderText = "Số Nước Đã Sử Dụng";
+        //                //dataGridView1Dien_nuoc.Columns["TIEN_DIEN"].HeaderText = "Tiền Điện";
+        //                //dataGridView1Dien_nuoc.Columns["TIEN_NUOC"].HeaderText = "Tiền Nước";
+        //                //dataGridView1Dien_nuoc.Columns["TONG_TIEN"].HeaderText = "Tổng Tiền";
+        //                //dataGridView1Dien_nuoc.Columns["NGAY_THANH_TOAN_DIEN_NUOC"].HeaderText = "Ngày Thanh Toán Điện - Nước";
+        //                //dataGridView1Dien_nuoc.Columns["TINH_TRANG_TT"].HeaderText = "Tình Trạng Thanh Toán";
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi truy vấn: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //}
+
         private void btnTracuunoitru_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtMasinhvien.Text))
@@ -32,9 +102,9 @@ namespace WinformKTX
                 {
                     conn.Open();
                     string query = @"
-                        SELECT NOI_TRU.MSSV, SINH_VIEN.HOTEN_SV, NOI_TRU.MA_PHONG, PHONG.TEN_PHONG, NOI_TRU.NGAY_BAT_DAU_NOI_TRU, NOI_TRU.NGAY_KET_THUC_NOI_TRU, NOI_TRU.TRANG_THAI_NOI_TRU 
-                        FROM NOI_TRU JOIN PHONG ON PHONG.MA_PHONG = NOI_TRU.MA_PHONG JOIN SINH_VIEN ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                        WHERE NOI_TRU.MSSV = @MaSV";
+                SELECT NOI_TRU.MSSV, SINH_VIEN.HOTEN_SV, NOI_TRU.MA_PHONG, PHONG.TEN_PHONG, NOI_TRU.NGAY_BAT_DAU_NOI_TRU, NOI_TRU.NGAY_KET_THUC_NOI_TRU, NOI_TRU.TRANG_THAI_NOI_TRU 
+                FROM NOI_TRU JOIN PHONG ON PHONG.MA_PHONG = NOI_TRU.MA_PHONG JOIN SINH_VIEN ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                WHERE NOI_TRU.MSSV = @MaSV";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@MaSV", txtMasinhvien.Text);
@@ -50,14 +120,21 @@ namespace WinformKTX
                     else
                     {
                         string trangThai = dt.Rows[0]["TRANG_THAI_NOI_TRU"].ToString();
-                        if (trangThai == "Đã nội trú")
-                        {
-                            dataGridView1.DataSource = dt;
-                        }
-                        else
+                        if (trangThai != "Đã nội trú")
                         {
                             MessageBox.Show("Sinh viên chưa nội trú!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
+
+                        dataGridView1.DataSource = dt;
+
+                        // Đổi tên cột hiển thị trên DataGridView
+                        dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                        dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ Và Tên";
+                        dataGridView1.Columns["MA_PHONG"].HeaderText = "Mã Phòng";
+                        dataGridView1.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+                        dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                        dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                        dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
                     }
                 }
                 catch (Exception ex)
@@ -66,6 +143,8 @@ namespace WinformKTX
                 }
             }
         }
+
+
 
         // 2. Hiển thị giá phòng khi chọn thời gian gia hạn
         private void TxtThoigiangiahan_SelectedIndexChanged(object sender, EventArgs e)
@@ -86,9 +165,7 @@ namespace WinformKTX
                         SELECT GIA_PHONG 
                         FROM PHONG 
                         JOIN LOAI_PHONG ON PHONG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG 
-                        WHERE PHONG.MA_PHONG = (
-                            SELECT MA_PHONG FROM NOI_TRU WHERE MSSV = @MaSV
-                        )";
+                        WHERE PHONG.MA_PHONG = ( SELECT MA_PHONG FROM NOI_TRU WHERE MSSV = @MaSV )";
 
                     SqlCommand cmd = new SqlCommand(getGiaPhongQuery, conn);
                     cmd.Parameters.AddWithValue("@MaSV", txtMasinhvien.Text);
@@ -147,10 +224,10 @@ namespace WinformKTX
 
                     // Cập nhật ngày mới vào bảng NOI_TRU
                     string updateQuery = @"
-            UPDATE NOI_TRU 
-            SET NGAY_BAT_DAU_NOI_TRU = @NgayBatDauMoi, 
-                NGAY_KET_THUC_NOI_TRU = @NgayKetThucMoi
-            WHERE MSSV = @MaSV";
+                                          UPDATE NOI_TRU 
+                                          SET NGAY_BAT_DAU_NOI_TRU = @NgayBatDauMoi, 
+                                          NGAY_KET_THUC_NOI_TRU = @NgayKetThucMoi
+                                          WHERE MSSV = @MaSV";
 
                     SqlCommand cmdUpdate = new SqlCommand(updateQuery, conn);
                     cmdUpdate.Parameters.AddWithValue("@NgayBatDauMoi", ngayBatDauMoi);
@@ -161,7 +238,10 @@ namespace WinformKTX
                     if (rowsAffected > 0)
                     {
                         // Cập nhật trạng thái thanh toán
-                        string updateThanhToanQuery = "UPDATE THANH_TOAN_PHONG SET TRANG_THAI_THANH_TOAN = N'Chưa thanh toán' WHERE MSSV = @MaSV";
+                        string updateThanhToanQuery = @"
+    UPDATE THANH_TOAN_PHONG
+    SET TRANG_THAI_THANH_TOAN = N'Chưa thanh toán'
+    WHERE MA_NOI_TRU IN (SELECT MA_NOI_TRU FROM NOI_TRU WHERE MSSV = @MaSV)";
                         SqlCommand cmdUpdateThanhToan = new SqlCommand(updateThanhToanQuery, conn);
                         cmdUpdateThanhToan.Parameters.AddWithValue("@MaSV", txtMasinhvien.Text);
                         cmdUpdateThanhToan.ExecuteNonQuery();
@@ -183,8 +263,6 @@ namespace WinformKTX
                 }
             }
         }
-
-
 
         private void LoadData()
         {
@@ -213,6 +291,20 @@ namespace WinformKTX
                 }
             }
         }
+
+
+
+        /// <summary>
+        /// /// 4. Đổi phòng
+
+        private void guna2Button1Doiphong_Click(object sender, EventArgs e)
+        {
+            ThayDoiPhong formDoiPhong = new ThayDoiPhong();
+            formDoiPhong.ShowDialog(); // Hoặc dùng Show() nếu muốn mở không khóa form chính
+        }
+
+
+
     }
 }
 
