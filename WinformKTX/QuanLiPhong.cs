@@ -134,11 +134,6 @@ namespace WinformKTX
 
             using (SqlConnection conn = ketnoi.GetConnection())
 
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
-
             {
                 string query = "SELECT MA_PHONG, MA_LOAI_PHONG, MA_TANG, TEN_PHONG, SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG, TINH_TRANG_PHONG FROM PHONG";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -178,12 +173,6 @@ namespace WinformKTX
 
 
             using (SqlConnection conn = ketnoi.GetConnection())
-
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
-
 
             {
                 string updateQuery = "UPDATE PHONG SET TINH_TRANG_PHONG = @TinhTrang, SO_GIUONG_CON_TRONG = @SoGiuongConTrong WHERE TEN_PHONG = @TenPhong";
@@ -233,9 +222,7 @@ namespace WinformKTX
 
 
             using (SqlConnection conn = ketnoi.GetConnection())
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
+   
             {
                 string query;
 
@@ -306,11 +293,6 @@ namespace WinformKTX
 
 
             using (SqlConnection conn = ketnoi.GetConnection())
-
-
-            using (SqlConnection conn = ketnoi.GetConnection())
-
-
 
             {
                 string checkQuery = "SELECT COUNT(*) FROM PHONG WHERE TEN_PHONG = @TenPhong";
