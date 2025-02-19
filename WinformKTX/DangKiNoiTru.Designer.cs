@@ -524,6 +524,7 @@
             txtTang.Size = new Size(300, 36);
             txtTang.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtTang.TabIndex = 151;
+            txtTang.SelectedIndexChanged += txtTang_SelectedIndexChanged_1;
             // 
             // txtNgaybatdaunoitru
             // 

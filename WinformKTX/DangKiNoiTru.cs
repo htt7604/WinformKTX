@@ -24,6 +24,72 @@ namespace WinformKTX
             // Tải lại dữ liệu
             LoadData();
         }
+        //private void ComboBoxGioitinh_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (comboBoxGioitinh.SelectedItem == null) return;
+
+        //    string gender = comboBoxGioitinh.SelectedItem.ToString();
+        //    txtLoaiphong.Text = gender;
+        //    txtTang.Items.Clear();
+
+        //    if (gender == "Nam")
+        //    {
+        //        txtTang.Items.Add("T3");
+        //        txtTang.Items.Add("T4");
+        //    }
+        //    else if (gender == "Nữ")
+        //    {
+        //        txtTang.Items.Add("T1");
+        //        txtTang.Items.Add("T2");
+        //    }
+        //}
+
+        //private void TxtLoaiphong_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    txtTang.SelectedIndex = -1;
+        //    txtTenphong.Items.Clear();
+        //}
+
+        //private void TxtTang_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (txtTang.SelectedItem == null) return;
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        conn.Open();
+        //        string query = "SELECT TEN_PHONG FROM PHONG WHERE MA_TANG = (SELECT MA_TANG FROM TANG WHERE TEN_TANG = @Tang) AND TINH_TRANG_PHONG = N'Trống'";
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@Tang", txtTang.SelectedItem.ToString());
+        //            using (SqlDataReader reader = cmd.ExecuteReader())
+        //            {
+        //                txtTenphong.Items.Clear();
+        //                while (reader.Read())
+        //                {
+        //                    txtTenphong.Items.Add(reader["TEN_PHONG"].ToString());
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        //private void TxtTenphong_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    if (txtTenphong.SelectedItem == null) return;
+
+        //    using (SqlConnection conn = kn.GetConnection())
+        //    {
+        //        conn.Open();
+        //        string query = "SELECT COUNT(*) FROM GIUONG WHERE MA_PHONG = (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong) AND TINH_TRANG_GIUONG = N'Trống'";
+        //        using (SqlCommand cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@TenPhong", txtTenphong.SelectedItem.ToString());
+        //            object result = cmd.ExecuteScalar();
+        //            ComboBoxSogiuong.Text = result != null ? result.ToString() : "Không có dữ liệu";
+        //        }
+        //    }
+        //}
+
 
         private void ComboBoxGioitinh_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -31,18 +97,32 @@ namespace WinformKTX
 
             string gender = comboBoxGioitinh.SelectedItem.ToString();
             txtLoaiphong.Text = gender;
-            txtTang.Items.Clear();
 
-            if (gender == "Nam")
+            using (SqlConnection conn = kn.GetConnection())
             {
-                txtTang.Items.Add("T3");
-                txtTang.Items.Add("T4");
+                conn.Open();
+                string query = @"
+            SELECT DISTINCT T.TEN_TANG 
+            FROM TANG T
+            JOIN LOAI_PHONG LP ON T.LOAI_PHONG = LP.MA_LOAI_PHONG
+            WHERE LP.TEN_LOAI_PHONG = @Gender";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Gender", gender);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        txtTang.Items.Clear();
+                        while (reader.Read())
+                        {
+                            txtTang.Items.Add(reader["TEN_TANG"].ToString());
+                        }
+                    }
+                }
             }
-            else if (gender == "Nữ")
-            {
-                txtTang.Items.Add("T1");
-                txtTang.Items.Add("T2");
-            }
+            txtTang.SelectedIndex = -1;
+            txtTenphong.Items.Clear();
         }
 
         private void TxtLoaiphong_SelectedIndexChanged(object sender, EventArgs e)
@@ -58,10 +138,16 @@ namespace WinformKTX
             using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
-                string query = "SELECT TEN_PHONG FROM PHONG WHERE MA_TANG = (SELECT MA_TANG FROM TANG WHERE TEN_TANG = @Tang) AND TINH_TRANG_PHONG = N'Trống'";
+                string query = @"
+            SELECT TEN_PHONG 
+            FROM PHONG 
+            WHERE MA_TANG = (SELECT MA_TANG FROM TANG WHERE TEN_TANG = @Tang)
+            AND SO_GIUONG_CON_TRONG > 0"; // Chỉ lấy phòng còn giường trống
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@Tang", txtTang.SelectedItem.ToString());
+
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         txtTenphong.Items.Clear();
@@ -72,6 +158,7 @@ namespace WinformKTX
                     }
                 }
             }
+            txtTenphong.SelectedIndex = -1;
         }
 
         private void TxtTenphong_SelectedIndexChanged(object sender, EventArgs e)
@@ -81,7 +168,12 @@ namespace WinformKTX
             using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
-                string query = "SELECT COUNT(*) FROM GIUONG WHERE MA_PHONG = (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong) AND TINH_TRANG_GIUONG = N'Trống'";
+                string query = @"
+            SELECT COUNT(*) 
+            FROM GIUONG 
+            WHERE MA_PHONG = (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong)
+            AND TINH_TRANG_GIUONG = N'Trống'";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@TenPhong", txtTenphong.SelectedItem.ToString());
@@ -90,6 +182,13 @@ namespace WinformKTX
                 }
             }
         }
+
+
+
+
+
+
+
 
         private void TxtThoigiannoitru_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -412,7 +511,7 @@ VALUES (@MA_GIA_DN, (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TEN_PHONG), 0
                                 }
 
 
-                                
+
 
                                 // Xóa đăng ký nội trú từ cơ sở dữ liệu
                                 string deleteNoiTruQuery = "DELETE FROM NOI_TRU WHERE MSSV = @MSSV";
@@ -521,6 +620,11 @@ VALUES (@MA_GIA_DN, (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TEN_PHONG), 0
         }
 
         private void btnTimkiemnoitru_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtTang_SelectedIndexChanged_1(object sender, EventArgs e)
         {
 
         }
