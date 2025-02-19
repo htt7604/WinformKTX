@@ -32,15 +32,15 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             tableLayoutPanel3 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
-            textBox3 = new TextBox();
+            textBoxGhiChu = new TextBox();
             label9 = new Label();
             comboBoxChonThaoTac = new ComboBox();
             label8 = new Label();
             label7 = new Label();
-            comboBox5 = new ComboBox();
-            textBox2 = new TextBox();
+            comboBoxChonTinhTrang = new ComboBox();
+            textBoxNhapSoLuong = new TextBox();
             label6 = new Label();
-            textBox1 = new TextBox();
+            textBoxTenCSVC = new TextBox();
             label5 = new Label();
             comboBoxChonPhong = new ComboBox();
             label4 = new Label();
@@ -52,27 +52,30 @@
             comboBoxChonHinhThuc = new ComboBox();
             groupBox2 = new GroupBox();
             tableLayoutPanel4 = new TableLayoutPanel();
-            SiSo = new Label();
+            labelChiSo = new Label();
             comboBoxLocTang = new ComboBox();
             comboBoxLocPhong = new ComboBox();
             comboBoxLocTenCSVC = new ComboBox();
             comboBoxLocTrangThai = new ComboBox();
-            dataGridView1 = new DataGridView();
+            dataGridViewCSVC = new DataGridView();
             tableLayoutPanel5 = new TableLayoutPanel();
             groupBox3 = new GroupBox();
-            button3 = new Button();
-            button2 = new Button();
-            button1 = new Button();
+            buttonXoaCSVC = new Button();
+            buttonSuaCSVC = new Button();
+            buttonThemCSVC = new Button();
             groupBox4 = new GroupBox();
+            buttonXoaAllCSVC = new Button();
+            buttonXoaAllCSVCHuHong = new Button();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewCSVC).BeginInit();
             tableLayoutPanel5.SuspendLayout();
             groupBox3.SuspendLayout();
+            groupBox4.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -110,7 +113,7 @@
             tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel3.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(groupBox2, 0, 1);
-            tableLayoutPanel3.Controls.Add(dataGridView1, 0, 2);
+            tableLayoutPanel3.Controls.Add(dataGridViewCSVC, 0, 2);
             tableLayoutPanel3.Dock = DockStyle.Fill;
             tableLayoutPanel3.Location = new Point(3, 3);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -123,15 +126,15 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(textBox3);
+            groupBox1.Controls.Add(textBoxGhiChu);
             groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(comboBoxChonThaoTac);
             groupBox1.Controls.Add(label8);
             groupBox1.Controls.Add(label7);
-            groupBox1.Controls.Add(comboBox5);
-            groupBox1.Controls.Add(textBox2);
+            groupBox1.Controls.Add(comboBoxChonTinhTrang);
+            groupBox1.Controls.Add(textBoxNhapSoLuong);
             groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(textBox1);
+            groupBox1.Controls.Add(textBoxTenCSVC);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(comboBoxChonPhong);
             groupBox1.Controls.Add(label4);
@@ -150,13 +153,13 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Thông Tin Cơ Sở Vật Chất";
             // 
-            // textBox3
+            // textBoxGhiChu
             // 
-            textBox3.Location = new Point(830, 155);
-            textBox3.Multiline = true;
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(321, 117);
-            textBox3.TabIndex = 17;
+            textBoxGhiChu.Location = new Point(830, 155);
+            textBoxGhiChu.Multiline = true;
+            textBoxGhiChu.Name = "textBoxGhiChu";
+            textBoxGhiChu.Size = new Size(321, 117);
+            textBoxGhiChu.TabIndex = 17;
             // 
             // label9
             // 
@@ -169,6 +172,7 @@
             // 
             // comboBoxChonThaoTac
             // 
+            comboBoxChonThaoTac.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxChonThaoTac.FormattingEnabled = true;
             comboBoxChonThaoTac.Items.AddRange(new object[] { "Thêm", "Sửa", "Xóa" });
             comboBoxChonThaoTac.Location = new Point(311, 41);
@@ -190,47 +194,49 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(449, 247);
+            label7.Location = new Point(449, 245);
             label7.Name = "label7";
             label7.Size = new Size(128, 20);
             label7.TabIndex = 13;
             label7.Text = "Chọn Tình Trạng:";
             // 
-            // comboBox5
+            // comboBoxChonTinhTrang
             // 
-            comboBox5.FormattingEnabled = true;
-            comboBox5.Location = new Point(577, 244);
-            comboBox5.Name = "comboBox5";
-            comboBox5.Size = new Size(160, 28);
-            comboBox5.TabIndex = 12;
+            comboBoxChonTinhTrang.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxChonTinhTrang.FormattingEnabled = true;
+            comboBoxChonTinhTrang.Items.AddRange(new object[] { "Có Thể Sử Dụng", "Hư Hỏng" });
+            comboBoxChonTinhTrang.Location = new Point(577, 242);
+            comboBoxChonTinhTrang.Name = "comboBoxChonTinhTrang";
+            comboBoxChonTinhTrang.Size = new Size(160, 28);
+            comboBoxChonTinhTrang.TabIndex = 12;
             // 
-            // textBox2
+            // textBoxNhapSoLuong
             // 
-            textBox2.Location = new Point(577, 189);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(160, 27);
-            textBox2.TabIndex = 11;
+            textBoxNhapSoLuong.Location = new Point(577, 183);
+            textBoxNhapSoLuong.Name = "textBoxNhapSoLuong";
+            textBoxNhapSoLuong.Size = new Size(160, 27);
+            textBoxNhapSoLuong.TabIndex = 11;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(456, 189);
+            label6.Location = new Point(456, 187);
             label6.Name = "label6";
             label6.Size = new Size(121, 20);
             label6.TabIndex = 10;
             label6.Text = "Nhập Số Lượng:";
             // 
-            // textBox1
+            // textBoxTenCSVC
             // 
-            textBox1.Location = new Point(577, 127);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(160, 27);
-            textBox1.TabIndex = 9;
+            textBoxTenCSVC.Location = new Point(577, 125);
+            textBoxTenCSVC.Name = "textBoxTenCSVC";
+            textBoxTenCSVC.Size = new Size(160, 27);
+            textBoxTenCSVC.TabIndex = 9;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(457, 135);
+            label5.Location = new Point(457, 133);
             label5.Name = "label5";
             label5.Size = new Size(120, 20);
             label5.TabIndex = 8;
@@ -238,11 +244,13 @@
             // 
             // comboBoxChonPhong
             // 
+            comboBoxChonPhong.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxChonPhong.FormattingEnabled = true;
             comboBoxChonPhong.Location = new Point(179, 244);
             comboBoxChonPhong.Name = "comboBoxChonPhong";
             comboBoxChonPhong.Size = new Size(151, 28);
             comboBoxChonPhong.TabIndex = 7;
+            comboBoxChonPhong.SelectedIndexChanged += comboBoxChonPhong_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -255,6 +263,7 @@
             // 
             // comboBoxMaTang
             // 
+            comboBoxMaTang.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxMaTang.FormattingEnabled = true;
             comboBoxMaTang.Location = new Point(179, 181);
             comboBoxMaTang.Name = "comboBoxMaTang";
@@ -273,6 +282,7 @@
             // 
             // comboBoxLoaiPhong
             // 
+            comboBoxLoaiPhong.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLoaiPhong.FormattingEnabled = true;
             comboBoxLoaiPhong.Location = new Point(179, 127);
             comboBoxLoaiPhong.Name = "comboBoxLoaiPhong";
@@ -301,10 +311,11 @@
             // 
             // comboBoxChonHinhThuc
             // 
+            comboBoxChonHinhThuc.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxChonHinhThuc.FormattingEnabled = true;
             comboBoxChonHinhThuc.Location = new Point(696, 41);
             comboBoxChonHinhThuc.Name = "comboBoxChonHinhThuc";
-            comboBoxChonHinhThuc.Size = new Size(264, 28);
+            comboBoxChonHinhThuc.Size = new Size(270, 28);
             comboBoxChonHinhThuc.TabIndex = 0;
             comboBoxChonHinhThuc.SelectedIndexChanged += comboBoxChonHinhThuc_Click;
             // 
@@ -312,6 +323,7 @@
             // 
             groupBox2.Controls.Add(tableLayoutPanel4);
             groupBox2.Dock = DockStyle.Fill;
+            groupBox2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
             groupBox2.Location = new Point(3, 333);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(1178, 76);
@@ -327,7 +339,7 @@
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel4.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tableLayoutPanel4.Controls.Add(SiSo, 4, 0);
+            tableLayoutPanel4.Controls.Add(labelChiSo, 4, 0);
             tableLayoutPanel4.Controls.Add(comboBoxLocTang, 0, 0);
             tableLayoutPanel4.Controls.Add(comboBoxLocPhong, 1, 0);
             tableLayoutPanel4.Controls.Add(comboBoxLocTenCSVC, 2, 0);
@@ -340,29 +352,32 @@
             tableLayoutPanel4.Size = new Size(1172, 50);
             tableLayoutPanel4.TabIndex = 0;
             // 
-            // SiSo
+            // labelChiSo
             // 
-            SiSo.Anchor = AnchorStyles.None;
-            SiSo.AutoSize = true;
-            SiSo.Location = new Point(1025, 15);
-            SiSo.Name = "SiSo";
-            SiSo.Size = new Size(58, 20);
-            SiSo.TabIndex = 4;
-            SiSo.Text = "label11";
+            labelChiSo.Anchor = AnchorStyles.None;
+            labelChiSo.AutoSize = true;
+            labelChiSo.Location = new Point(1024, 15);
+            labelChiSo.Name = "labelChiSo";
+            labelChiSo.Size = new Size(60, 20);
+            labelChiSo.TabIndex = 4;
+            labelChiSo.Text = "label11";
             // 
             // comboBoxLocTang
             // 
             comboBoxLocTang.Anchor = AnchorStyles.None;
+            comboBoxLocTang.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLocTang.FormattingEnabled = true;
             comboBoxLocTang.Location = new Point(41, 11);
             comboBoxLocTang.Name = "comboBoxLocTang";
             comboBoxLocTang.Size = new Size(151, 28);
             comboBoxLocTang.TabIndex = 0;
-            comboBoxLocTang.Click += comboBoxLocTang_Click;
             // 
             // comboBoxLocPhong
             // 
             comboBoxLocPhong.Anchor = AnchorStyles.None;
+            comboBoxLocPhong.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBoxLocPhong.AutoCompleteSource = AutoCompleteSource.ListItems;
+            comboBoxLocPhong.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLocPhong.FormattingEnabled = true;
             comboBoxLocPhong.Location = new Point(275, 11);
             comboBoxLocPhong.Name = "comboBoxLocPhong";
@@ -373,6 +388,9 @@
             // comboBoxLocTenCSVC
             // 
             comboBoxLocTenCSVC.Anchor = AnchorStyles.None;
+            comboBoxLocTenCSVC.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            comboBoxLocTenCSVC.AutoCompleteSource = AutoCompleteSource.ListItems;
+            comboBoxLocTenCSVC.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLocTenCSVC.FormattingEnabled = true;
             comboBoxLocTenCSVC.Location = new Point(509, 11);
             comboBoxLocTenCSVC.Name = "comboBoxLocTenCSVC";
@@ -383,23 +401,27 @@
             // comboBoxLocTrangThai
             // 
             comboBoxLocTrangThai.Anchor = AnchorStyles.None;
+            comboBoxLocTrangThai.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxLocTrangThai.FormattingEnabled = true;
             comboBoxLocTrangThai.Location = new Point(743, 11);
             comboBoxLocTrangThai.Name = "comboBoxLocTrangThai";
             comboBoxLocTrangThai.Size = new Size(151, 28);
             comboBoxLocTrangThai.TabIndex = 3;
+            comboBoxLocTrangThai.Click += comboBoxLocTrangThai_Click;
             // 
-            // dataGridView1
+            // dataGridViewCSVC
             // 
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.Location = new Point(3, 415);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(1178, 407);
-            dataGridView1.TabIndex = 2;
+            dataGridViewCSVC.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCSVC.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCSVC.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCSVC.Dock = DockStyle.Fill;
+            dataGridViewCSVC.Location = new Point(3, 415);
+            dataGridViewCSVC.Name = "dataGridViewCSVC";
+            dataGridViewCSVC.ReadOnly = true;
+            dataGridViewCSVC.RowHeadersWidth = 51;
+            dataGridViewCSVC.Size = new Size(1178, 407);
+            dataGridViewCSVC.TabIndex = 2;
+            dataGridViewCSVC.CellClick += dataGridViewCSVC_CellClick;
             // 
             // tableLayoutPanel5
             // 
@@ -419,9 +441,9 @@
             // 
             // groupBox3
             // 
-            groupBox3.Controls.Add(button3);
-            groupBox3.Controls.Add(button2);
-            groupBox3.Controls.Add(button1);
+            groupBox3.Controls.Add(buttonXoaCSVC);
+            groupBox3.Controls.Add(buttonSuaCSVC);
+            groupBox3.Controls.Add(buttonThemCSVC);
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
             groupBox3.Location = new Point(3, 3);
@@ -431,35 +453,40 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Các Thao Tác";
             // 
-            // button3
+            // buttonXoaCSVC
             // 
-            button3.Location = new Point(53, 279);
-            button3.Name = "button3";
-            button3.Size = new Size(190, 52);
-            button3.TabIndex = 2;
-            button3.Text = "Xóa Cơ Sở Vật Chất";
-            button3.UseVisualStyleBackColor = true;
+            buttonXoaCSVC.Location = new Point(53, 279);
+            buttonXoaCSVC.Name = "buttonXoaCSVC";
+            buttonXoaCSVC.Size = new Size(190, 52);
+            buttonXoaCSVC.TabIndex = 2;
+            buttonXoaCSVC.Text = "Xóa Cơ Sở Vật Chất";
+            buttonXoaCSVC.UseVisualStyleBackColor = true;
+            buttonXoaCSVC.Click += buttonXoaCSVC_Click;
             // 
-            // button2
+            // buttonSuaCSVC
             // 
-            button2.Location = new Point(53, 179);
-            button2.Name = "button2";
-            button2.Size = new Size(190, 52);
-            button2.TabIndex = 1;
-            button2.Text = "Sửa Cơ Sở Vật Chất";
-            button2.UseVisualStyleBackColor = true;
+            buttonSuaCSVC.Location = new Point(53, 179);
+            buttonSuaCSVC.Name = "buttonSuaCSVC";
+            buttonSuaCSVC.Size = new Size(190, 52);
+            buttonSuaCSVC.TabIndex = 1;
+            buttonSuaCSVC.Text = "Sửa Cơ Sở Vật Chất";
+            buttonSuaCSVC.UseVisualStyleBackColor = true;
+            buttonSuaCSVC.Click += buttonSuaCSVC_Click;
             // 
-            // button1
+            // buttonThemCSVC
             // 
-            button1.Location = new Point(53, 80);
-            button1.Name = "button1";
-            button1.Size = new Size(190, 52);
-            button1.TabIndex = 0;
-            button1.Text = "Thêm Cơ Sở Vật Chất";
-            button1.UseVisualStyleBackColor = true;
+            buttonThemCSVC.Location = new Point(53, 80);
+            buttonThemCSVC.Name = "buttonThemCSVC";
+            buttonThemCSVC.Size = new Size(190, 52);
+            buttonThemCSVC.TabIndex = 0;
+            buttonThemCSVC.Text = "Thêm Cơ Sở Vật Chất";
+            buttonThemCSVC.UseVisualStyleBackColor = true;
+            buttonThemCSVC.Click += buttonThemCSVC_Click;
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(buttonXoaAllCSVC);
+            groupBox4.Controls.Add(buttonXoaAllCSVCHuHong);
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
             groupBox4.Location = new Point(3, 415);
@@ -468,6 +495,27 @@
             groupBox4.TabIndex = 1;
             groupBox4.TabStop = false;
             groupBox4.Text = "Các Thực Hiện";
+            // 
+            // buttonXoaAllCSVC
+            // 
+            buttonXoaAllCSVC.BackColor = SystemColors.ControlLight;
+            buttonXoaAllCSVC.Location = new Point(79, 230);
+            buttonXoaAllCSVC.Name = "buttonXoaAllCSVC";
+            buttonXoaAllCSVC.Size = new Size(164, 56);
+            buttonXoaAllCSVC.TabIndex = 1;
+            buttonXoaAllCSVC.Text = "Xóa Tất Cả Cơ Sở Vật Chất";
+            buttonXoaAllCSVC.UseVisualStyleBackColor = false;
+            buttonXoaAllCSVC.Click += buttonXoaAllCSVC_Click;
+            // 
+            // buttonXoaAllCSVCHuHong
+            // 
+            buttonXoaAllCSVCHuHong.Location = new Point(79, 105);
+            buttonXoaAllCSVCHuHong.Name = "buttonXoaAllCSVCHuHong";
+            buttonXoaAllCSVCHuHong.Size = new Size(164, 56);
+            buttonXoaAllCSVCHuHong.TabIndex = 0;
+            buttonXoaAllCSVCHuHong.Text = "Xóa Tất Cả Cơ Sở Vật Chất Hư Hỏng";
+            buttonXoaAllCSVCHuHong.UseVisualStyleBackColor = true;
+            buttonXoaAllCSVCHuHong.Click += buttonXoaAllCSVCHuHong_Click;
             // 
             // CoSoVatChat
             // 
@@ -485,9 +533,10 @@
             groupBox2.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewCSVC).EndInit();
             tableLayoutPanel5.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -506,28 +555,30 @@
         private ComboBox comboBoxLoaiPhong;
         private Label label2;
         private Label label6;
-        private TextBox textBox1;
+        private TextBox textBoxTenCSVC;
         private Label label5;
         private Label label7;
-        private ComboBox comboBox5;
-        private TextBox textBox2;
+        private ComboBox comboBoxChonTinhTrang;
+        private TextBox textBoxNhapSoLuong;
         private ComboBox comboBoxChonThaoTac;
         private Label label8;
-        private TextBox textBox3;
+        private TextBox textBoxGhiChu;
         private Label label9;
         private GroupBox groupBox2;
         private TableLayoutPanel tableLayoutPanel4;
         private TableLayoutPanel tableLayoutPanel5;
         private GroupBox groupBox3;
         private GroupBox groupBox4;
-        private DataGridView dataGridView1;
-        private Button button3;
-        private Button button2;
-        private Button button1;
+        private DataGridView dataGridViewCSVC;
+        private Button buttonXoaCSVC;
+        private Button buttonSuaCSVC;
+        private Button buttonThemCSVC;
         private ComboBox comboBoxLocTang;
         private ComboBox comboBoxLocPhong;
         private ComboBox comboBoxLocTenCSVC;
-        private Label SiSo;
+        private Label labelChiSo;
         private ComboBox comboBoxLocTrangThai;
+        private Button buttonXoaAllCSVC;
+        private Button buttonXoaAllCSVCHuHong;
     }
 }
