@@ -104,7 +104,7 @@ namespace WinformKTX
                 string query = @"
             SELECT DISTINCT T.TEN_TANG 
             FROM TANG T
-            JOIN LOAI_PHONG LP ON T.LOAI_PHONG = LP.MA_LOAI_PHONG
+            JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
             WHERE LP.TEN_LOAI_PHONG = @Gender";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

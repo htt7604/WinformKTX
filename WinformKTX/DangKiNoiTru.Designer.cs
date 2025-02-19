@@ -558,7 +558,6 @@
             ComboBoxSogiuong.Font = new Font("Segoe UI", 10F);
             ComboBoxSogiuong.ForeColor = Color.Black;
             ComboBoxSogiuong.ItemHeight = 30;
-            ComboBoxSogiuong.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6" });
             ComboBoxSogiuong.Location = new Point(1031, 110);
             ComboBoxSogiuong.Name = "ComboBoxSogiuong";
             ComboBoxSogiuong.ShadowDecoration.CustomizableEdges = customizableEdges28;
