@@ -39,6 +39,8 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             txtThoigiangiahan = new Guna.UI2.WinForms.Guna2ComboBox();
             btnTracuunoitru = new Guna.UI2.WinForms.Guna2Button();
             txtMasinhvien = new Guna.UI2.WinForms.Guna2TextBox();
@@ -49,6 +51,7 @@
             txtTienphong = new Guna.UI2.WinForms.Guna2TextBox();
             label1 = new Label();
             dataGridView1 = new DataGridView();
+            guna2Button1Doiphong = new Guna.UI2.WinForms.Guna2Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -64,7 +67,7 @@
             txtThoigiangiahan.ForeColor = Color.Black;
             txtThoigiangiahan.ItemHeight = 30;
             txtThoigiangiahan.Items.AddRange(new object[] { "3" });
-            txtThoigiangiahan.Location = new Point(593, 273);
+            txtThoigiangiahan.Location = new Point(612, 246);
             txtThoigiangiahan.Name = "txtThoigiangiahan";
             txtThoigiangiahan.ShadowDecoration.CustomizableEdges = customizableEdges2;
             txtThoigiangiahan.Size = new Size(300, 36);
@@ -86,7 +89,7 @@
             btnTracuunoitru.ForeColor = Color.White;
             btnTracuunoitru.Image = (Image)resources.GetObject("btnTracuunoitru.Image");
             btnTracuunoitru.ImageSize = new Size(35, 35);
-            btnTracuunoitru.Location = new Point(960, 188);
+            btnTracuunoitru.Location = new Point(979, 161);
             btnTracuunoitru.Name = "btnTracuunoitru";
             btnTracuunoitru.ShadowDecoration.CustomizableEdges = customizableEdges4;
             btnTracuunoitru.Size = new Size(165, 56);
@@ -106,7 +109,7 @@
             txtMasinhvien.Font = new Font("Segoe UI", 9F);
             txtMasinhvien.ForeColor = Color.Black;
             txtMasinhvien.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtMasinhvien.Location = new Point(593, 188);
+            txtMasinhvien.Location = new Point(612, 161);
             txtMasinhvien.Margin = new Padding(3, 4, 3, 4);
             txtMasinhvien.Name = "txtMasinhvien";
             txtMasinhvien.PasswordChar = '\0';
@@ -132,7 +135,7 @@
             btnDangkygiahan.ForeColor = Color.White;
             btnDangkygiahan.Image = (Image)resources.GetObject("btnDangkygiahan.Image");
             btnDangkygiahan.ImageSize = new Size(35, 35);
-            btnDangkygiahan.Location = new Point(960, 265);
+            btnDangkygiahan.Location = new Point(979, 238);
             btnDangkygiahan.Name = "btnDangkygiahan";
             btnDangkygiahan.ShadowDecoration.CustomizableEdges = customizableEdges8;
             btnDangkygiahan.Size = new Size(165, 56);
@@ -144,7 +147,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label3.Location = new Point(370, 284);
+            label3.Location = new Point(389, 257);
             label3.Name = "label3";
             label3.Size = new Size(191, 25);
             label3.TabIndex = 155;
@@ -154,7 +157,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(370, 197);
+            label2.Location = new Point(389, 170);
             label2.Name = "label2";
             label2.Size = new Size(167, 25);
             label2.TabIndex = 154;
@@ -165,7 +168,7 @@
             label4.Anchor = AnchorStyles.Top;
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label4.Location = new Point(593, 75);
+            label4.Location = new Point(598, 53);
             label4.Name = "label4";
             label4.Size = new Size(314, 46);
             label4.TabIndex = 153;
@@ -183,7 +186,7 @@
             txtTienphong.Font = new Font("Segoe UI", 9F);
             txtTienphong.ForeColor = Color.Black;
             txtTienphong.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtTienphong.Location = new Point(593, 349);
+            txtTienphong.Location = new Point(612, 322);
             txtTienphong.Margin = new Padding(3, 4, 3, 4);
             txtTienphong.Name = "txtTienphong";
             txtTienphong.PasswordChar = '\0';
@@ -198,7 +201,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(370, 358);
+            label1.Location = new Point(389, 331);
             label1.Name = "label1";
             label1.Size = new Size(124, 25);
             label1.TabIndex = 161;
@@ -215,12 +218,36 @@
             dataGridView1.Size = new Size(1488, 505);
             dataGridView1.TabIndex = 163;
             // 
+            // guna2Button1Doiphong
+            // 
+            guna2Button1Doiphong.BorderRadius = 10;
+            guna2Button1Doiphong.BorderThickness = 1;
+            guna2Button1Doiphong.CheckedState.BorderColor = Color.FromArgb(255, 192, 192);
+            guna2Button1Doiphong.CheckedState.FillColor = Color.White;
+            guna2Button1Doiphong.CustomizableEdges = customizableEdges11;
+            guna2Button1Doiphong.DisabledState.BorderColor = Color.DarkGray;
+            guna2Button1Doiphong.DisabledState.CustomBorderColor = Color.DarkGray;
+            guna2Button1Doiphong.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            guna2Button1Doiphong.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            guna2Button1Doiphong.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
+            guna2Button1Doiphong.ForeColor = Color.White;
+            guna2Button1Doiphong.Image = (Image)resources.GetObject("guna2Button1Doiphong.Image");
+            guna2Button1Doiphong.ImageSize = new Size(35, 35);
+            guna2Button1Doiphong.Location = new Point(979, 322);
+            guna2Button1Doiphong.Name = "guna2Button1Doiphong";
+            guna2Button1Doiphong.ShadowDecoration.CustomizableEdges = customizableEdges12;
+            guna2Button1Doiphong.Size = new Size(165, 56);
+            guna2Button1Doiphong.TabIndex = 164;
+            guna2Button1Doiphong.Text = "ĐỔI PHÒNG";
+            guna2Button1Doiphong.Click += guna2Button1Doiphong_Click;
+            // 
             // GiaHanNoiTru1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightGray;
             ClientSize = new Size(1512, 947);
+            Controls.Add(guna2Button1Doiphong);
             Controls.Add(dataGridView1);
             Controls.Add(txtTienphong);
             Controls.Add(label1);
@@ -251,5 +278,6 @@
         private Guna.UI2.WinForms.Guna2TextBox txtTienphong;
         private Label label1;
         private DataGridView dataGridView1;
+        private Guna.UI2.WinForms.Guna2Button guna2Button1Doiphong;
     }
 }

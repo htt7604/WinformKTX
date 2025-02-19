@@ -119,6 +119,7 @@
             txtQuequan.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtQuequan.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtQuequan.Font = new Font("Segoe UI", 9F);
+            txtQuequan.ForeColor = Color.Black;
             txtQuequan.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtQuequan.Location = new Point(372, 341);
             txtQuequan.Margin = new Padding(3, 4, 3, 4);
@@ -241,7 +242,7 @@
             txtLoaiphong.ForeColor = Color.Black;
             txtLoaiphong.ItemHeight = 30;
             txtLoaiphong.Items.AddRange(new object[] { "Nam", "Nữ" });
-            txtLoaiphong.Location = new Point(702, 181);
+            txtLoaiphong.Location = new Point(702, 180);
             txtLoaiphong.Name = "txtLoaiphong";
             txtLoaiphong.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtLoaiphong.Size = new Size(300, 36);
@@ -285,6 +286,7 @@
             txtEmail.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtEmail.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtEmail.Font = new Font("Segoe UI", 9F);
+            txtEmail.ForeColor = Color.Black;
             txtEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtEmail.Location = new Point(372, 257);
             txtEmail.Margin = new Padding(3, 4, 3, 4);
@@ -316,6 +318,7 @@
             txtSDT.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtSDT.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSDT.Font = new Font("Segoe UI", 9F);
+            txtSDT.ForeColor = Color.Black;
             txtSDT.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSDT.Location = new Point(372, 180);
             txtSDT.Margin = new Padding(3, 4, 3, 4);
@@ -347,6 +350,7 @@
             txtCCCD.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtCCCD.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtCCCD.Font = new Font("Segoe UI", 9F);
+            txtCCCD.ForeColor = Color.Black;
             txtCCCD.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtCCCD.Location = new Point(32, 257);
             txtCCCD.Margin = new Padding(3, 4, 3, 4);
@@ -378,6 +382,7 @@
             txtHoten.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtHoten.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtHoten.Font = new Font("Segoe UI", 9F);
+            txtHoten.ForeColor = Color.Black;
             txtHoten.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtHoten.Location = new Point(32, 180);
             txtHoten.Margin = new Padding(3, 4, 3, 4);
@@ -462,7 +467,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(575, 11);
+            label1.Location = new Point(629, 20);
             label1.Name = "label1";
             label1.Size = new Size(321, 46);
             label1.TabIndex = 114;
@@ -489,7 +494,6 @@
             btnDangkynoitru.Size = new Size(165, 56);
             btnDangkynoitru.TabIndex = 147;
             btnDangkynoitru.Text = "ĐĂNG KÝ";
-            btnDangkynoitru.Click += btnDangkynoitru_Click_1;
             // 
             // dataGridView1Dangkynoitru
             // 
@@ -501,7 +505,7 @@
             dataGridView1Dangkynoitru.RowHeadersWidth = 51;
             dataGridView1Dangkynoitru.Size = new Size(1488, 521);
             dataGridView1Dangkynoitru.TabIndex = 148;
-            dataGridView1Dangkynoitru.CellClick += this.DataGridView1Dangkynoitru_CellClick;
+            dataGridView1Dangkynoitru.CellClick += DataGridView1Dangkynoitru_CellClick;
             // 
             // txtTang
             // 
@@ -520,6 +524,7 @@
             txtTang.Size = new Size(300, 36);
             txtTang.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtTang.TabIndex = 151;
+            txtTang.SelectedIndexChanged += txtTang_SelectedIndexChanged_1;
             // 
             // txtNgaybatdaunoitru
             // 
@@ -551,10 +556,10 @@
             ComboBoxSogiuong.FocusedColor = Color.FromArgb(94, 148, 255);
             ComboBoxSogiuong.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             ComboBoxSogiuong.Font = new Font("Segoe UI", 10F);
-            ComboBoxSogiuong.ForeColor = Color.FromArgb(68, 88, 112);
+            ComboBoxSogiuong.ForeColor = Color.Black;
             ComboBoxSogiuong.ItemHeight = 30;
             ComboBoxSogiuong.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6" });
-            ComboBoxSogiuong.Location = new Point(1031, 109);
+            ComboBoxSogiuong.Location = new Point(1031, 110);
             ComboBoxSogiuong.Name = "ComboBoxSogiuong";
             ComboBoxSogiuong.ShadowDecoration.CustomizableEdges = customizableEdges28;
             ComboBoxSogiuong.Size = new Size(251, 36);
@@ -572,7 +577,7 @@
             comboBoxGioitinh.ForeColor = Color.Black;
             comboBoxGioitinh.ItemHeight = 30;
             comboBoxGioitinh.Items.AddRange(new object[] { "Nam", "Nữ" });
-            comboBoxGioitinh.Location = new Point(702, 119);
+            comboBoxGioitinh.Location = new Point(702, 109);
             comboBoxGioitinh.Name = "comboBoxGioitinh";
             comboBoxGioitinh.ShadowDecoration.CustomizableEdges = customizableEdges30;
             comboBoxGioitinh.Size = new Size(300, 36);
@@ -605,6 +610,7 @@
             txtSdtNguoiThan.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtSdtNguoiThan.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSdtNguoiThan.Font = new Font("Segoe UI", 9F);
+            txtSdtNguoiThan.ForeColor = Color.Black;
             txtSdtNguoiThan.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
             txtSdtNguoiThan.Location = new Point(1031, 180);
             txtSdtNguoiThan.Margin = new Padding(3, 4, 3, 4);
@@ -619,7 +625,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(1295, 85);
+            label2.Location = new Point(1295, 86);
             label2.Name = "label2";
             label2.Size = new Size(78, 20);
             label2.TabIndex = 157;
@@ -635,8 +641,9 @@
             txtGiaphong.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtGiaphong.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtGiaphong.Font = new Font("Segoe UI", 9F);
+            txtGiaphong.ForeColor = Color.Black;
             txtGiaphong.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtGiaphong.Location = new Point(1295, 109);
+            txtGiaphong.Location = new Point(1295, 110);
             txtGiaphong.Margin = new Padding(3, 4, 3, 4);
             txtGiaphong.Name = "txtGiaphong";
             txtGiaphong.PasswordChar = '\0';
@@ -667,7 +674,7 @@
             btnTimkiemnoitru.Size = new Size(165, 56);
             btnTimkiemnoitru.TabIndex = 159;
             btnTimkiemnoitru.Text = "TÌM KIẾM";
-            btnTimkiemnoitru.Click += btnTimkiemnoitru_Click;
+            btnTimkiemnoitru.Click += btnTimkiemnoitru_Click_1;
             // 
             // DangKiNoiTru
             // 

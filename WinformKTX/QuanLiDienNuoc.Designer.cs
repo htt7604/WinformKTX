@@ -43,6 +43,8 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges13 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges14 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges15 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
+            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges16 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             label3 = new Label();
             btnTracuudien_nuoc = new Guna.UI2.WinForms.Guna2Button();
             txtTenphong = new Guna.UI2.WinForms.Guna2TextBox();
@@ -57,6 +59,7 @@
             label6 = new Label();
             txtTungay = new Guna.UI2.WinForms.Guna2DateTimePicker();
             txtDenngay = new Guna.UI2.WinForms.Guna2DateTimePicker();
+            btnThongkediennuoc = new Guna.UI2.WinForms.Guna2Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1Dien_nuoc).BeginInit();
             SuspendLayout();
             // 
@@ -247,6 +250,7 @@
             // 
             txtTungay.Checked = true;
             txtTungay.CustomizableEdges = customizableEdges11;
+            txtTungay.FillColor = Color.FromArgb(255, 192, 128);
             txtTungay.Font = new Font("Segoe UI", 9F);
             txtTungay.Format = DateTimePickerFormat.Long;
             txtTungay.Location = new Point(391, 326);
@@ -257,12 +261,12 @@
             txtTungay.Size = new Size(300, 45);
             txtTungay.TabIndex = 178;
             txtTungay.Value = new DateTime(2025, 2, 13, 13, 31, 37, 804);
-            txtTungay.ValueChanged += txtTungay_ValueChanged;
             // 
             // txtDenngay
             // 
             txtDenngay.Checked = true;
             txtDenngay.CustomizableEdges = customizableEdges13;
+            txtDenngay.FillColor = Color.FromArgb(255, 192, 128);
             txtDenngay.Font = new Font("Segoe UI", 9F);
             txtDenngay.Format = DateTimePickerFormat.Long;
             txtDenngay.Location = new Point(804, 326);
@@ -273,7 +277,29 @@
             txtDenngay.Size = new Size(300, 45);
             txtDenngay.TabIndex = 179;
             txtDenngay.Value = new DateTime(2025, 2, 13, 13, 31, 41, 810);
-            txtDenngay.ValueChanged += txtDenngay_ValueChanged;
+            // 
+            // btnThongkediennuoc
+            // 
+            btnThongkediennuoc.BorderRadius = 10;
+            btnThongkediennuoc.BorderThickness = 1;
+            btnThongkediennuoc.CheckedState.BorderColor = Color.FromArgb(255, 192, 192);
+            btnThongkediennuoc.CheckedState.FillColor = Color.White;
+            btnThongkediennuoc.CustomizableEdges = customizableEdges15;
+            btnThongkediennuoc.DisabledState.BorderColor = Color.DarkGray;
+            btnThongkediennuoc.DisabledState.CustomBorderColor = Color.DarkGray;
+            btnThongkediennuoc.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
+            btnThongkediennuoc.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
+            btnThongkediennuoc.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
+            btnThongkediennuoc.ForeColor = Color.White;
+            btnThongkediennuoc.Image = (Image)resources.GetObject("btnThongkediennuoc.Image");
+            btnThongkediennuoc.ImageSize = new Size(35, 35);
+            btnThongkediennuoc.Location = new Point(1190, 129);
+            btnThongkediennuoc.Name = "btnThongkediennuoc";
+            btnThongkediennuoc.ShadowDecoration.CustomizableEdges = customizableEdges16;
+            btnThongkediennuoc.Size = new Size(169, 56);
+            btnThongkediennuoc.TabIndex = 180;
+            btnThongkediennuoc.Text = "THỐNG KÊ";
+            btnThongkediennuoc.Click += btnThongkediennuoc_Click;
             // 
             // QuanLiDienNuoc
             // 
@@ -281,6 +307,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightGray;
             ClientSize = new Size(1512, 947);
+            Controls.Add(btnThongkediennuoc);
             Controls.Add(txtDenngay);
             Controls.Add(txtTungay);
             Controls.Add(label6);
@@ -319,5 +346,6 @@
         private Label label6;
         private Guna.UI2.WinForms.Guna2DateTimePicker txtTungay;
         private Guna.UI2.WinForms.Guna2DateTimePicker txtDenngay;
+        private Guna.UI2.WinForms.Guna2Button btnThongkediennuoc;
     }
 }
