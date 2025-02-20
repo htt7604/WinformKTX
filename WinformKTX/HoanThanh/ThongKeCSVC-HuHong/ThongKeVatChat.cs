@@ -281,6 +281,8 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             if (!string.IsNullOrEmpty(TenCSVC))
             {
                 DemCSVC(TenCSVC);
+                DemCSVCTot(TenCSVC);
+                DemCSVC_Hong(TenCSVC);
                 cmd.Parameters.AddWithValue("@TenCSVC", TenCSVC);
             }
 
@@ -402,6 +404,75 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             catch (Exception ex)
             {
                 MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
+            }
+            finally
+            {
+                // Đảm bảo đóng kết nối
+                conn.Close();
+            }
+        }
+        //dem tong so luong CSVC dua tren ten+soluong
+        private void DemCSVCTot(string TenCSVC)
+        {
+            // Chuỗi kết nối đến cơ sở dữ liệu
+            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+
+            // Truy vấn SQL để đếm số sinh viên
+            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC And TINH_TRANG=N'Tot' ";
+
+            // Tạo lệnh SQL
+            SqlCommand command = new SqlCommand(query, conn);
+            command.Parameters.AddWithValue("@TenCSVC", TenCSVC);
+            //command.Parameters.AddWithValue("@TinhTrang", TinhTrang);
+            try
+            {
+                // Mở kết nối
+                conn.Open();
+
+                // Thực hiện truy vấn và lấy kết quả đếm
+                int Count = (int)command.ExecuteScalar();
+
+                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
+                textBoxDemConTot.Text = "Tong SL " + TenCSVC + " Tot: " + Count.ToString();
+            }
+            catch (Exception ex)
+            {
+                textBoxDemConTot.Text = "Tong SL " + TenCSVC + " tot: 0";
+                //MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
+            }
+            finally
+            {
+                // Đảm bảo đóng kết nối
+                conn.Close();
+            }
+        }
+        //dem tong so luong CSVC dua tren ten+soluong
+        private void DemCSVC_Hong(string TenCSVC)
+        {
+            // Chuỗi kết nối đến cơ sở dữ liệu
+            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+
+            // Truy vấn SQL để đếm số sinh viên
+            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC and TINH_TRANG=N'hong'";
+
+            // Tạo lệnh SQL
+            SqlCommand command = new SqlCommand(query, conn);
+            command.Parameters.AddWithValue("@TenCSVC", TenCSVC);
+            try
+            {
+                // Mở kết nối
+                conn.Open();
+
+                // Thực hiện truy vấn và lấy kết quả đếm
+                int Count = (int)command.ExecuteScalar();
+
+                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
+                textBoxDemHuHong.Text = "Tong SL " + TenCSVC + " hong: " + Count.ToString();
+            }
+            catch (Exception ex)
+            {
+                textBoxDemHuHong.Text = "Tong SL " + TenCSVC + " hong: 0";
+                //MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
             }
             finally
             {

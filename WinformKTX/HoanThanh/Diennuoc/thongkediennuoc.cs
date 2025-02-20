@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,64 +10,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace abc.HoanThanh.ThanhToan
+namespace WinformKTX.HoanThanh.Diennuoc
 {
-    public partial class ThongKeThanhToan : Form
+    public partial class thongkediennuoc : Form
     {
-        public ThongKeThanhToan()
+        public thongkediennuoc()
         {
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
             InitializeComponent();
+            LoadDienNuocData();
             TaidanhsachPhong(conn);
-            LoadcomboBoxMSSV();
         }
-        //ham load mssv
-
-        private void LoadcomboBoxMSSV()
-        {
-            try
-            {
-                radioButtonAll.Checked = true;
-                var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-                string query = "select DISTINCT NOI_TRU.MSSV from THANH_TOAN_PHONG join NOI_TRU on THANH_TOAN_PHONG.MA_NOI_TRU=NOI_TRU.MA_NOI_TRU";
-                using (var cmd = new SqlCommand(query, conn))
-                {
-
-                    SqlDataAdapter da = new SqlDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    var table = new DataTable();
-                    da.Fill(table);
-                    comboBoxMSSV.DataSource = table;
-                    comboBoxMSSV.DisplayMember = "MSSV";
-                    comboBoxMSSV.ValueMember = "MSSV";
-
-                    comboBoxMSSV.SelectedIndex = -1;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-
-
-
-
 
 
         //ham du lieu vao data
-        private void LoadThanhToanData()
+        private void LoadDienNuocData()
         {
-            DemSVDaThanhToan();
-            DemSVChuaThanhToan();
+            //DemSVDaThanhToan();
+            //DemSVChuaThanhToan();
             string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = "select THANH_TOAN_PHONG.MA_THANH_TOAN_PHONG, SINH_VIEN.MSSV,SINH_VIEN.HOTEN_SV, LOAI_PHONG.TEN_LOAI_PHONG, TANG.TEN_TANG,PHONG.TEN_PHONG,GIUONG.TEN_GIUONG,THANH_TOAN_PHONG.NGAY_THANH_TOAN,THANH_TOAN_PHONG.GIA_TIEN,THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN from THANH_TOAN_PHONG join NOI_TRU on THANH_TOAN_PHONG.MA_NOI_TRU=NOI_TRU.MA_NOI_TRU join GIUONG on NOI_TRU.MA_GIUONG=GIUONG.MA_GIUONG join SINH_VIEN on NOI_TRU.MSSV=SINH_VIEN.MSSV join PHONG on NOI_TRU.MA_PHONG=PHONG.MA_PHONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG=LOAI_PHONG.MA_LOAI_PHONG";
+                    string query = "select LOAI_PHONG.TEN_LOAI_PHONG,TANG.TEN_TANG,PHONG.TEN_PHONG,DIEN_NUOC.CHI_SO_DIEN_CU,CHI_SO_DIEN_MOI,DIEN_NUOC.CHI_SO_NUOC_CU,DIEN_NUOC.CHI_SO_NUOC_MOI,TU_NGAY,DEN_NGAY,SO_DIEN_DA_SU_DUNG,SO_NUOC_DA_SU_DUNG,DIEN_NUOC.TIEN_DIEN,TIEN_NUOC,TONG_TIEN,NGAY_THANH_TOAN_DIEN_NUOC,TINH_TRANG_TT  from DIEN_NUOC join PHONG on DIEN_NUOC.MA_PHONG=PHONG.MA_PHONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG=LOAI_PHONG.MA_LOAI_PHONG ";
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
@@ -168,61 +135,46 @@ namespace abc.HoanThanh.ThanhToan
             }
         }
 
-        private void comboBoxPhong_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxPhong.SelectedItem == null)
-            {
-                return;
-            }
-            var selectedRow = comboBoxPhong.SelectedItem as DataRowView;
-            if (selectedRow != null)
-            {
-                string MaPhong = selectedRow["MA_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
-                {
-                    conn.Open();
-                    string query = "SELECT MA_GIUONG,TEN_GIUONG FROM GIUONG where GIUONG.MA_PHONG= @MaPhong";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@MaPhong", MaPhong);
-                        SqlDataAdapter da = new SqlDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        comboBoxGiuong.DataSource = dt;
-                        comboBoxGiuong.DisplayMember = "TEN_GIUONG";
-                        comboBoxGiuong.ValueMember = "MA_GIUONG";
-                        comboBoxGiuong.Enabled = true;
-                        comboBoxGiuong.SelectedIndex = -1;
-                    }
-                }
-            }
-        }
-
-
-        //ham clean
-        private void XoaThongtin()
-        {
-        }
-        private void ThongKeThanhToan_Load(object sender, EventArgs e)
+        private void thongkediennuoc_Load(object sender, EventArgs e)
         {
             //ham load du lieu 
-            XoaThongtin();
-            LoadThanhToanData();
+            //XoaThongtin();
+            LoadDienNuocData();
             groupBoxThoiGian.Enabled = false;
-            checkBoxThoigian.Checked = false;
+            radioButtonThoiGianThanhToan.Checked = false;
+            radioButtonThoiGianSuDung.Checked = false;
+            radioButtonTatThoiGian.Checked = true;
+            radioButtonAll.Checked = true;
             comboBoxTang.Enabled = false;
             comboBoxPhong.Enabled = false;
-            comboBoxGiuong.Enabled = false;
 
+            textBoxDien.Text = "";
+            textBoxNuoc.Text = "";
         }
 
         //ham luu thong tin ng dung nhap
 
-        private (string mssv, string loaiTangGiuong, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd) GetUserInputs()
+        private (string sodien, string sonuoc, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd) GetUserInputs()
         {
             // Lấy giá trị từ các điều khiển giao diện người dùng
-            string mssv = comboBoxMSSV.SelectedValue != null ? comboBoxMSSV.SelectedValue.ToString() : null; // Mã sinh viên
-            string loaiTangGiuong = comboBoxLoaiTang.SelectedValue != null ? comboBoxLoaiTang.SelectedValue.ToString() : null; // Loại giường
+            bool thoigianthanhtoan = radioButtonThoiGianThanhToan.Checked;
+            bool thoigiansudung = radioButtonThoiGianSuDung.Checked;
+            bool tatthoigian = radioButtonTatThoiGian.Checked;
+            if (tatthoigian == false)
+            {
+                if (radioButtonThoiGianSuDung.Checked == true)
+                {
+
+                    thoigiansudung = true;
+                }
+                else
+                {
+
+                    thoigianthanhtoan = false;
+                }
+            }
+            string sodien = textBoxDien.Text != null ? textBoxDien.Text.ToString() : null;
+            string sonuoc = textBoxNuoc.Text != null ? textBoxNuoc.Text.ToString() : null;
             string phong = comboBoxPhong.SelectedValue != null ? comboBoxPhong.SelectedValue.ToString() : null; // Phòng
             string tang = comboBoxTang.SelectedValue != null ? comboBoxTang.SelectedValue.ToString() : null; // Tầng
             string loaiTang = comboBoxLoaiTang.SelectedValue != null ? comboBoxLoaiTang.SelectedValue.ToString() : null; // Loại tầng
@@ -231,96 +183,138 @@ namespace abc.HoanThanh.ThanhToan
             DateTime ngayStart = dateTimePickerBatDau.Value;
             DateTime ngayEnd = dateTimePickerKetThuc.Value;
 
-            return (mssv, loaiTangGiuong, phong, tang, loaiTang, ngayStart, ngayEnd);
+            return (sodien, sonuoc, phong, tang, loaiTang, ngayStart, ngayEnd);
         }
 
         //cau sql
-        private string CreateSqlQuery(string mssv, string loaiTangGiuong, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd)
+        private string CreateSqlQuery(string sodien, string sonuoc, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd)
         {
-            string query = "SELECT THANH_TOAN_PHONG.MA_THANH_TOAN_PHONG, SINH_VIEN.MSSV, SINH_VIEN.HOTEN_SV, LOAI_PHONG.TEN_LOAI_PHONG, TANG.TEN_TANG, PHONG.TEN_PHONG, GIUONG.TEN_GIUONG, THANH_TOAN_PHONG.NGAY_THANH_TOAN, THANH_TOAN_PHONG.GIA_TIEN, THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN FROM THANH_TOAN_PHONG " +
-                           "JOIN NOI_TRU ON THANH_TOAN_PHONG.MA_NOI_TRU = NOI_TRU.MA_NOI_TRU " +
-                           "JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG " +
-                           "JOIN SINH_VIEN ON NOI_TRU.MSSV = SINH_VIEN.MSSV " +
-                           "JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG " +
-                           "JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG " +
-                           "JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG " +
-                           "WHERE 1=1 ";  // Thêm điều kiện cơ bản (dễ dàng thêm các điều kiện khác sau này)
-
+            string query = "select LOAI_PHONG.TEN_LOAI_PHONG,TANG.TEN_TANG,PHONG.TEN_PHONG,DIEN_NUOC.CHI_SO_DIEN_CU,CHI_SO_DIEN_MOI,DIEN_NUOC.CHI_SO_NUOC_CU,DIEN_NUOC.CHI_SO_NUOC_MOI,TU_NGAY,DEN_NGAY,SO_DIEN_DA_SU_DUNG,SO_NUOC_DA_SU_DUNG,DIEN_NUOC.TIEN_DIEN,TIEN_NUOC,TONG_TIEN,NGAY_THANH_TOAN_DIEN_NUOC,TINH_TRANG_TT  from DIEN_NUOC join PHONG on DIEN_NUOC.MA_PHONG=PHONG.MA_PHONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG=LOAI_PHONG.MA_LOAI_PHONG " +
+                           "WHERE 1=1 ";  
+            // Thêm điều kiện cơ bản (dễ dàng thêm các điều kiện khác sau này)
+            //co khi co du lieu 
             bool hasCondition = false;
             if (radioButtonAll.Checked)
             {
-                query += "AND ( THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='true' or THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='false') ";
+                query += "AND ( DIEN_NUOC.TINH_TRANG_TT='true' or DIEN_NUOC.TINH_TRANG_TT='false') ";
                 hasCondition = false;
             }
             else if (radioButtonDaTT.Checked)
             {
-                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='true'";
+                query += "AND DIEN_NUOC.TINH_TRANG_TT='true' ";
                 hasCondition = false;
             }
             else if (radioButtonChuaTT.Checked)
             {
-                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='false'";
+                query += "AND DIEN_NUOC.TINH_TRANG_TT='false' ";
                 hasCondition = false;
-            }
-            // Kiểm tra ComboBox loại giường
-            if (comboBoxGiuong.SelectedIndex != -1)
-            {
-                query += " AND GIUONG.MA_GIUONG = @LoaiTangGiuong";
-                hasCondition = true;
             }
 
             // Kiểm tra ComboBox phòng
             if (comboBoxPhong.SelectedIndex != -1)
             {
-                query += " AND PHONG.MA_PHONG = @Phong";
+                query += " AND PHONG.MA_PHONG = @Phong ";
                 hasCondition = true;
             }
 
             // Kiểm tra ComboBox tầng
             if (comboBoxTang.SelectedIndex != -1)
             {
-                query += " AND TANG.MA_TANG = @Tang";
+                query += " AND TANG.MA_TANG = @Tang ";
                 hasCondition = true;
             }
 
             // Kiểm tra ComboBox loại tầng
             if (comboBoxLoaiTang.SelectedIndex != -1)
             {
-                query += " AND LOAI_PHONG.MA_LOAI_PHONG = @LoaiTang";
+                query += " AND LOAI_PHONG.MA_LOAI_PHONG = @LoaiTang ";
                 hasCondition = true;
             }
 
-            // Kiểm tra điều kiện ngày tháng
-            if (checkBoxThoigian.Checked == true)
+            //la so dien > hon
+            if (textBoxDien.Text != null)
             {
-                if ((ngayStart.Value > ngayEnd.Value.AddHours(1)))
-                {
-                    dateTimePickerBatDau.Value = DateTime.Now;
-                    dateTimePickerKetThuc.Value = DateTime.Now;
-                    MessageBox.Show("Vui Long Chon Khoang Thoi gian hop le");
+                query += "AND ((CHI_SO_DIEN_MOI-CHI_SO_DIEN_CU)>= @SoDien ) ";
+                hasCondition = true;
+            }
+            else if (textBoxDien.Text == null)
+            {
+                query += "AND ((CHI_SO_DIEN_MOI-CHI_SO_DIEN_CU)>= 0 )  ";
+            }
+            //lay so nuoc lon hon 
+            if (textBoxNuoc.Text != null)
+            {
+                query += "AND ((CHI_SO_NUOC_MOI-CHI_SO_NUOC_CU)>= @SoNuoc ) ";
+                hasCondition = true;
+            }
+            else
+            if (textBoxNuoc.Text == null)
+            {
+                query += "AND ((CHI_SO_NUOC_MOI-CHI_SO_NUOC_CU)>= 0 )  ";
+            }
 
-                }
-                else
+
+
+
+            // Kiểm tra điều kiện ngày tháng neu ngay tu > ngay den 1h 
+            //la thoi gian su dung 
+            if (radioButtonTatThoiGian.Checked == false)
+            {
+                if (radioButtonThoiGianSuDung.Checked == true)
                 {
-                    if (ngayStart.Value == ngayEnd.Value.AddHours(1))
+                    if ((ngayStart.Value > ngayEnd.Value.AddHours(1)))
                     {
-                        query += " AND THANH_TOAN_PHONG.NGAY_THANH_TOAN ='@NgayStart'";
+                        dateTimePickerBatDau.Value = DateTime.Now;
+                        dateTimePickerKetThuc.Value = DateTime.Now;
+                        MessageBox.Show("Vui Long Chon Khoang Thoi gian hop le");
+
                     }
                     else
                     {
-                        // Nếu có ngày bắt đầu và ngày kết thúc, thêm điều kiện ngày
-                        if (ngayStart.Value < ngayEnd.Value.AddHours(1))
+                        if (ngayStart.Value == ngayEnd.Value.AddHours(1))
                         {
-                            query += " AND THANH_TOAN_PHONG.NGAY_THANH_TOAN BETWEEN @NgayStart AND @NgayEnd";
+                            query += " AND ((DIEN_NUOC.TU_NGAY BETWEEN @NgayStart AND @NgayEnd ) or  (DIEN_NUOC.DEN_NGAY BETWEEN @NgayStart AND @NgayEnd ))  ";
+                        }
+                        else
+                        {
+                            // Nếu có ngày bắt đầu và ngày kết thúc, thêm điều kiện ngày
+                            if (ngayStart.Value < ngayEnd.Value.AddHours(1))
+                            {
+                                query += " AND DIEN_NUOC.TU_NGAY = @NgayStart And DIEN_NUOC.DEN_NGAY = @NgayEnd ";
+                            }
                         }
                     }
                 }
+                //la thoi gian thanh toan 
+                else if (radioButtonThoiGianThanhToan.Checked == true)
+                {
+                    if ((ngayStart.Value > ngayEnd.Value.AddHours(1)))
+                    {
+                        dateTimePickerBatDau.Value = DateTime.Now;
+                        dateTimePickerKetThuc.Value = DateTime.Now;
+                        MessageBox.Show("Vui Long Chon Khoang Thoi gian hop le");
+
+                    }
+                    else
+                    {
+                        if (ngayStart.Value == ngayEnd.Value.AddHours(1))
+                        {
+                            query += " AND DIEN_NUOC.NGAY_THANH_TOAN_DIEN_NUOC ='@NgayStart' ";
+                        }
+                        else
+                        {
+                            // Nếu có ngày bắt đầu và ngày kết thúc, thêm điều kiện ngày
+                            if (ngayStart.Value < ngayEnd.Value.AddHours(1))
+                            {
+                                query += " AND DIEN_NUOC.NGAY_THANH_TOAN_DIEN_NUOC BETWEEN @NgayStart AND @NgayEnd";
+                            }
+                        }
+                    }
+                }
+
             }
-            else
-            {
-                checkBoxThoigian.Checked = false;
-                query += "";
-            }
+
+
 
 
             // Nếu không có điều kiện tìm kiếm nào, thông báo lỗi
@@ -329,23 +323,14 @@ namespace abc.HoanThanh.ThanhToan
                 query += "";
                 //MessageBox.Show("Vui lòng chọn ít nhất một điều kiện tìm kiếm.");
             }
-            // Nếu có MSSV, thêm điều kiện MSSV
-            if (comboBoxMSSV.SelectedIndex != -1)
-            {
-                query += " AND NOI_TRU.MSSV = @MSSV";
-            }
 
+            MessageBox.Show(query);
             return query;
         }
 
-
-        private void AddParametersToSqlCommand(SqlCommand cmd, string mssv, string loaiTangGiuong, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd)
+        private void AddParametersToSqlCommand(SqlCommand cmd, string sodien, string sonuoc, string phong, string tang, string loaiTang, DateTime? ngayStart, DateTime? ngayEnd)
         {
-            // Nếu có loại giường, thêm tham số giường
-            if (!string.IsNullOrEmpty(loaiTangGiuong))
-            {
-                cmd.Parameters.AddWithValue("@LoaiTangGiuong", loaiTangGiuong);
-            }
+
 
             // Nếu có phòng, thêm tham số phòng
             if (!string.IsNullOrEmpty(phong))
@@ -376,11 +361,23 @@ namespace abc.HoanThanh.ThanhToan
             {
                 cmd.Parameters.AddWithValue("@NgayEnd", ngayEnd.Value);
             }
-
-            // Nếu có MSSV, thêm tham số MSSV
-            if (!string.IsNullOrEmpty(mssv))
+            //neu co so dien
+            if (!string.IsNullOrEmpty(sodien))
             {
-                cmd.Parameters.AddWithValue("@MSSV", mssv);
+                cmd.Parameters.AddWithValue("@SoDien", sodien);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@SoDien", "0");
+            }
+            //neu co so nuoc 
+            if (!string.IsNullOrEmpty(sonuoc))
+            {
+                cmd.Parameters.AddWithValue("@SoNuoc", sonuoc);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@SoNuoc", "0");
             }
         }
         private void ExecuteSqlAndBindToGridView(SqlCommand cmd)
@@ -414,14 +411,13 @@ namespace abc.HoanThanh.ThanhToan
         }
 
 
-
-        private void GetThongTinThanhToan()
+        private void GetThongTinDienNuoc()
         {
             // Lấy các tham số tìm kiếm từ giao diện người dùng
-            var (mssv, loaiTangGiuong, phong, tang, loaiTang, ngayStart, ngayEnd) = GetUserInputs();
+            var (sonuoc, sodien, phong, tang, loaiTang, ngayStart, ngayEnd) = GetUserInputs();
 
             // Xây dựng câu lệnh SQL với các điều kiện động
-            string query = CreateSqlQuery(mssv, loaiTangGiuong, phong, tang, loaiTang, ngayStart, ngayEnd);
+            string query = CreateSqlQuery(sonuoc, sodien, phong, tang, loaiTang, ngayStart, ngayEnd);
 
             using (SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
             {
@@ -433,7 +429,7 @@ namespace abc.HoanThanh.ThanhToan
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         // Thêm các tham số vào câu lệnh SQL
-                        AddParametersToSqlCommand(cmd, mssv, loaiTangGiuong, phong, tang, loaiTang, ngayStart, ngayEnd);
+                        AddParametersToSqlCommand(cmd, sonuoc, sodien, phong, tang, loaiTang, ngayStart, ngayEnd);
                         ////kiem tra cau truy van
                         //MessageBox.Show(query);
                         // Thực thi câu lệnh và hiển thị kết quả lên DataGridView
@@ -447,112 +443,37 @@ namespace abc.HoanThanh.ThanhToan
             }
         }
 
-
-
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonTimKiem_Click(object sender, EventArgs e)
         {
-
-            GetThongTinThanhToan();
+            GetThongTinDienNuoc();
         }
 
-        private void checkBoxThoigian_CheckedChanged(object sender, EventArgs e)
+        private void radioButtonTatThoiGian_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxThoigian.Checked)
-            {
-                groupBoxThoiGian.Enabled = true;
-            }
-            else { 
-                groupBoxThoiGian.Enabled = false;
-            }
+            groupBoxThoiGian.Enabled = false;
+        }
+
+        private void radioButtonThoiGianSuDung_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxThoiGian.Enabled = true;
+
+        }
+
+        private void radioButtonThoiGianThanhToan_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxThoiGian.Enabled = true;
         }
 
         private void buttonTroLai_Click(object sender, EventArgs e)
         {
-            checkBoxThoigian.Checked = false;
+            radioButtonTatThoiGian.Checked = true;
             radioButtonAll.Checked = true;
             comboBoxLoaiTang.SelectedIndex = -1;
             comboBoxTang.SelectedIndex = -1;
-            comboBoxPhong.SelectedIndex = -1;
-            comboBoxMSSV.SelectedIndex = -1;
-            comboBoxGiuong.SelectedIndex = -1;
-            LoadThanhToanData();
-            ThongKeThanhToan_Load(sender, e);
-        }
-
-
-
-
-        //dem 
-        private void DemSVDaThanhToan()
-        {
-            // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
-            // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN='True'";
-
-            // Tạo lệnh SQL
-            SqlCommand command = new SqlCommand(query, conn);
-
-            try
-            {
-                // Mở kết nối
-                conn.Open();
-
-                // Thực hiện truy vấn và lấy kết quả đếm
-                int Count = (int)command.ExecuteScalar();
-
-                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSVDaTT.Text = "Số sinh viên da thanh toan: " + Count.ToString();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
-            }
-            finally
-            {
-                // Đảm bảo đóng kết nối
-                conn.Close();
-            }
-        }
-        private void DemSVChuaThanhToan()
-        {
-            // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
-            // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN='false'";
-
-            // Tạo lệnh SQL
-            SqlCommand command = new SqlCommand(query, conn);
-
-            try
-            {
-                // Mở kết nối
-                conn.Open();
-
-                // Thực hiện truy vấn và lấy kết quả đếm
-                int Count = (int)command.ExecuteScalar();
-
-                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSVChuTT.Text = "Số sinh viên da thanh toan: " + Count.ToString();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
-            }
-            finally
-            {
-                // Đảm bảo đóng kết nối
-                conn.Close();
-            }
+            comboBoxPhong.SelectedIndex = -1;          
+            LoadDienNuocData();
+            thongkediennuoc_Load(sender, e);
         }
     }
+
 }
-
-
-
-
-
-
-

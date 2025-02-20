@@ -387,7 +387,11 @@ namespace abc.HoanThanh.ThongKeSinhVien
         //ham set lai toan bo gia tri cua field
         private void ClearFields()
         {
+            comboBoxGiuong.SelectedValue = -1;
+            comboBoxTang.SelectedValue = -1;
+            comboBoxPhong.SelectedValue = -1;
             comboBoxLoaiTang.SelectedValue = -1;
+            radioButtonChuaNoiTru.Checked = true;
         }
 
 

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             groupBox2 = new GroupBox();
             groupBox3 = new GroupBox();
             radioButtonHoTen = new RadioButton();
@@ -61,7 +61,7 @@
             groupBox2.Size = new Size(354, 134);
             groupBox2.TabIndex = 56;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Thong tin Sinh vien";
+            groupBox2.Text = "Thông Tin";
             // 
             // groupBox3
             // 
@@ -72,17 +72,17 @@
             groupBox3.Size = new Size(97, 134);
             groupBox3.TabIndex = 60;
             groupBox3.TabStop = false;
-            groupBox3.Text = "Tim Bang";
+            groupBox3.Text = "Tìm Bằng";
             // 
             // radioButtonHoTen
             // 
             radioButtonHoTen.AutoSize = true;
             radioButtonHoTen.Location = new Point(6, 84);
             radioButtonHoTen.Name = "radioButtonHoTen";
-            radioButtonHoTen.Size = new Size(63, 19);
+            radioButtonHoTen.Size = new Size(44, 19);
             radioButtonHoTen.TabIndex = 1;
             radioButtonHoTen.TabStop = true;
-            radioButtonHoTen.Text = "Ho Ten";
+            radioButtonHoTen.Text = "Tên";
             radioButtonHoTen.UseVisualStyleBackColor = true;
             radioButtonHoTen.CheckedChanged += radioButtonHoTen_CheckedChanged;
             // 
@@ -123,11 +123,11 @@
             // labelHoTen
             // 
             labelHoTen.AutoSize = true;
-            labelHoTen.Location = new Point(37, 86);
+            labelHoTen.Location = new Point(6, 86);
             labelHoTen.Name = "labelHoTen";
-            labelHoTen.Size = new Size(61, 15);
+            labelHoTen.Size = new Size(97, 15);
             labelHoTen.TabIndex = 46;
-            labelHoTen.Text = "Ho Ten SV";
+            labelHoTen.Text = "Họ Tên Sinh Viên";
             // 
             // label
             // 
@@ -145,14 +145,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewThongTin.Location = new Point(-4, 151);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -172,7 +172,7 @@
             groupBox1.Size = new Size(219, 134);
             groupBox1.TabIndex = 58;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Thong tin thong ke ";
+            groupBox1.Text = "Thông tin thống kê";
             // 
             // textBoxDemSVNu
             // 
@@ -205,11 +205,11 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 30F, FontStyle.Bold);
-            label1.Location = new Point(602, 17);
+            label1.Location = new Point(551, 43);
             label1.Name = "label1";
-            label1.Size = new Size(322, 54);
+            label1.Size = new Size(323, 54);
             label1.TabIndex = 59;
-            label1.Text = "Ho So Sinh Vien";
+            label1.Text = "Hồ Sơ Sinh Viên";
             // 
             // ThongtinSV
             // 

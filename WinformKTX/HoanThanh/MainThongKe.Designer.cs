@@ -48,9 +48,9 @@
             // 
             // panelMain
             // 
-            panelMain.Location = new Point(0, 40);
+            panelMain.Location = new Point(0, 32);
             panelMain.Name = "panelMain";
-            panelMain.Size = new Size(1472, 809);
+            panelMain.Size = new Size(1308, 638);
             panelMain.TabIndex = 9;
             // 
             // menuStrip2
@@ -58,7 +58,7 @@
             menuStrip2.Items.AddRange(new ToolStripItem[] { chonMucToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
-            menuStrip2.Size = new Size(1484, 29);
+            menuStrip2.Size = new Size(1308, 29);
             menuStrip2.TabIndex = 10;
             menuStrip2.Text = "menuStrip2";
             // 
@@ -67,90 +67,92 @@
             chonMucToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem4, toolStripSeparator1, coSoVatChatToolStripMenuItem, toolStripSeparator3, thanhToanToolStripMenuItem, toolStripSeparator4 });
             chonMucToolStripMenuItem.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             chonMucToolStripMenuItem.Name = "chonMucToolStripMenuItem";
-            chonMucToolStripMenuItem.Size = new Size(99, 25);
-            chonMucToolStripMenuItem.Text = "Chon Muc";
+            chonMucToolStripMenuItem.Size = new Size(98, 25);
+            chonMucToolStripMenuItem.Text = "Thống Kê ";
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.DropDownItems.AddRange(new ToolStripItem[] { hoSoSinhVienToolStripMenuItem, sinhVienNoiTruToolStripMenuItem, vIPhamSinhVienToolStripMenuItem });
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(191, 26);
-            toolStripMenuItem4.Text = "Sinh Vien";
+            toolStripMenuItem4.Size = new Size(192, 26);
+            toolStripMenuItem4.Text = "Sinh Viên";
             // 
             // hoSoSinhVienToolStripMenuItem
             // 
             hoSoSinhVienToolStripMenuItem.Name = "hoSoSinhVienToolStripMenuItem";
             hoSoSinhVienToolStripMenuItem.Size = new Size(221, 26);
-            hoSoSinhVienToolStripMenuItem.Text = "Ho So Sinh Vien";
+            hoSoSinhVienToolStripMenuItem.Text = "Hồ Sơ Sinh Viên";
             hoSoSinhVienToolStripMenuItem.Click += hoSoSinhVienToolStripMenuItem_Click;
             // 
             // sinhVienNoiTruToolStripMenuItem
             // 
             sinhVienNoiTruToolStripMenuItem.Name = "sinhVienNoiTruToolStripMenuItem";
             sinhVienNoiTruToolStripMenuItem.Size = new Size(221, 26);
-            sinhVienNoiTruToolStripMenuItem.Text = "Sinh Vien Noi Tru";
+            sinhVienNoiTruToolStripMenuItem.Text = "Sinh Viên Nội Trú";
             sinhVienNoiTruToolStripMenuItem.Click += sinhVienNoiTruToolStripMenuItem_Click;
             // 
             // vIPhamSinhVienToolStripMenuItem
             // 
             vIPhamSinhVienToolStripMenuItem.Name = "vIPhamSinhVienToolStripMenuItem";
             vIPhamSinhVienToolStripMenuItem.Size = new Size(221, 26);
-            vIPhamSinhVienToolStripMenuItem.Text = "VI Pham Sinh Vien";
+            vIPhamSinhVienToolStripMenuItem.Text = "Vi Phạm Sinh Viên";
+            vIPhamSinhVienToolStripMenuItem.Click += vIPhamSinhVienToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(188, 6);
+            toolStripSeparator1.Size = new Size(189, 6);
             // 
             // coSoVatChatToolStripMenuItem
             // 
             coSoVatChatToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { huHongToolStripMenuItem, dienNuocToolStripMenuItem, phongGiuongToolStripMenuItem });
             coSoVatChatToolStripMenuItem.Name = "coSoVatChatToolStripMenuItem";
-            coSoVatChatToolStripMenuItem.Size = new Size(191, 26);
-            coSoVatChatToolStripMenuItem.Text = "Co So Vat Chat";
+            coSoVatChatToolStripMenuItem.Size = new Size(192, 26);
+            coSoVatChatToolStripMenuItem.Text = "Cơ Sở Vật Chất";
             // 
             // huHongToolStripMenuItem
             // 
             huHongToolStripMenuItem.Name = "huHongToolStripMenuItem";
-            huHongToolStripMenuItem.Size = new Size(200, 26);
-            huHongToolStripMenuItem.Text = "Hu Hong";
+            huHongToolStripMenuItem.Size = new Size(196, 26);
+            huHongToolStripMenuItem.Text = "Cơ Sở Vật Chất ";
             huHongToolStripMenuItem.Click += huHongToolStripMenuItem_Click;
             // 
             // dienNuocToolStripMenuItem
             // 
             dienNuocToolStripMenuItem.Name = "dienNuocToolStripMenuItem";
-            dienNuocToolStripMenuItem.Size = new Size(200, 26);
-            dienNuocToolStripMenuItem.Text = "Dien Nuoc";
+            dienNuocToolStripMenuItem.Size = new Size(196, 26);
+            dienNuocToolStripMenuItem.Text = "Điện Nước";
+            dienNuocToolStripMenuItem.Click += dienNuocToolStripMenuItem_Click;
             // 
             // phongGiuongToolStripMenuItem
             // 
             phongGiuongToolStripMenuItem.Name = "phongGiuongToolStripMenuItem";
-            phongGiuongToolStripMenuItem.Size = new Size(200, 26);
-            phongGiuongToolStripMenuItem.Text = "Phong - Giuong";
+            phongGiuongToolStripMenuItem.Size = new Size(196, 26);
+            phongGiuongToolStripMenuItem.Text = "Phòng";
             phongGiuongToolStripMenuItem.Click += phongGiuongToolStripMenuItem_Click_1;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(188, 6);
+            toolStripSeparator3.Size = new Size(189, 6);
             // 
             // thanhToanToolStripMenuItem
             // 
             thanhToanToolStripMenuItem.Name = "thanhToanToolStripMenuItem";
-            thanhToanToolStripMenuItem.Size = new Size(191, 26);
-            thanhToanToolStripMenuItem.Text = "Thanh Toan";
+            thanhToanToolStripMenuItem.Size = new Size(192, 26);
+            thanhToanToolStripMenuItem.Text = "Thanh Toán";
             thanhToanToolStripMenuItem.Click += thanhToanToolStripMenuItem_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(188, 6);
+            toolStripSeparator4.Size = new Size(189, 6);
             // 
             // MainThongKe
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1484, 861);
+            ClientSize = new Size(1308, 672);
             Controls.Add(panelMain);
             Controls.Add(menuStrip2);
             Name = "MainThongKe";
