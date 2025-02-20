@@ -46,17 +46,17 @@ namespace WinformKTX
                 {
                     conn.Open();
 
-                    // Kiểm tra xem phòng có sinh viên nội trú hay không
-                    string checkNoiTruQuery = "SELECT COUNT(*) FROM NOI_TRU WHERE MA_PHONG = @MaPhong";
-                    SqlCommand cmdCheckNoiTru = new SqlCommand(checkNoiTruQuery, conn);
-                    cmdCheckNoiTru.Parameters.AddWithValue("@MaPhong", maPhong);
+                    //// Kiểm tra xem phòng có sinh viên nội trú hay không
+                    //string checkNoiTruQuery = "SELECT COUNT(*) FROM NOI_TRU WHERE MA_PHONG = @MaPhong";
+                    //SqlCommand cmdCheckNoiTru = new SqlCommand(checkNoiTruQuery, conn);
+                    //cmdCheckNoiTru.Parameters.AddWithValue("@MaPhong", maPhong);
 
-                    int countNoiTru = (int)cmdCheckNoiTru.ExecuteScalar();
-                    if (countNoiTru == 0)
-                    {
-                        MessageBox.Show("Phòng chưa được sử dụng.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+                    //int countNoiTru = (int)cmdCheckNoiTru.ExecuteScalar();
+                    //if (countNoiTru == 0)
+                    //{
+                    //    MessageBox.Show("Phòng chưa được sử dụng.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //    return;
+                    //}
 
 
                     // Truy vấn thông tin điện nước của phòng
