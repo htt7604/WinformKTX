@@ -28,4 +28,9 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="HoanThanh\DienNuoc\" />
+    <Folder Include="HoanThanh\QuanLyViPham\" />
+  </ItemGroup>
+
 </Project>
