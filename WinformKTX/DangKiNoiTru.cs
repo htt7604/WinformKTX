@@ -455,15 +455,12 @@ namespace WinformKTX
                         cmd.Parameters.AddWithValue("@MaPhong", maPhong);
                         cmd.Parameters.AddWithValue("@MaLoaiPhong", maLoaiPhong);
 
-                        object result = cmd.ExecuteScalar();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            DataTable table = new DataTable();
+                            adapter.Fill(table);
 
-                        if (result != null && result != DBNull.Value)
-                        {
-                            txtGiaphong.Text = result.ToString();
-                        }
-                        else
-                        {
-                            txtGiaphong.Text = "Không có giá";
+                            txtGiaphong.Text = table.Rows[0]["GIA_PHONG"].ToString();
                         }
                     }
                 }

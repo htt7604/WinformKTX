@@ -294,7 +294,7 @@
             // 
             comboBoxTrangThaiNoiTru.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxTrangThaiNoiTru.FormattingEnabled = true;
-            comboBoxTrangThaiNoiTru.Items.AddRange(new object[] { "Đang nội trú", "Đã đăng ký", "Chờ gia hạn", "Cần chú ý" });
+            comboBoxTrangThaiNoiTru.Items.AddRange(new object[] { "Đang nội trú", "Đã đăng kí", "Chờ gia hạn", "Cần chú ý" });
             comboBoxTrangThaiNoiTru.Location = new Point(818, 367);
             comboBoxTrangThaiNoiTru.Name = "comboBoxTrangThaiNoiTru";
             comboBoxTrangThaiNoiTru.Size = new Size(210, 28);
