@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             dataGridViewThongTin = new DataGridView();
             label1 = new Label();
             groupBoxThongTin = new GroupBox();
@@ -72,14 +72,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle4;
             dataGridViewThongTin.Location = new Point(-6, 289);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -97,7 +97,7 @@
             label1.Name = "label1";
             label1.Size = new Size(298, 37);
             label1.TabIndex = 55;
-            label1.Text = "Thong ke Thanh Toan ";
+            label1.Text = "Thống kê Thanh Toán ";
             // 
             // groupBoxThongTin
             // 
@@ -126,7 +126,7 @@
             labelGiuong.Name = "labelGiuong";
             labelGiuong.Size = new Size(79, 19);
             labelGiuong.TabIndex = 51;
-            labelGiuong.Text = "Ten Giuong";
+            labelGiuong.Text = "Tên Giường";
             // 
             // comboBoxGiuong
             // 
@@ -155,9 +155,9 @@
             labelLoaiPhong.AutoSize = true;
             labelLoaiPhong.Location = new Point(40, 27);
             labelLoaiPhong.Name = "labelLoaiPhong";
-            labelLoaiPhong.Size = new Size(66, 19);
+            labelLoaiPhong.Size = new Size(72, 19);
             labelLoaiPhong.TabIndex = 41;
-            labelLoaiPhong.Text = "Loai Tang";
+            labelLoaiPhong.Text = "Loại Tầng ";
             // 
             // comboBoxPhong
             // 
@@ -189,7 +189,7 @@
             labelTenPhong.Name = "labelTenPhong";
             labelTenPhong.Size = new Size(74, 19);
             labelTenPhong.TabIndex = 30;
-            labelTenPhong.Text = "Ten Phong";
+            labelTenPhong.Text = "Tên Phòng";
             // 
             // label10
             // 
@@ -221,7 +221,7 @@
             label2.Name = "label2";
             label2.Size = new Size(55, 15);
             label2.TabIndex = 54;
-            label2.Text = "Tu Ngay:";
+            label2.Text = "Từ Ngày:";
             // 
             // label3
             // 
@@ -241,7 +241,7 @@
             buttonTimKiem.Name = "buttonTimKiem";
             buttonTimKiem.Size = new Size(84, 34);
             buttonTimKiem.TabIndex = 56;
-            buttonTimKiem.Text = "Tim Kiem";
+            buttonTimKiem.Text = "Tìm Kiếm";
             buttonTimKiem.UseVisualStyleBackColor = false;
             buttonTimKiem.Click += button1_Click;
             // 
@@ -254,7 +254,7 @@
             buttonTroLai.Name = "buttonTroLai";
             buttonTroLai.Size = new Size(83, 34);
             buttonTroLai.TabIndex = 57;
-            buttonTroLai.Text = "Tro Lai";
+            buttonTroLai.Text = "Trở Lại";
             buttonTroLai.UseVisualStyleBackColor = false;
             buttonTroLai.Click += buttonTroLai_Click;
             // 
@@ -269,7 +269,7 @@
             groupBoxThoiGian.Size = new Size(248, 171);
             groupBoxThoiGian.TabIndex = 58;
             groupBoxThoiGian.TabStop = false;
-            groupBoxThoiGian.Text = "Thoi Gian";
+            groupBoxThoiGian.Text = "Thời gian ";
             // 
             // label4
             // 
@@ -297,10 +297,10 @@
             radioButtonDaTT.AutoSize = true;
             radioButtonDaTT.Location = new Point(6, 22);
             radioButtonDaTT.Name = "radioButtonDaTT";
-            radioButtonDaTT.Size = new Size(119, 23);
+            radioButtonDaTT.Size = new Size(118, 23);
             radioButtonDaTT.TabIndex = 60;
             radioButtonDaTT.TabStop = true;
-            radioButtonDaTT.Text = "Da Thanh Toan";
+            radioButtonDaTT.Text = "Đã Thanh toán";
             radioButtonDaTT.UseVisualStyleBackColor = true;
             // 
             // radioButtonChuaTT
@@ -308,10 +308,10 @@
             radioButtonChuaTT.AutoSize = true;
             radioButtonChuaTT.Location = new Point(140, 22);
             radioButtonChuaTT.Name = "radioButtonChuaTT";
-            radioButtonChuaTT.Size = new Size(134, 23);
+            radioButtonChuaTT.Size = new Size(138, 23);
             radioButtonChuaTT.TabIndex = 61;
             radioButtonChuaTT.TabStop = true;
-            radioButtonChuaTT.Text = "Chua Thanh Toan";
+            radioButtonChuaTT.Text = "Chưa Thanh Toán ";
             radioButtonChuaTT.UseVisualStyleBackColor = true;
             // 
             // radioButtonAll
@@ -319,10 +319,10 @@
             radioButtonAll.AutoSize = true;
             radioButtonAll.Location = new Point(281, 22);
             radioButtonAll.Name = "radioButtonAll";
-            radioButtonAll.Size = new Size(64, 23);
+            radioButtonAll.Size = new Size(63, 23);
             radioButtonAll.TabIndex = 62;
             radioButtonAll.TabStop = true;
-            radioButtonAll.Text = "Tat Ca";
+            radioButtonAll.Text = "Tất cả";
             radioButtonAll.UseVisualStyleBackColor = true;
             // 
             // groupBox1
@@ -336,16 +336,16 @@
             groupBox1.Size = new Size(364, 47);
             groupBox1.TabIndex = 63;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Trang Thai";
+            groupBox1.Text = "Trạng Thái";
             // 
             // checkBoxThoigian
             // 
             checkBoxThoigian.AutoSize = true;
             checkBoxThoigian.Location = new Point(51, 243);
             checkBoxThoigian.Name = "checkBoxThoigian";
-            checkBoxThoigian.Size = new Size(161, 19);
+            checkBoxThoigian.Size = new Size(107, 19);
             checkBoxThoigian.TabIndex = 64;
-            checkBoxThoigian.Text = "Tim Kiem Theo Thoi Gian";
+            checkBoxThoigian.Text = "Theo Thời Gian";
             checkBoxThoigian.UseVisualStyleBackColor = true;
             checkBoxThoigian.CheckedChanged += checkBoxThoigian_CheckedChanged;
             // 
@@ -376,7 +376,7 @@
             groupBox2.Size = new Size(200, 171);
             groupBox2.TabIndex = 67;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Thong ke";
+            groupBox2.Text = "Thống Kê";
             // 
             // ThongKeThanhToan
             // 

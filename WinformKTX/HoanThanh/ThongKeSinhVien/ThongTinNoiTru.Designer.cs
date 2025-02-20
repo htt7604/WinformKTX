@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             label1 = new Label();
             dataGridViewThongTin = new DataGridView();
             label2 = new Label();
@@ -48,9 +48,9 @@
             buttonLoad = new Button();
             buttonTimKiemGiuong = new Button();
             groupBox2 = new GroupBox();
+            textBoxDemSV = new TextBox();
             textBoxDemSVNoiTru = new TextBox();
             textBoxDemSVChuaNoiTru = new TextBox();
-            textBoxDemSV = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).BeginInit();
             groupBoxTrangThai.SuspendLayout();
             groupBoxThongTin.SuspendLayout();
@@ -61,11 +61,11 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            label1.Location = new Point(10, 21);
+            label1.Location = new Point(450, 9);
             label1.Name = "label1";
-            label1.Size = new Size(357, 37);
+            label1.Size = new Size(443, 37);
             label1.TabIndex = 43;
-            label1.Text = "Thong ke sinh vien Noi Tru";
+            label1.Text = "Thông tin Sinh Viên Đang Nội Trú";
             // 
             // dataGridViewThongTin
             // 
@@ -75,14 +75,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewThongTin.Location = new Point(-5, 258);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -101,7 +101,7 @@
             label2.Name = "label2";
             label2.Size = new Size(192, 25);
             label2.TabIndex = 54;
-            label2.Text = "Thong Tin Sinh Vien";
+            label2.Text = "Thông Tin Sinh Viên";
             // 
             // groupBoxTrangThai
             // 
@@ -114,7 +114,7 @@
             groupBoxTrangThai.Size = new Size(165, 154);
             groupBoxTrangThai.TabIndex = 49;
             groupBoxTrangThai.TabStop = false;
-            groupBoxTrangThai.Text = "Trang Thai ";
+            groupBoxTrangThai.Text = "Trạng Thái ";
             // 
             // radioButtonChuaNoiTru
             // 
@@ -180,9 +180,9 @@
             labelGiuong.AutoSize = true;
             labelGiuong.Location = new Point(351, 87);
             labelGiuong.Name = "labelGiuong";
-            labelGiuong.Size = new Size(79, 19);
+            labelGiuong.Size = new Size(54, 19);
             labelGiuong.TabIndex = 51;
-            labelGiuong.Text = "Ten Giuong";
+            labelGiuong.Text = "Giường";
             // 
             // comboBoxGiuong
             // 
@@ -211,9 +211,9 @@
             labelLoaiPhong.AutoSize = true;
             labelLoaiPhong.Location = new Point(40, 28);
             labelLoaiPhong.Name = "labelLoaiPhong";
-            labelLoaiPhong.Size = new Size(66, 19);
+            labelLoaiPhong.Size = new Size(72, 19);
             labelLoaiPhong.TabIndex = 41;
-            labelLoaiPhong.Text = "Loai Tang";
+            labelLoaiPhong.Text = "Loại Tầng ";
             // 
             // comboBoxPhong
             // 
@@ -245,7 +245,7 @@
             labelTenPhong.Name = "labelTenPhong";
             labelTenPhong.Size = new Size(74, 19);
             labelTenPhong.TabIndex = 30;
-            labelTenPhong.Text = "Ten Phong";
+            labelTenPhong.Text = "Tên Phòng";
             // 
             // label10
             // 
@@ -266,8 +266,9 @@
             buttonLoad.Name = "buttonLoad";
             buttonLoad.Size = new Size(104, 32);
             buttonLoad.TabIndex = 43;
-            buttonLoad.Text = "Lam moi";
+            buttonLoad.Text = "Làm Mới";
             buttonLoad.UseVisualStyleBackColor = false;
+            buttonLoad.Click += buttonLoad_Click;
             // 
             // buttonTimKiemGiuong
             // 
@@ -279,7 +280,7 @@
             buttonTimKiemGiuong.Name = "buttonTimKiemGiuong";
             buttonTimKiemGiuong.Size = new Size(104, 32);
             buttonTimKiemGiuong.TabIndex = 40;
-            buttonTimKiemGiuong.Text = "Tim kiem";
+            buttonTimKiemGiuong.Text = "Tìm Kiếm";
             buttonTimKiemGiuong.UseVisualStyleBackColor = false;
             buttonTimKiemGiuong.Click += buttonTimkiemgiuong_Click;
             // 
@@ -293,7 +294,16 @@
             groupBox2.Size = new Size(200, 171);
             groupBox2.TabIndex = 68;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Thong ke";
+            groupBox2.Text = "Thông tin thống kê";
+            // 
+            // textBoxDemSV
+            // 
+            textBoxDemSV.Location = new Point(7, 47);
+            textBoxDemSV.Name = "textBoxDemSV";
+            textBoxDemSV.ReadOnly = true;
+            textBoxDemSV.Size = new Size(193, 23);
+            textBoxDemSV.TabIndex = 67;
+            textBoxDemSV.WordWrap = false;
             // 
             // textBoxDemSVNoiTru
             // 
@@ -312,15 +322,6 @@
             textBoxDemSVChuaNoiTru.Size = new Size(193, 23);
             textBoxDemSVChuaNoiTru.TabIndex = 66;
             textBoxDemSVChuaNoiTru.WordWrap = false;
-            // 
-            // textBoxDemSV
-            // 
-            textBoxDemSV.Location = new Point(7, 47);
-            textBoxDemSV.Name = "textBoxDemSV";
-            textBoxDemSV.ReadOnly = true;
-            textBoxDemSV.Size = new Size(193, 23);
-            textBoxDemSV.TabIndex = 67;
-            textBoxDemSV.WordWrap = false;
             // 
             // ThongTinNoiTru
             // 

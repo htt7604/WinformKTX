@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             buttonLoad = new Button();
             groupBox1 = new GroupBox();
             comboBoxLoaiTang = new ComboBox();
@@ -42,8 +42,6 @@
             label1 = new Label();
             label2 = new Label();
             groupBox2 = new GroupBox();
-            label4 = new Label();
-            comboBoxSoLuong = new ComboBox();
             label3 = new Label();
             comboBoxTinhTrang = new ComboBox();
             groupBox3 = new GroupBox();
@@ -66,7 +64,7 @@
             buttonLoad.Name = "buttonLoad";
             buttonLoad.Size = new Size(87, 32);
             buttonLoad.TabIndex = 43;
-            buttonLoad.Text = "Lam moi";
+            buttonLoad.Text = "Làm mới";
             buttonLoad.UseVisualStyleBackColor = false;
             buttonLoad.Click += buttonLoad_Click;
             // 
@@ -86,7 +84,7 @@
             groupBox1.Size = new Size(570, 166);
             groupBox1.TabIndex = 46;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Tim Kiem Theo";
+            groupBox1.Text = "Tìm Kiếm Theo";
             // 
             // comboBoxLoaiTang
             // 
@@ -105,9 +103,9 @@
             labelLoaiPhong.AutoSize = true;
             labelLoaiPhong.Location = new Point(40, 33);
             labelLoaiPhong.Name = "labelLoaiPhong";
-            labelLoaiPhong.Size = new Size(66, 19);
+            labelLoaiPhong.Size = new Size(68, 19);
             labelLoaiPhong.TabIndex = 41;
-            labelLoaiPhong.Text = "Loai Tang";
+            labelLoaiPhong.Text = "Loại Tầng";
             // 
             // comboBoxPhong
             // 
@@ -136,9 +134,9 @@
             labelTenPhong.AutoSize = true;
             labelTenPhong.Location = new Point(324, 33);
             labelTenPhong.Name = "labelTenPhong";
-            labelTenPhong.Size = new Size(74, 19);
+            labelTenPhong.Size = new Size(49, 19);
             labelTenPhong.TabIndex = 30;
-            labelTenPhong.Text = "Ten Phong";
+            labelTenPhong.Text = "Phòng";
             // 
             // label10
             // 
@@ -159,7 +157,7 @@
             buttonTimKiemGiuong.Name = "buttonTimKiemGiuong";
             buttonTimKiemGiuong.Size = new Size(87, 32);
             buttonTimKiemGiuong.TabIndex = 40;
-            buttonTimKiemGiuong.Text = "Tim kiem";
+            buttonTimKiemGiuong.Text = "Tìm Kiếm";
             buttonTimKiemGiuong.UseVisualStyleBackColor = false;
             buttonTimKiemGiuong.Click += buttonTimkiemgiuong_Click;
             // 
@@ -170,14 +168,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewThongTin.Location = new Point(-4, 291);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -194,24 +192,22 @@
             label1.ForeColor = Color.Blue;
             label1.Location = new Point(22, 251);
             label1.Name = "label1";
-            label1.Size = new Size(167, 25);
+            label1.Size = new Size(163, 25);
             label1.TabIndex = 48;
-            label1.Text = "Thong Tin Phong";
+            label1.Text = "Thông tin phòng";
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
-            label2.Location = new Point(22, 15);
+            label2.Location = new Point(545, 9);
             label2.Name = "label2";
             label2.Size = new Size(229, 37);
             label2.TabIndex = 47;
-            label2.Text = "Thong Ke Phong";
+            label2.Text = "Thống Kê Phòng";
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(label4);
-            groupBox2.Controls.Add(comboBoxSoLuong);
             groupBox2.Controls.Add(label3);
             groupBox2.Controls.Add(comboBoxTinhTrang);
             groupBox2.Location = new Point(747, 71);
@@ -219,26 +215,7 @@
             groupBox2.Size = new Size(268, 166);
             groupBox2.TabIndex = 50;
             groupBox2.TabStop = false;
-            groupBox2.Text = "Tim Kiem Theo";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(17, 98);
-            label4.Name = "label4";
-            label4.Size = new Size(99, 15);
-            label4.TabIndex = 46;
-            label4.Text = "So Luong Giuong";
-            // 
-            // comboBoxSoLuong
-            // 
-            comboBoxSoLuong.Font = new Font("Segoe UI", 12F);
-            comboBoxSoLuong.FormattingEnabled = true;
-            comboBoxSoLuong.Location = new Point(17, 115);
-            comboBoxSoLuong.Margin = new Padding(3, 2, 3, 2);
-            comboBoxSoLuong.Name = "comboBoxSoLuong";
-            comboBoxSoLuong.Size = new Size(223, 29);
-            comboBoxSoLuong.TabIndex = 45;
+            groupBox2.Text = "Tìm Theo";
             // 
             // label3
             // 
@@ -247,7 +224,7 @@
             label3.Name = "label3";
             label3.Size = new Size(64, 15);
             label3.TabIndex = 44;
-            label3.Text = "Tinh Trang";
+            label3.Text = "Tình Trạng";
             // 
             // comboBoxTinhTrang
             // 
@@ -269,7 +246,7 @@
             groupBox3.Size = new Size(219, 134);
             groupBox3.TabIndex = 59;
             groupBox3.TabStop = false;
-            groupBox3.Text = "Thong tin thong ke ";
+            groupBox3.Text = "Thông tin thống kê";
             // 
             // textBoxDemPhongTrong
             // 
@@ -341,8 +318,6 @@
         private GroupBox groupBox2;
         private Label label3;
         private ComboBox comboBoxTinhTrang;
-        private Label label4;
-        private ComboBox comboBoxSoLuong;
         private GroupBox groupBox3;
         private TextBox textBoxDemPhongTrong;
         private TextBox textBoxDemPhongDay;

@@ -1,5 +1,6 @@
 ﻿using abc.HoanThanh.ThanhToan;
 using abc.HoanThanh.ThongKeSinhVien;
+using abc.HoanThanh.ThongKeViPham;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX.HoanThanh.Diennuoc;
 using WinformKTX.HoanThanh.ThongKeCSVC_HuHong;
 
 namespace abc.HoanThanh
@@ -136,6 +138,44 @@ namespace abc.HoanThanh
             thongKeGiuongPhong.FormBorderStyle = FormBorderStyle.None;
             panelMain.Controls.Add(thongKeGiuongPhong);
             thongKeGiuongPhong.Show();
+        }
+
+        private void vIPhamSinhVienToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra và đóng tất cả các form đang mở trong panelMain
+            foreach (Control ctrl in panelMain.Controls)
+            {
+                if (ctrl is Form form)
+                {
+                    // Đóng form đang mở
+                    form.Close();  // Hoặc sử dụng form.Hide() nếu bạn chỉ muốn ẩn mà không giải phóng tài nguyên
+                }
+            }
+            thongkevipham thongKeViPham = new thongkevipham();
+            thongKeViPham.Dock = DockStyle.Fill;
+            thongKeViPham.TopLevel = false;
+            thongKeViPham.FormBorderStyle = FormBorderStyle.None;
+            panelMain.Controls.Add(thongKeViPham);
+            thongKeViPham.Show();
+        }
+
+        private void dienNuocToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra và đóng tất cả các form đang mở trong panelMain
+            foreach (Control ctrl in panelMain.Controls)
+            {
+                if (ctrl is Form form)
+                {
+                    // Đóng form đang mở
+                    form.Close();  // Hoặc sử dụng form.Hide() nếu bạn chỉ muốn ẩn mà không giải phóng tài nguyên
+                }
+            }
+            thongkediennuoc thongKeDienNuoc = new thongkediennuoc();
+            thongKeDienNuoc.Dock = DockStyle.Fill;
+            thongKeDienNuoc.TopLevel = false;
+            thongKeDienNuoc.FormBorderStyle = FormBorderStyle.None;
+            panelMain.Controls.Add(thongKeDienNuoc);
+            thongKeDienNuoc.Show();
         }
     }
 }
