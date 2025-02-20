@@ -714,40 +714,40 @@ namespace WinformKTX
                     DateTime ngayKetThucNoiTru = dateTimePickerNgayKetThucNoiTru.Value;
                     string trangThaiMoi = comboBoxTrangThaiNoiTru.Text;
 
-                    if (trangThaiMoi == "Chờ Gia Hạn" && DateTime.Now <= ngayKetThucNoiTru)
+                    if (trangThaiMoi == "Chờ gia hạn" && DateTime.Now <= ngayKetThucNoiTru)
                     {
-                        MessageBox.Show("Chỉ có thể đặt trạng thái 'Chờ Gia Hạn' khi đã qua thời gian kết thúc nội trú.");
+                        MessageBox.Show("Chỉ có thể đặt trạng thái 'Chờ gia hạn' khi đã qua thời gian kết thúc nội trú.");
                         return;
                     }
-                    //if (trangThaiMoi == "Đang Nội Trú" && DateTime.Now > ngayKetThucNoiTru)
+                    //if (trangThaiMoi == "Đang nội trú" && DateTime.Now > ngayKetThucNoiTru)
                     //{
-                    //    MessageBox.Show("Không thể đặt trạng thái 'Đang Nội Trú' khi đã qua thời gian kết thúc nội trú.");
+                    //    MessageBox.Show("Không thể đặt trạng thái 'Đang nội trú' khi đã qua thời gian kết thúc nội trú.");
                     //    return;
                     //}
                     // Kiểm tra trạng thái mới và trạng thái hiện tại
-                    if (trangThaiMoi == "Chờ Gia Hạn" && currentStatus == "Chưa Nội Trú")
+                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Đã đăng ký")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Chưa Nội Trú' sang 'Chờ Gia Hạn'.");
+                        MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Chờ gia hạn'.");
                         return;
                     }
-                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Chờ Gia Hạn")
+                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Chờ gia hạn")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Chờ Gia Hạn' sang 'Cần Chú Ý'.");
+                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần Chú Ý'.");
                         return;
                     }
-                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Đang Nội Trú")
+                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Đang nội trú")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Đang Nội Trú' sang 'Cần Chú Ý'.");
+                        MessageBox.Show("Không thể chuyển từ 'Đang nội trú' sang 'Cần Chú Ý'.");
                         return;
                     }
-                    if (trangThaiMoi == "Đang Nội Trú" && currentStatus == "Cần Chú Ý")
+                    if (trangThaiMoi == "Đang nội trú" && currentStatus == "Cần Chú Ý")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Đang Nội Trú'.");
+                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Đang nội trú'.");
                         return;
                     }
-                    if (trangThaiMoi == "Chờ Gia Hạn" && currentStatus == "Cần Chú Ý")
+                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Cần Chú Ý")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Chờ Gia Hạn'.");
+                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Chờ gia hạn'.");
                         return;
                     }
                     //// Kiểm tra số lượng giường trống trong phòng
@@ -769,8 +769,8 @@ namespace WinformKTX
                     // Kiểm tra trạng thái giường trước khi cập nhật
                     string checkBedStatusQuery = @"SELECT TINH_TRANG_GIUONG FROM GIUONG WHERE MA_GIUONG = @MaGiuong";
                     string bedStatus = string.Empty;
-                    if ((trangThaiMoi == "Đang Nội Trú" || trangThaiMoi == "Chờ Gia Hạn") &&
-                    (currentStatus == "Chưa Nội Trú" || currentStatus == "Cần Chú Ý"))
+                    if ((trangThaiMoi == "Đang nội trú" || trangThaiMoi == "Chờ gia hạn") &&
+                    (currentStatus == "Đã đăng ký" || currentStatus == "Cần Chú Ý"))
                     {
                         using (var checkBedCmd = new SqlCommand(checkBedStatusQuery, conn))
                         {
@@ -820,28 +820,28 @@ namespace WinformKTX
                                         -- Nếu thay đổi giường và chuyển sang phòng khác 
                                         IF @OldMaPhong != @MaPhong
                                         BEGIN
-                                            -- Nếu trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn"", tăng số giường trống của phòng cũ
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                            -- Nếu trạng thái cũ là ""Đang nội trú"" hoặc ""Chờ gia hạn"", tăng số giường trống của phòng cũ
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                             END
 
-                                            -- Nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn"", giảm số giường trống của phòng mới
-                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                            -- Nếu trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn"", giảm số giường trống của phòng mới
+                                            IF @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
                                             END
 
-                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn"" -> ""Chưa Nội Trú"" hoặc ""Cần Chú Ý""
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ Gia Hạn') AND @TrangThai IN (N'Chưa Nội Trú', N'Cần Chú Ý')
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đang nội trú"" hoặc ""Chờ gia hạn"" -> ""Đã đăng ký"" hoặc ""Cần Chú Ý""
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
                                             BEGIN
                                                 -- UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @MaGiuong;
                                             END
 
-                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Chưa Nội Trú"" hoặc ""Cần Chú Ý"" -> ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn""
-                                            IF @CurrentStatus IN (N'Chưa Nội Trú', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đã đăng ký"" hoặc ""Cần Chú Ý"" -> ""Đang nội trú"" hoặc ""Chờ gia hạn""
+                                            IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 -- UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
@@ -849,19 +849,19 @@ namespace WinformKTX
                                         END
                                         ELSE -- Nếu sinh viên đổi giường nhưng vẫn ở cùng phòng
                                         BEGIN
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ Gia Hạn') AND @TrangThai IN (N'Chưa Nội Trú', N'Cần Chú Ý')
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
                                             BEGIN
-                                                -- Trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn"", trạng thái mới là ""Chưa Nội Trú"" hoặc ""Cần Chú Ý"" => tăng số giường trống
+                                                -- Trạng thái cũ là ""Đang nội trú"" hoặc ""Chờ gia hạn"", trạng thái mới là ""Đã đăng ký"" hoặc ""Cần Chú Ý"" => tăng số giường trống
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @MaPhong;
                                             END
-                                            ELSE IF @CurrentStatus IN (N'Chưa Nội Trú', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                            ELSE IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
-                                                -- Trạng thái cũ là ""Chưa Nội Trú"" hoặc ""Cần Chú Ý"", trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn"" => giảm số giường trống
+                                                -- Trạng thái cũ là ""Đã đăng ký"" hoặc ""Cần Chú Ý"", trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn"" => giảm số giường trống
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                             END
 
-                                            -- Chỉ cần cập nhật giường mới nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ Gia Hạn""
-                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                            -- Chỉ cần cập nhật giường mới nếu trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn""
+                                            IF @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
                                             END
@@ -889,7 +889,7 @@ namespace WinformKTX
                                    BEGIN
                                        DECLARE @SoGiuongConLai INT;
                                        -- Kiểm tra trạng thái cũ và mới để tránh cập nhật không hợp lệ
-                                       IF (@TrangThai = N'Chưa Nội Trú' OR @TrangThai = N'Cần Chú Ý') AND (@CurrentStatus = N'Đang Nội Trú')
+                                       IF (@TrangThai = N'Đã đăng ký' OR @TrangThai = N'Cần Chú Ý') AND (@CurrentStatus = N'Đang nội trú')
                                        BEGIN
                                            UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                            UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @OldMaGiuong;
@@ -901,16 +901,16 @@ namespace WinformKTX
                                            END WHERE MA_PHONG = @OldMaPhong;
                                        END;
 
-                                       ELSE IF @TrangThai = N'Chờ Gia Hạn' AND @CurrentStatus = N'Đang Nội Trú'
-                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn' WHERE MSSV = @MSSV;
+                                       ELSE IF @TrangThai = N'Chờ gia hạn' AND @CurrentStatus = N'Đang nội trú'
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' WHERE MSSV = @MSSV;
 
-                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú' WHERE MSSV = @MSSV;
+                                       ELSE IF @TrangThai = N'Đang nội trú' AND @CurrentStatus = N'Chờ gia hạn'
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang nội trú' WHERE MSSV = @MSSV;
 
-                                       ELSE IF @TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                                           PRINT N'Không thể chuyển từ Chờ Gia Hạn sang Chưa Nội Trú';
+                                       ELSE IF @TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Chờ gia hạn'
+                                           PRINT N'Không thể chuyển từ Chờ gia hạn sang Đã đăng ký';
 
-                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND (@CurrentStatus = N'Chưa Nội Trú' OR @CurrentStatus = N'Cần Chú Ý')
+                                       ELSE IF @TrangThai = N'Đang nội trú' AND (@CurrentStatus = N'Đã đăng ký' OR @CurrentStatus = N'Cần Chú Ý')
                                        BEGIN
                                            DECLARE @SoGiuongHienTai INT;
                                            SELECT @SoGiuongHienTai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
@@ -925,9 +925,9 @@ namespace WinformKTX
                                            END;
                                        END;
 
-                                       -- Nếu chuyển đổi giữa Chưa Nội Trú và Cần Chú Ý thì chỉ cập nhật trạng thái
-                                       ELSE IF(@TrangThai = N'Cần Chú Ý' AND @CurrentStatus = N'Chưa Nội Trú') 
-                                           OR(@TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Cần Chú Ý')
+                                       -- Nếu chuyển đổi giữa Đã đăng ký và Cần Chú Ý thì chỉ cập nhật trạng thái
+                                       ELSE IF(@TrangThai = N'Cần Chú Ý' AND @CurrentStatus = N'Đã đăng ký') 
+                                           OR(@TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Cần Chú Ý')
                                        BEGIN
                                            UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = @TrangThai WHERE MSSV = @MSSV;
                                        END;
@@ -1016,8 +1016,8 @@ namespace WinformKTX
                                     -- Xóa sinh viên khỏi SINH_VIEN
                                     DELETE FROM SINH_VIEN WHERE MSSV = @MSSV;
 
-                                    -- Nếu sinh viên đang trong trạng thái Đang Nội Trú hoặc Chờ Gia Hạn, cập nhật giường và phòng
-                                    IF @CurrentStatus IN(N'Đang Nội Trú', N'Chờ Gia Hạn')
+                                    -- Nếu sinh viên đang trong trạng thái Đang nội trú hoặc Chờ gia hạn, cập nhật giường và phòng
+                                    IF @CurrentStatus IN(N'Đang nội trú', N'Chờ gia hạn')
                                     BEGIN
                                         -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
                                         IF @MaGiuong IS NOT NULL
@@ -1138,7 +1138,7 @@ namespace WinformKTX
                                     INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                                     INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                                     INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên đang nội trú
+                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên Đang nội trú
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1221,7 +1221,7 @@ namespace WinformKTX
                             INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                             INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                             INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chưa nội trú'"; // Lọc sinh viên chưa nội trú
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đã đăng ký'"; // Lọc sinh viên Đã đăng ký
 
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -1387,7 +1387,7 @@ namespace WinformKTX
                             INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                             INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                             INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn'"; // Lọc sinh viên chờ gia hạn
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ gia hạn'"; // Lọc sinh viên Chờ gia hạn
 
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -1638,7 +1638,7 @@ namespace WinformKTX
         private void buttonXacNhanNoiTruAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xác nhận nội trú cho tất cả sinh viên chưa nội trú không?",
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xác nhận nội trú cho tất cả sinh viên Đã đăng ký không?",
                                                   "Xác Nhận Nội Trú",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
@@ -1691,16 +1691,16 @@ namespace WinformKTX
                                     -- Tạo bảng tạm để lưu danh sách sinh viên vừa được xác nhận nội trú
                                     DECLARE @DanhSachSinhVienMoi TABLE (MA_PHONG INT, MA_GIUONG NVARCHAR(50));
 
-                                    -- Lưu danh sách sinh viên từ 'Chưa Nội Trú' sang 'Đang Nội Trú'
+                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang nội trú'
                                     INSERT INTO @DanhSachSinhVienMoi (MA_PHONG, MA_GIUONG)
                                     SELECT MA_PHONG, MA_GIUONG
                                     FROM NOI_TRU
-                                    WHERE TRANG_THAI_NOI_TRU = N'Chưa Nội Trú';
+                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
                                     -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận
                                     UPDATE NOI_TRU
-                                    SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú'
-                                    WHERE TRANG_THAI_NOI_TRU = N'Chưa Nội Trú';
+                                    SET TRANG_THAI_NOI_TRU = N'Đang nội trú'
+                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
                                     -- Cập nhật trạng thái giường thành 'Đang Sử Dụng' cho giường của sinh viên vừa xác nhận
                                     UPDATE GIUONG
@@ -1745,8 +1745,8 @@ namespace WinformKTX
         private void buttonChoGiaHanNoiTruAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Chờ Gia Hạn' cho tất cả sinh viên đã quá hạn nội trú không?",
-                                                  "Xác Nhận Chờ Gia Hạn",
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Chờ gia hạn' cho tất cả sinh viên đã quá hạn nội trú không?",
+                                                  "Xác Nhận Chờ gia hạn",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
 
@@ -1765,7 +1765,7 @@ namespace WinformKTX
                     // Lấy danh sách sinh viên đã quá hạn nội trú
                     string query = @"SELECT MSSV 
                              FROM NOI_TRU 
-                             WHERE TRANG_THAI_NOI_TRU = N'Đang Nội Trú' 
+                             WHERE TRANG_THAI_NOI_TRU = N'Đang nội trú' 
                              AND NGAY_KET_THUC_NOI_TRU < GETDATE()";
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1773,12 +1773,12 @@ namespace WinformKTX
 
                     if (dataTable.Rows.Count > 0)
                     {
-                        // Chuyển trạng thái Chờ Gia Hạn cho tất cả sinh viên đã quá hạn nội trú
+                        // Chuyển trạng thái Chờ gia hạn cho tất cả sinh viên đã quá hạn nội trú
                         foreach (DataRow row in dataTable.Rows)
                         {
                             string mssv = row["MSSV"].ToString();
                             string updateQuery = @"UPDATE NOI_TRU 
-                                           SET TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn' 
+                                           SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' 
                                            WHERE MSSV = @MSSV";
 
                             using (var command = new SqlCommand(updateQuery, conn))
@@ -1788,7 +1788,7 @@ namespace WinformKTX
                             }
                         }
 
-                        MessageBox.Show("Đã chuyển trạng thái 'Chờ Gia Hạn' cho tất cả sinh viên đã quá hạn nội trú.");
+                        MessageBox.Show("Đã chuyển trạng thái 'Chờ gia hạn' cho tất cả sinh viên đã quá hạn nội trú.");
                     }
                     else
                     {
@@ -1800,7 +1800,7 @@ namespace WinformKTX
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi khi cập nhật trạng thái chờ gia hạn: " + ex.Message);
+                    MessageBox.Show("Lỗi khi cập nhật trạng thái Chờ gia hạn: " + ex.Message);
                 }
             }
         }
@@ -1808,8 +1808,8 @@ namespace WinformKTX
         private void buttonChuaNoiTruAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Chưa Nội Trú' cho tất cả sinh viên không?",
-                                                  "Xác Nhận Chưa Nội Trú",
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên không?",
+                                                  "Xác Nhận Đã đăng ký",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
 
@@ -1825,10 +1825,10 @@ namespace WinformKTX
                 {
                     conn.Open();
 
-                    // Lấy danh sách sinh viên có trạng thái nội trú khác 'Chưa Nội Trú'
+                    // Lấy danh sách sinh viên có trạng thái nội trú khác 'Đã đăng ký'
                     string query = @"SELECT MSSV, MA_PHONG, MA_GIUONG 
                              FROM NOI_TRU 
-                             WHERE TRANG_THAI_NOI_TRU <> N'Chưa Nội Trú'";
+                             WHERE TRANG_THAI_NOI_TRU <> N'Đã đăng ký'";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1842,9 +1842,9 @@ namespace WinformKTX
                             int maPhong = row["MA_PHONG"] != DBNull.Value ? Convert.ToInt32(row["MA_PHONG"]) : 0;
                             string maGiuong = row["MA_GIUONG"]?.ToString();
 
-                            // Cập nhật trạng thái sinh viên về 'Chưa Nội Trú'
+                            // Cập nhật trạng thái sinh viên về 'Đã đăng ký'
                             string updateQuery = @"UPDATE NOI_TRU 
-                                           SET TRANG_THAI_NOI_TRU = N'Chưa Nội Trú' 
+                                           SET TRANG_THAI_NOI_TRU = N'Đã đăng ký' 
                                            WHERE MSSV = @MSSV";
 
                             using (var command = new SqlCommand(updateQuery, conn))
@@ -1901,7 +1901,7 @@ namespace WinformKTX
                             }
                         }
 
-                        MessageBox.Show("Đã chuyển trạng thái 'Chưa Nội Trú' cho tất cả sinh viên.");
+                        MessageBox.Show("Đã chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên.");
                     }
                     else
                     {
@@ -1913,7 +1913,7 @@ namespace WinformKTX
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi khi cập nhật trạng thái 'Chưa Nội Trú': " + ex.Message);
+                    MessageBox.Show("Lỗi khi cập nhật trạng thái 'Đã đăng ký': " + ex.Message);
                 }
             }
         }
@@ -1922,7 +1922,7 @@ namespace WinformKTX
         {
             // Hiển thị hộp thoại xác nhận
             DialogResult result = MessageBox.Show(
-                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Chờ Gia Hạn' không?",
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' không?",
                 "Xác nhận xóa",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
@@ -1947,7 +1947,7 @@ namespace WinformKTX
                                     INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
                                     SELECT MSSV, MA_PHONG, MA_GIUONG
                                     FROM NOI_TRU
-                                    WHERE TRANG_THAI_NOI_TRU = N'Chờ Gia hạn';
+                                    WHERE TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
 
                                     -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
                                     DELETE NT
@@ -1989,11 +1989,11 @@ namespace WinformKTX
 
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Chờ Gia Hạn' và cập nhật giường, phòng thành công.");
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' và cập nhật giường, phòng thành công.");
                     }
                     else
                     {
-                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Chờ Gia Hạn' để xóa.");
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Chờ gia hạn' để xóa.");
                     }
 
                     // Load lại dữ liệu sau khi xóa
@@ -2011,7 +2011,7 @@ namespace WinformKTX
         {
             // Hiển thị hộp thoại xác nhận
             DialogResult result = MessageBox.Show(
-                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Chưa Nội Trú' không?",
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Đã đăng ký' không?",
                 "Xác nhận xóa",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
@@ -2029,7 +2029,7 @@ namespace WinformKTX
                     conn.Open();
                     string query = @"
                             -- Xóa sinh viên khỏi NOI_TRU trước
-                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Chưa Nội Trú';
+                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
                             -- Xóa sinh viên khỏi SINH_VIEN
                             DELETE FROM SINH_VIEN 
@@ -2041,11 +2041,11 @@ namespace WinformKTX
 
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Chưa Nội Trú' thành công.");
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Đã đăng ký' thành công.");
                     }
                     else
                     {
-                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Chưa Nội Trú' để xóa.");
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Đã đăng ký' để xóa.");
                     }
 
                     // Load lại dữ liệu sau khi xóa
