@@ -145,7 +145,7 @@
             txtTenphong.Size = new Size(300, 36);
             txtTenphong.Style = Guna.UI2.WinForms.Enums.TextBoxStyle.Material;
             txtTenphong.TabIndex = 154;
-            txtTenphong.SelectedIndexChanged += txtTenphong_SelectedIndexChanged;
+            //txtTenphong.SelectedIndexChanged += txtTenphong_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -168,7 +168,6 @@
             ComboBoxSogiuong.Font = new Font("Segoe UI", 10F);
             ComboBoxSogiuong.ForeColor = Color.Black;
             ComboBoxSogiuong.ItemHeight = 30;
-            ComboBoxSogiuong.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6" });
             ComboBoxSogiuong.Location = new Point(819, 251);
             ComboBoxSogiuong.Name = "ComboBoxSogiuong";
             ComboBoxSogiuong.ShadowDecoration.CustomizableEdges = customizableEdges8;

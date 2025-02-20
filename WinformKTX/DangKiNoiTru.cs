@@ -599,54 +599,92 @@ namespace WinformKTX
                 //            @NGAYDANGKY, @NGAYBATDAU, @NGAYKETTHUC, N'Đã đăng ký')";
 
 
+                ////string query = @"
+                ////        INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU,NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU)
+                ////    VALUES (@MSSV, @MaPhong, @MaGiuong, @NGAYDANGKY, @NgayBatDau, @NgayKetThuc, N'Đã đăng ký')";
+                //using (SqlCommand cmd = new SqlCommand(query, conn))
+                //{
+                //    //cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
+                //    //cmd.Parameters.AddWithValue("@TENPHONG", txtTenphong.SelectedItem.ToString());
+                //    //cmd.Parameters.AddWithValue("@TEN_GIUONG", ComboBoxSogiuong.SelectedItem.ToString());
+                //    //cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
+                //    //cmd.Parameters.AddWithValue("@NGAYBATDAU", DateTime.Now);
+                //    //cmd.Parameters.AddWithValue("@NGAYKETTHUC", ngayKetThuc);
+
+                //    // Gắn giá trị từ TextBox vào tham số
+                //    cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
+                //    //cmd.Parameters.AddWithValue("@HoTenSV", textBoxHoTenSV.Text);
+                //    //cmd.Parameters.AddWithValue("@CCCD", textBoxCccd.Text);
+                //    //cmd.Parameters.AddWithValue("@NgaySinh", dateTimePickerNgaySinh.Value);
+                //    //cmd.Parameters.AddWithValue("@GioiTinh", comboBoxGioiTinh.Text);
+                //    //cmd.Parameters.AddWithValue("@SdtSV", textBoxSdtSV.Text);
+                //    //cmd.Parameters.AddWithValue("@SdtNguoiThan", textBoxSdtNguoiThan.Text);
+                //    //cmd.Parameters.AddWithValue("@QueQuan", textBoxQueQuan.Text);
+                //    //cmd.Parameters.AddWithValue("@Email", textBoxEmail.Text);
+                //    cmd.Parameters.AddWithValue("@MaPhong", txtTenphong.SelectedValue);
+                //    cmd.Parameters.AddWithValue("@MaGiuong", ComboBoxSogiuong.SelectedValue);
+                //    cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
+                //    cmd.Parameters.AddWithValue("@NgayBatDau", DateTime.Now);
+                //    cmd.Parameters.AddWithValue("@NgayKetThuc", ngayKetThuc);
+                //    //cmd.Parameters.AddWithValue("@TrangThai", comboBoxTrangThaiNoiTru.Text);
+
+                //    int maNoiTru = Convert.ToInt32(cmd.ExecuteScalar()); // Lấy MA_NOI_TRU mới nhất từ câu lệnh OUTPUT INSERTED
+
+                //    if (maNoiTru > 0)
+                //    {
+                //        string insertThanhToanQuery = @"
+                //                INSERT INTO THANH_TOAN_PHONG ( MA_NOI_TRU, TRANG_THAI_THANH_TOAN) 
+                //                VALUES (@MA_NOI_TRU, N'Chưa thanh toán')";
+
+                //        using (SqlCommand cmdThanhToan = new SqlCommand(insertThanhToanQuery, conn))
+                //        {
+
+
+                //            cmdThanhToan.Parameters.AddWithValue("@MA_NOI_TRU", maNoiTru);
+
+                //            cmdThanhToan.ExecuteNonQuery();
+                //        }
+                //    }
+
+                //}
                 string query = @"
-                        INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU,NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU)
-                    VALUES (@MSSV, @MaPhong, @MaGiuong, @NGAYDANGKY, @NgayBatDau, @NgayKetThuc, N'Đã đăng ký')";
+    INSERT INTO NOI_TRU (MSSV, MA_PHONG, MA_GIUONG, NGAY_DANG_KY_NOI_TRU, NGAY_BAT_DAU_NOI_TRU, NGAY_KET_THUC_NOI_TRU, TRANG_THAI_NOI_TRU) 
+    OUTPUT INSERTED.MA_NOI_TRU
+    VALUES (@MSSV, @MaPhong, @MaGiuong, @NGAYDANGKY, @NgayBatDau, @NgayKetThuc, N'Đã đăng ký');";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    //cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
-                    //cmd.Parameters.AddWithValue("@TENPHONG", txtTenphong.SelectedItem.ToString());
-                    //cmd.Parameters.AddWithValue("@TEN_GIUONG", ComboBoxSogiuong.SelectedItem.ToString());
-                    //cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
-                    //cmd.Parameters.AddWithValue("@NGAYBATDAU", DateTime.Now);
-                    //cmd.Parameters.AddWithValue("@NGAYKETTHUC", ngayKetThuc);
-
-                    // Gắn giá trị từ TextBox vào tham số
                     cmd.Parameters.AddWithValue("@MSSV", txtMasinhvien.Text);
-                    //cmd.Parameters.AddWithValue("@HoTenSV", textBoxHoTenSV.Text);
-                    //cmd.Parameters.AddWithValue("@CCCD", textBoxCccd.Text);
-                    //cmd.Parameters.AddWithValue("@NgaySinh", dateTimePickerNgaySinh.Value);
-                    //cmd.Parameters.AddWithValue("@GioiTinh", comboBoxGioiTinh.Text);
-                    //cmd.Parameters.AddWithValue("@SdtSV", textBoxSdtSV.Text);
-                    //cmd.Parameters.AddWithValue("@SdtNguoiThan", textBoxSdtNguoiThan.Text);
-                    //cmd.Parameters.AddWithValue("@QueQuan", textBoxQueQuan.Text);
-                    //cmd.Parameters.AddWithValue("@Email", textBoxEmail.Text);
                     cmd.Parameters.AddWithValue("@MaPhong", txtTenphong.SelectedValue);
                     cmd.Parameters.AddWithValue("@MaGiuong", ComboBoxSogiuong.SelectedValue);
                     cmd.Parameters.AddWithValue("@NGAYDANGKY", DateTime.Now);
                     cmd.Parameters.AddWithValue("@NgayBatDau", DateTime.Now);
                     cmd.Parameters.AddWithValue("@NgayKetThuc", ngayKetThuc);
-                    //cmd.Parameters.AddWithValue("@TrangThai", comboBoxTrangThaiNoiTru.Text);
 
-                    int maNoiTru = Convert.ToInt32(cmd.ExecuteScalar()); // Lấy MA_NOI_TRU mới nhất từ câu lệnh OUTPUT INSERTED
-
-                    if (maNoiTru > 0)
+                    // Lấy giá trị MA_NOI_TRU vừa được tạo
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
                     {
+                        int maNoiTru = Convert.ToInt32(result);
+
+                        // Thêm dữ liệu vào bảng THANH_TOAN_PHONG
                         string insertThanhToanQuery = @"
-                                INSERT INTO THANH_TOAN_PHONG ( MA_NOI_TRU, TRANG_THAI_THANH_TOAN) 
-                                VALUES (@MA_NOI_TRU, N'Chưa thanh toán')";
+            INSERT INTO THANH_TOAN_PHONG (MA_NOI_TRU, TRANG_THAI_THANH_TOAN) 
+            VALUES (@MA_NOI_TRU, N'Chưa thanh toán');";
 
                         using (SqlCommand cmdThanhToan = new SqlCommand(insertThanhToanQuery, conn))
                         {
-
-
                             cmdThanhToan.Parameters.AddWithValue("@MA_NOI_TRU", maNoiTru);
-
                             cmdThanhToan.ExecuteNonQuery();
                         }
                     }
-
+                    else
+                    {
+                        MessageBox.Show("Không thể đăng ký nội trú. Vui lòng kiểm tra lại dữ liệu.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
+
+
 
                 // Cập nhật số giường còn trống
                 string queryUpdateSoGiuong = "UPDATE PHONG SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 1 WHERE TEN_PHONG = @TEN_PHONG";
