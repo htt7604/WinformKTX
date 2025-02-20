@@ -279,9 +279,9 @@
             guna2HtmlLabel7.BackColor = Color.Transparent;
             guna2HtmlLabel7.Location = new Point(989, 135);
             guna2HtmlLabel7.Name = "guna2HtmlLabel7";
-            guna2HtmlLabel7.Size = new Size(77, 22);
+            guna2HtmlLabel7.Size = new Size(74, 22);
             guna2HtmlLabel7.TabIndex = 18;
-            guna2HtmlLabel7.Text = "Tên phòng: ";
+            guna2HtmlLabel7.Text = "Mã phòng: ";
             // 
             // txtmasophong2
             // 
