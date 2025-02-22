@@ -2,70 +2,40 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.ComponentModel.Design.ObjectSelectorEditor;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WinformKTX
 {
     public partial class QuanLiSinhVien : Form
     {
-        //private string connectionString = "Data Source=LAPTOP-SI5JBDIU\\SQLEXPRESS01;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"; // Thay bằng chuỗi kết nối của bạn
+        // Khởi tạo đối tượng KetnoiCSDL để sử dụng phương thức GetConnection
         KetnoiCSDL ketnoi = new KetnoiCSDL();
+        //private string connectionString = "Data Source=LAPTOP-SI5JBDIU\\SQLEXPRESS01;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"; // Thay bằng chuỗi kết nối của bạn
         public QuanLiSinhVien()
         {
             InitializeComponent();
 
             // Các thao tác khởi tạo khác
-            comboBoxMaPhong.SelectedIndexChanged += comboBoxMaPhong_ThayDoiMaPhong;
+            comboBoxGioiTinh.SelectedIndexChanged += comboBoxGioiTinh_ThayDoi;
+            comboBoxMaLoaiPhong.SelectedIndexChanged += comboBoxMaLoaiPhong_ThayDoi;
+            comboBoxMaTang.SelectedIndexChanged += comboBoxMaTang_ThayDoi;
+            comboBoxMaPhong.SelectedIndexChanged += comboBoxMaPhong_ThayDoi;
 
             // Tải dữ liệu lên DataGridView khi form load
             LoadData();
         }
 
-        //private void LoadData()
-        //{
-        //    using (var conn = new SqlConnection(connectionString))
-        //    {
-        //        try
-        //        {
-        //            conn.Open();
-        //            string query = @"SELECT SINH_VIEN.MSSV,
-        //                                   SINH_VIEN.HOTEN_SV, 
-        //                                   SINH_VIEN.CCCD, 
-        //                                   SINH_VIEN.NGAY_SINH, 
-        //                                   SINH_VIEN.GIOI_TINH, 
-        //                                   SINH_VIEN.SDT_SINHVIEN,
-        //                                   SINH_VIEN.SDT_NGUOITHAN,
-        //                                   SINH_VIEN.QUE_QUAN,
-        //                                   SINH_VIEN.EMAIL,
-        //                                   NOI_TRU.MA_PHONG,
-        //                                   NOI_TRU.MA_GIUONG,
-        //                                   NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-        //                                   NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-        //                                   NOI_TRU.TRANG_THAI_NOI_TRU
-        //                            FROM SINH_VIEN 
-        //                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV";// Thay bằng tên bảng và cột thực tế
-        //            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-        //            DataTable dataTable = new DataTable();
-        //            adapter.Fill(dataTable);
-
-        //            // Hiển thị dữ liệu lên DataGridView
-        //            dataGridView1.DataSource = dataTable;
-
-        //            // Gọi hàm cập nhật labelChiSo
-        //            UpdateLabelChiSo(dataTable.Rows.Count);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show("Lỗi khi tải dữ liệu: " + ex.Message);
-        //        }
-        //    }
-        //}
         private void LoadData()
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -74,8 +44,10 @@ namespace WinformKTX
                 {
                     conn.Open();
 
-                    // Tải dữ liệu sinh viên và nội trú
-                    string query = @"SELECT SINH_VIEN.MSSV,
+                    // Truy vấn lấy dữ liệu sinh viên + nội trú + tên tầng + tên loại tầng + tên phòng + tên giường
+                    string query = @"
+                                SELECT 
+                                    SINH_VIEN.MSSV,
                                     SINH_VIEN.HOTEN_SV, 
                                     SINH_VIEN.CCCD, 
                                     SINH_VIEN.NGAY_SINH, 
@@ -84,13 +56,24 @@ namespace WinformKTX
                                     SINH_VIEN.SDT_NGUOITHAN,
                                     SINH_VIEN.QUE_QUAN,
                                     SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
+                                    NOI_TRU.MA_PHONG,    -- Giữ lại để xử lý dữ liệu
+                                    NOI_TRU.MA_GIUONG,   -- Giữ lại để xử lý dữ liệu
+                                    PHONG.MA_TANG,       -- Giữ lại để xử lý dữ liệu
+                                    LOAI_PHONG.MA_LOAI_PHONG,   -- Giữ lại để xử lý dữ liệu
                                     NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
                                     NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN 
-                             INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV";
+                                    NOI_TRU.TRANG_THAI_NOI_TRU,
+                                    PHONG.TEN_PHONG,     -- Hiển thị thay vì MA_PHONG
+                                    GIUONG.TEN_GIUONG,   -- Hiển thị thay vì MA_GIUONG
+                                    TANG.TEN_TANG,       -- Hiển thị thay vì MA_TANG
+                                    LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                                FROM SINH_VIEN
+                                INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                                INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                                INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                                INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                                INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG";
+
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -98,19 +81,100 @@ namespace WinformKTX
                     // Hiển thị dữ liệu lên DataGridView
                     dataGridView1.DataSource = dataTable;
 
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false; // Ẩn Mã Loại Tầng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Tên Loại Tầng";
+
+                    dataGridView1.Columns["MA_TANG"].Visible = false;   // Ẩn Mã Tầng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tên Tầng";
+
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;  // Ẩn Mã Phòng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false; // Ẩn Mã Giường nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Tên Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
                     // Cập nhật label chỉ số
                     UpdateLabelChiSo(dataTable.Rows.Count);
 
+                    // Tải danh sách loại phòng vào comboBoxMaLoaiTang
+                    //TaiDanhSachLoaiPhong(conn);
+
+                    // Tải danh sách tầng vào comboBoxMaTang
+                    //TaiDanhSachTang(conn);
+
                     // Tải danh sách phòng trống vào comboBoxMaPhong
-                    LoadAvailableRooms(conn);
+                    //LoadAvailableRooms(conn);
 
                     // Tải danh sách giường trống vào comboBoxMaGiuong
-                    LoadAvailableBeds(conn);
+                    //LoadAvailableBeds(conn);
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Lỗi khi tải dữ liệu: " + ex.Message);
                 }
+            }
+        }
+        private void TaiDanhSachTang(SqlConnection conn)
+        {
+            try
+            {
+                // Truy vấn danh sách tầng
+                string query = @"SELECT MA_TANG, TEN_TANG FROM TANG";
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+
+                    comboBoxMaTang.DataSource = table;
+                    comboBoxMaTang.DisplayMember = "TEN_TANG";  // Hiển thị tên tầng
+                    comboBoxMaTang.ValueMember = "MA_TANG";  // Xử lý logic theo mã tầng
+                    comboBoxMaTang.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tải danh sách tầng: " + ex.Message);
+            }
+        }
+
+        private void TaiDanhSachLoaiPhong(SqlConnection conn)
+        {
+            try
+            {
+                // Truy vấn danh sách loại phòng
+                string query = @"SELECT MA_LOAI_PHONG, TEN_LOAI_PHONG FROM LOAI_PHONG";
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+
+                    comboBoxMaLoaiPhong.DataSource = table;
+                    comboBoxMaLoaiPhong.DisplayMember = "TEN_LOAI_PHONG";  // Hiển thị tên loại tầng
+                    comboBoxMaLoaiPhong.ValueMember = "MA_LOAI_PHONG";  // Xử lý logic theo mã loại tầng
+                    comboBoxMaLoaiPhong.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tải danh sách loại phòng: " + ex.Message);
             }
         }
 
@@ -119,19 +183,19 @@ namespace WinformKTX
             try
             {
                 // Truy vấn danh sách phòng trống
-                string roomQuery = @"SELECT MA_PHONG 
-                             FROM PHONG 
-                             WHERE SO_GIUONG_CON_TRONG > 0";
+                string roomQuery = @"SELECT MA_PHONG, TEN_PHONG 
+                     FROM PHONG 
+                     WHERE SO_GIUONG_CON_TRONG > 0";
                 using (var cmd = new SqlCommand(roomQuery, conn))
                 {
                     SqlDataAdapter roomAdapter = new SqlDataAdapter(cmd);
                     DataTable roomTable = new DataTable();
                     roomAdapter.Fill(roomTable);
 
-                    // Gắn dữ liệu vào ComboBox
+                    // Gắn dữ liệu vào ComboBox, hiển thị TÊN_PHÒNG nhưng giữ giá trị là MA_PHONG
                     comboBoxMaPhong.DataSource = roomTable;
-                    comboBoxMaPhong.DisplayMember = "MA_PHONG";
-                    comboBoxMaPhong.ValueMember = "MA_PHONG";
+                    comboBoxMaPhong.DisplayMember = "TEN_PHONG";  // Hiển thị tên phòng
+                    comboBoxMaPhong.ValueMember = "MA_PHONG";  // Xử lý logic theo mã phòng
                     comboBoxMaPhong.SelectedIndex = -1; // Không chọn mặc định
                 }
             }
@@ -140,162 +204,275 @@ namespace WinformKTX
                 MessageBox.Show("Lỗi khi tải danh sách phòng trống: " + ex.Message);
             }
         }
+        private void comboBoxGioiTinh_ThayDoi(object sender, EventArgs e)
+        {
+            if (comboBoxGioiTinh.SelectedItem == null) return;
 
-        private void LoadAvailableBeds(SqlConnection conn)
+            string gioiTinh = comboBoxGioiTinh.SelectedItem.ToString();
+
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                conn.Open();
+                string query = @"
+            SELECT DISTINCT MA_LOAI_PHONG, TEN_LOAI_PHONG
+            FROM LOAI_PHONG
+            WHERE TEN_LOAI_PHONG = @GioiTinh";  // Chỉ lọc theo tên loại phòng
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@GioiTinh", gioiTinh);
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataTable table = new DataTable();
+                    adapter.Fill(table);
+
+                    comboBoxMaLoaiPhong.DataSource = table;
+                    comboBoxMaLoaiPhong.DisplayMember = "TEN_LOAI_PHONG"; // Hiển thị tên loại phòng
+                    comboBoxMaLoaiPhong.ValueMember = "MA_LOAI_PHONG";   // Lấy mã loại phòng
+                    comboBoxMaLoaiPhong.SelectedIndex = -1;
+
+                    comboBoxMaGiuong.DataSource = null; // Xóa danh sách giường khi thay đổi giới tính
+                }
+            }
+        }
+
+        private void comboBoxMaLoaiPhong_ThayDoi(object sender, EventArgs e)
         {
             try
             {
-                // Kiểm tra nếu mã phòng chưa được chọn hoặc ComboBox chưa có giá trị
-                if (comboBoxMaPhong.SelectedValue == null)
+                // Kiểm tra nếu chưa chọn loại phòng
+                if (comboBoxMaLoaiPhong.SelectedValue == null)
                 {
-                    comboBoxMaGiuong.DataSource = null; // Xóa danh sách giường nếu phòng chưa được chọn
+                    comboBoxMaTang.DataSource = null; // Xóa danh sách tầng nếu chưa chọn loại phòng
                     return;
                 }
 
                 // Lấy giá trị thực tế từ SelectedValue
-                object selectedValue = comboBoxMaPhong.SelectedValue;
-                string selectedMaPhong;
+                object selectedValue = comboBoxMaLoaiPhong.SelectedValue;
+                string selectedMaLoaiPhong;
 
                 if (selectedValue is DataRowView dataRowView)
                 {
-                    selectedMaPhong = dataRowView["MA_PHONG"].ToString();
+                    selectedMaLoaiPhong = dataRowView["MA_LOAI_PHONG"].ToString();
                 }
                 else
                 {
-                    selectedMaPhong = selectedValue.ToString();
+                    selectedMaLoaiPhong = selectedValue.ToString();
                 }
 
-                // Chuyển đổi mã phòng sang kiểu số nguyên
-                int maPhong;
-                if (!int.TryParse(selectedMaPhong, out maPhong))
+                // Chuyển đổi mã loại phòng sang kiểu số nguyên
+                int maLoaiPhong;
+                if (!int.TryParse(selectedMaLoaiPhong, out maLoaiPhong))
+                {
+                    MessageBox.Show("Mã loại phòng không hợp lệ.");
+                    return;
+                }
+
+                using (SqlConnection conn = ketnoi.GetConnection())
+                {
+                    conn.Open();
+
+                    // Truy vấn danh sách tầng theo mã loại phòng được chọn
+                    string query = @"
+                SELECT DISTINCT T.MA_TANG, T.TEN_TANG
+                FROM TANG T
+                JOIN PHONG P ON T.MA_TANG = P.MA_TANG
+                WHERE T.MA_LOAI_PHONG = @MaLoaiPhong";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@MaLoaiPhong", maLoaiPhong);
+
+                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+
+                        // Gán dữ liệu cho combobox tầng
+                        comboBoxMaTang.DataSource = table;
+                        comboBoxMaTang.DisplayMember = "TEN_TANG"; // Hiển thị tên tầng
+                        comboBoxMaTang.ValueMember = "MA_TANG";    // Xử lý logic theo mã tầng
+                        comboBoxMaTang.SelectedIndex = -1; // Không chọn sẵn giá trị đầu tiên
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tải danh sách tầng: " + ex.Message);
+            }
+        }
+        private void comboBoxMaTang_ThayDoi(object sender, EventArgs e)
+        {
+            if (comboBoxMaTang.SelectedValue == null) { return; }
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                conn.Open();
+
+                // Lấy phòng hiện tại của sinh viên nếu MSSV có giá trị
+                string maPhongHienTai = null;
+                if (!string.IsNullOrEmpty(textBoxMSSV.Text.Trim()))
+                {
+                    string queryPhongHienTai = @"
+                SELECT MA_PHONG FROM NOI_TRU WHERE MSSV = @MSSV";
+
+                    using (SqlCommand cmdPhong = new SqlCommand(queryPhongHienTai, conn))
+                    {
+                        cmdPhong.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text.Trim());
+                        var result = cmdPhong.ExecuteScalar();
+                        if (result != null)
+                        {
+                            maPhongHienTai = result.ToString();
+                        }
+                    }
+                }
+
+                string query = @"
+                SELECT MA_PHONG, TEN_PHONG 
+                FROM PHONG 
+                WHERE MA_TANG = @MaTang 
+                AND (SO_GIUONG_CON_TRONG > 0 OR MA_PHONG = @MaPhongHienTai)";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    //if (comboBoxMaTang.SelectedValue == null)
+                    //{
+                    //    MessageBox.Show("Vui lòng chọn tầng hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //    return;
+                    //}
+
+                    // Lấy giá trị thực tế từ DataRowView nếu cần
+                    var selectedValue = comboBoxMaTang.SelectedValue;
+                    if (selectedValue is DataRowView rowView)
+                    {
+                        selectedValue = rowView["MA_TANG"];
+                    }
+
+                    // Chuyển thành kiểu số nguyên trước khi truyền vào SQL
+                    cmd.Parameters.AddWithValue("@MaTang", Convert.ToInt32(selectedValue));
+                    cmd.Parameters.AddWithValue("@MaPhongHienTai", maPhongHienTai ?? (object)DBNull.Value); // Xử lý null
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+
+                        if (table.Rows.Count == 0)
+                        {
+                            comboBoxMaPhong.DataSource = null;
+                            MessageBox.Show("Không có phòng nào còn giường trống trong tầng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
+                        comboBoxMaPhong.DataSource = table;
+                        comboBoxMaPhong.DisplayMember = "TEN_PHONG";
+                        comboBoxMaPhong.ValueMember = "MA_PHONG";
+                        comboBoxMaPhong.SelectedIndex = -1;
+
+                        comboBoxMaGiuong.DataSource = null; // Xóa danh sách giường khi thay đổi tầng
+                    }
+                }
+            }
+
+        }
+        private void comboBoxMaPhong_ThayDoi(object sender, EventArgs e)
+        {
+            if (comboBoxMaPhong.SelectedValue == null) return;
+
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                conn.Open();
+
+                // Lấy mã phòng được chọn
+                object selectedValue = comboBoxMaPhong.SelectedValue;
+                string selectedMaPhong = selectedValue is DataRowView dataRowView ? dataRowView["MA_PHONG"].ToString() : selectedValue.ToString();
+
+                if (!int.TryParse(selectedMaPhong, out int maPhong))
                 {
                     MessageBox.Show("Mã phòng không hợp lệ.");
                     return;
                 }
 
                 // Lấy mã phòng hiện tại của sinh viên
-                string currentRoomQuery = @"
-                                            SELECT MA_PHONG 
-                                            FROM NOI_TRU 
-                                            WHERE MSSV = @MSSV";
-
+                string currentRoomQuery = "SELECT MA_PHONG FROM NOI_TRU WHERE MSSV = @MSSV";
                 int currentRoom = 0;
                 using (var currentRoomCmd = new SqlCommand(currentRoomQuery, conn))
                 {
-                    currentRoomCmd.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text);
+                    currentRoomCmd.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text.Trim());
                     var result = currentRoomCmd.ExecuteScalar();
                     currentRoom = result != null ? Convert.ToInt32(result) : 0;
                 }
 
-                // Nếu mã phòng được chọn khác với mã phòng hiện tại của sinh viên, không hiển thị giường hiện tại
-                bool isCurrentRoom = (currentRoom == maPhong);
+                // Nếu phòng được chọn là phòng hiện tại của sinh viên, lấy mã giường hiện tại
+                string maGiuongHienTai = null;
+                if (currentRoom == maPhong)
+                {
+                    string queryGiuongHienTai = "SELECT MA_GIUONG FROM NOI_TRU WHERE MSSV = @MSSV";
+                    using (SqlCommand cmdGiuong = new SqlCommand(queryGiuongHienTai, conn))
+                    {
+                        cmdGiuong.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text.Trim());
+                        var result = cmdGiuong.ExecuteScalar();
+                        if (result != null)
+                        {
+                            maGiuongHienTai = result.ToString();
+                        }
+                    }
+                }
 
-                // Truy vấn danh sách giường theo mã phòng được chọn
-                string bedQuery = @"
-                                    SELECT MA_GIUONG, TINH_TRANG_GIUONG 
-                                    FROM GIUONG 
-                                    WHERE MA_PHONG = @MaPhong
-                                      AND TINH_TRANG_GIUONG = N'Trống'";
+                // Load danh sách giường còn trống hoặc giường hiện tại của sinh viên
+                string queryGiuong = @"
+                        SELECT MA_GIUONG, TEN_GIUONG
+                        FROM GIUONG 
+                        WHERE MA_PHONG = @MaPhong 
+                        AND (TINH_TRANG_GIUONG = 'Trống' OR MA_GIUONG = @MaGiuongHienTai)"; // Giữ giường hiện tại nếu có
 
-                using (var cmd = new SqlCommand(bedQuery, conn))
+                using (SqlCommand cmd = new SqlCommand(queryGiuong, conn))
                 {
                     cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                    cmd.Parameters.AddWithValue("@MaGiuongHienTai", maGiuongHienTai ?? (object)DBNull.Value); // Xử lý nếu null
 
-                    SqlDataAdapter bedAdapter = new SqlDataAdapter(cmd);
-                    DataTable bedTable = new DataTable();
-                    bedAdapter.Fill(bedTable);
-
-                    // Nếu phòng được chọn là phòng hiện tại, lấy mã giường hiện tại của sinh viên
-                    if (isCurrentRoom)
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
-                        string currentBedQuery = @"
-                                                SELECT MA_GIUONG 
-                                                FROM NOI_TRU 
-                                                WHERE MSSV = @MSSV";
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
 
-                        string currentBed = string.Empty;
-                        using (var currentBedCmd = new SqlCommand(currentBedQuery, conn))
-                        {
-                            currentBedCmd.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text);
-                            var result = currentBedCmd.ExecuteScalar();
-                            currentBed = result?.ToString();
-                        }
+                        //if (table.Rows.Count == 0)
+                        //{
+                        //    comboBoxMaGiuong.DataSource = null;
+                        //    MessageBox.Show("Không có giường nào trống trong phòng này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        //    return;
+                        //}
 
-                        // Nếu giường hiện tại của sinh viên không có trong danh sách, thêm vào
-                        if (!string.IsNullOrEmpty(currentBed) && !bedTable.AsEnumerable().Any(row => row["MA_GIUONG"].ToString() == currentBed))
-                        {
-                            DataRow newRow = bedTable.NewRow();
-                            newRow["MA_GIUONG"] = currentBed;
-                            newRow["TINH_TRANG_GIUONG"] = "Đang Sử Dụng";
-                            bedTable.Rows.InsertAt(newRow, 0);
-                        }
+                        comboBoxMaGiuong.DataSource = table;
+                        comboBoxMaGiuong.DisplayMember = "TEN_GIUONG";
+                        comboBoxMaGiuong.ValueMember = "MA_GIUONG";
 
-                        // Chọn giường hiện tại của sinh viên nếu có
-                        if (!string.IsNullOrEmpty(currentBed))
-                        {
-                            comboBoxMaGiuong.SelectedValue = currentBed;
-                        }
-                        else
-                        {
-                            comboBoxMaGiuong.SelectedIndex = -1; // Không chọn mặc định
-                        }
-                    }
-                    else
-                    {
-                        comboBoxMaGiuong.SelectedIndex = -1; // Không chọn mặc định
-                    }
-
-                    // Gắn dữ liệu vào ComboBox giường
-                    comboBoxMaGiuong.DataSource = bedTable;
-                    comboBoxMaGiuong.DisplayMember = "MA_GIUONG";
-                    comboBoxMaGiuong.ValueMember = "MA_GIUONG";
-
-                    // Kiểm tra nếu không có giường trống
-                    if (bedTable.Rows.Count == 0)
-                    {
-                        comboBoxMaGiuong.DataSource = null; // Xóa dữ liệu trong ComboBox
-                        MessageBox.Show("Phòng này không còn giường trống.");
-                        return;
+                        //// Nếu sinh viên đã có giường, đặt lại giá trị
+                        //if (!string.IsNullOrEmpty(maGiuongHienTai))
+                        //{
+                        //    comboBoxMaGiuong.SelectedValue = maGiuongHienTai;
+                        //}
+                        //else
+                        //{
+                        //    comboBoxMaGiuong.SelectedIndex = -1;
+                        //}
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                // Thông báo lỗi nếu xảy ra ngoại lệ
-                MessageBox.Show("Lỗi khi tải danh sách giường trống: " + ex.Message);
             }
         }
 
 
-        private void comboBoxMaPhong_ThayDoiMaPhong(object sender, EventArgs e)
-        {
-            using (SqlConnection conn = ketnoi.GetConnection())
-                try
-                {
-                    conn.Open();
-                    LoadAvailableBeds(conn);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi thay đổi mã phòng: " + ex.Message);
-                }
-        }
-
-        // Sự kiện khi click vào một ô trong DataGridView
         private void dataGridViewQLSV_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
-                // Lấy hàng được click
+                ResetInputFields();
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // Hàm kiểm tra giá trị không rỗng hoặc null
                 string GetSafeValue(object cellValue)
                 {
                     return cellValue != null && !string.IsNullOrWhiteSpace(cellValue.ToString()) ? cellValue.ToString() : string.Empty;
                 }
 
-                // Gán giá trị từ các ô vào TextBox
+                // Gán dữ liệu vào TextBox
                 textBoxMSSV.Text = GetSafeValue(row.Cells["MSSV"].Value);
                 textBoxHoTenSV.Text = GetSafeValue(row.Cells["HOTEN_SV"].Value);
                 textBoxCccd.Text = GetSafeValue(row.Cells["CCCD"].Value);
@@ -305,14 +482,34 @@ namespace WinformKTX
                 textBoxSdtNguoiThan.Text = GetSafeValue(row.Cells["SDT_NGUOITHAN"].Value);
                 textBoxQueQuan.Text = GetSafeValue(row.Cells["QUE_QUAN"].Value);
                 textBoxEmail.Text = GetSafeValue(row.Cells["EMAIL"].Value);
-                comboBoxMaPhong.Text = GetSafeValue(row.Cells["MA_PHONG"].Value);
-                comboBoxMaGiuong.Text = GetSafeValue(row.Cells["MA_GIUONG"].Value);
                 dateTimePickerNgayBatDauNoiTru.Text = GetSafeValue(row.Cells["NGAY_BAT_DAU_NOI_TRU"].Value);
                 dateTimePickerNgayKetThucNoiTru.Text = GetSafeValue(row.Cells["NGAY_KET_THUC_NOI_TRU"].Value);
                 comboBoxTrangThaiNoiTru.Text = GetSafeValue(row.Cells["TRANG_THAI_NOI_TRU"].Value);
-            }
 
+                //// Lấy mã nhưng hiển thị tên trong ComboBox
+                //comboBoxMaLoaiPhong.SelectedValue = GetSafeValue(row.Cells["MA_LOAI_PHONG"].Value);
+                //comboBoxMaTang.SelectedValue = GetSafeValue(row.Cells["MA_TANG"].Value);
+                //comboBoxMaPhong.SelectedValue = GetSafeValue(row.Cells["MA_PHONG"].Value);
+                //comboBoxMaGiuong.SelectedValue = GetSafeValue(row.Cells["MA_GIUONG"].Value);
+                SetComboBoxValue(comboBoxMaLoaiPhong, row.Cells["MA_LOAI_PHONG"].Value);
+                SetComboBoxValue(comboBoxMaTang, row.Cells["MA_TANG"].Value);
+                SetComboBoxValue(comboBoxMaPhong, row.Cells["MA_PHONG"].Value);
+                SetComboBoxValue(comboBoxMaGiuong, row.Cells["MA_GIUONG"].Value);
+
+            }
         }
+        private void SetComboBoxValue(ComboBox comboBox, object value)
+        {
+            if (comboBox.DataSource != null && value != null)
+            {
+                string safeValue = value.ToString();
+                if (comboBox.Items.Cast<DataRowView>().Any(item => item[comboBox.ValueMember].ToString() == safeValue))
+                {
+                    comboBox.SelectedValue = safeValue;
+                }
+            }
+        }
+
         private void buttonCapNhatSV_Click(object sender, EventArgs e)
         {
             // Kiểm tra dữ liệu MSSV không rỗng
@@ -325,6 +522,8 @@ namespace WinformKTX
             // Thực hiện cập nhật
             UpdateStudentInfo();
         }
+
+
         private void UpdateStudentInfo()
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -372,6 +571,16 @@ namespace WinformKTX
                         MessageBox.Show("Email không được để trống.");
                         return;
                     }
+                    if (comboBoxMaLoaiPhong.SelectedValue == null)
+                    {
+                        MessageBox.Show("Loại phòng không được để trống.");
+                        return;
+                    }
+                    if (comboBoxMaTang.SelectedValue == null)
+                    {
+                        MessageBox.Show("Tầng không được để trống.");
+                        return;
+                    }
                     if (comboBoxMaPhong.SelectedValue == null)
                     {
                         MessageBox.Show("Phòng không được để trống.");
@@ -388,6 +597,93 @@ namespace WinformKTX
                         return;
                     }
 
+                    try
+                    {
+                        conn.Open();
+
+                        // Truy vấn lấy dữ liệu cũ từ bảng NOI_TRU và SINH_VIEN
+                        string oldDataQuery = @"
+                            SELECT 
+                                nt.MA_PHONG, nt.MA_GIUONG, nt.NGAY_BAT_DAU_NOI_TRU, nt.NGAY_KET_THUC_NOI_TRU, nt.TRANG_THAI_NOI_TRU,
+                                sv.HOTEN_SV, sv.CCCD, sv.GIOI_TINH, sv.SDT_SINHVIEN, sv.EMAIL, sv.QUE_QUAN, sv.SDT_NGUOITHAN, sv.NGAY_SINH
+                            FROM NOI_TRU nt
+                            INNER JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
+                            WHERE nt.MSSV = @MSSV";
+
+                        using (SqlCommand oldDataCmd = new SqlCommand(oldDataQuery, conn))
+                        {
+                            oldDataCmd.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text);
+
+                            using (SqlDataReader reader = oldDataCmd.ExecuteReader())
+                            {
+                                if (reader.Read()) // Nếu có dữ liệu
+                                {
+                                    // Dữ liệu cũ từ bảng NOI_TRU
+                                    int oldMaPhong = Convert.ToInt32(reader["MA_PHONG"]);
+                                    int oldMaGiuong = Convert.ToInt32(reader["MA_GIUONG"]);
+                                    DateTime? oldNgayBatDau = reader["NGAY_BAT_DAU_NOI_TRU"] as DateTime?;
+                                    DateTime? oldNgayKetThuc = reader["NGAY_KET_THUC_NOI_TRU"] as DateTime?;
+                                    string oldTrangThai = reader["TRANG_THAI_NOI_TRU"].ToString();
+
+                                    // Dữ liệu cũ từ bảng SINH_VIEN
+                                    string oldHoTen = reader["HOTEN_SV"].ToString();
+                                    string oldCCCD = reader["CCCD"].ToString();
+                                    string oldGioiTinh = reader["GIOI_TINH"].ToString();
+                                    string oldSdt = reader["SDT_SINHVIEN"].ToString();
+                                    string oldEmail = reader["EMAIL"].ToString();
+                                    string oldQueQuan = reader["QUE_QUAN"].ToString();
+                                    string oldSdtNguoiThan = reader["SDT_NGUOITHAN"].ToString();
+                                    DateTime? oldNgaySinh = reader["NGAY_SINH"] as DateTime?;
+
+                                    // Dữ liệu mới từ giao diện
+                                    int newMaPhong = Convert.ToInt32(comboBoxMaPhong.SelectedValue);
+                                    int newMaGiuong = Convert.ToInt32(comboBoxMaGiuong.SelectedValue);
+                                    DateTime newNgayBatDau = dateTimePickerNgayBatDauNoiTru.Value;
+                                    DateTime newNgayKetThuc = dateTimePickerNgayKetThucNoiTru.Value;
+                                    string newTrangThai = comboBoxTrangThaiNoiTru.Text;
+
+                                    string newHoTen = textBoxHoTenSV.Text.Trim();
+                                    string newCCCD = textBoxCccd.Text.Trim();
+                                    string newGioiTinh = comboBoxGioiTinh.Text.Trim();
+                                    string newSdt = textBoxSdtSV.Text.Trim();
+                                    string newEmail = textBoxEmail.Text.Trim();
+                                    string newQueQuan = textBoxQueQuan.Text.Trim();
+                                    string newSdtNguoiThan = textBoxSdtNguoiThan.Text.Trim();
+                                    DateTime newNgaySinh = dateTimePickerNgaySinh.Value;
+
+                                    // Kiểm tra xem dữ liệu có thay đổi không
+                                    if (oldMaPhong == newMaPhong &&
+                                        oldMaGiuong == newMaGiuong &&
+                                        oldNgayBatDau == newNgayBatDau &&
+                                        oldNgayKetThuc == newNgayKetThuc &&
+                                        oldTrangThai == newTrangThai &&
+                                        oldHoTen == newHoTen &&
+                                        oldCCCD == newCCCD &&
+                                        oldGioiTinh == newGioiTinh &&
+                                        oldSdt == newSdt &&
+                                        oldEmail == newEmail &&
+                                        oldQueQuan == newQueQuan &&
+                                        oldSdtNguoiThan == newSdtNguoiThan &&
+                                        oldNgaySinh == newNgaySinh) // Thêm kiểm tra ngày sinh
+                                    {
+                                        MessageBox.Show("Không có thông tin nào cần cập nhật.");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Không tìm thấy thông tin sinh viên trong hệ thống.");
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi khi lấy thông tin: " + ex.Message);
+                    }
+
+
                     // Kiểm tra ngày sinh
                     if (dateTimePickerNgaySinh.Value > DateTime.Now)
                     {
@@ -395,7 +691,7 @@ namespace WinformKTX
                         return;
                     }
 
-                    conn.Open();
+                    //conn.Open();
 
                     // Lấy trạng thái nội trú hiện tại của sinh viên
                     string currentStatusQuery = @"SELECT TRANG_THAI_NOI_TRU FROM NOI_TRU WHERE MSSV = @MSSV";
@@ -418,324 +714,225 @@ namespace WinformKTX
                     DateTime ngayKetThucNoiTru = dateTimePickerNgayKetThucNoiTru.Value;
                     string trangThaiMoi = comboBoxTrangThaiNoiTru.Text;
 
-                    if (trangThaiMoi == "Chờ Gia Hạn" && DateTime.Now <= ngayKetThucNoiTru)
+                    if (trangThaiMoi == "Chờ gia hạn" && DateTime.Now <= ngayKetThucNoiTru)
                     {
-                        MessageBox.Show("Chỉ có thể đặt trạng thái 'Chờ Gia Hạn' khi đã qua thời gian kết thúc nội trú.");
+                        MessageBox.Show("Chỉ có thể đặt trạng thái 'Chờ gia hạn' khi đã qua thời gian kết thúc nội trú.");
                         return;
                     }
-                    if (trangThaiMoi == "Đang Nội Trú" && DateTime.Now > ngayKetThucNoiTru)
-                    {
-                        MessageBox.Show("Không thể đặt trạng thái 'Đang Nội Trú' khi đã qua thời gian kết thúc nội trú.");
-                        return;
-                    }
+                    //if (trangThaiMoi == "Đang Nội Trú" && DateTime.Now > ngayKetThucNoiTru)
+                    //{
+                    //    MessageBox.Show("Không thể đặt trạng thái 'Đang Nội Trú' khi đã qua thời gian kết thúc nội trú.");
+                    //    return;
+                    //}
                     // Kiểm tra trạng thái mới và trạng thái hiện tại
-                    if (trangThaiMoi == "Chờ Gia Hạn" && currentStatus == "Chưa Nội Trú")
+                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Đã đăng ký")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Chưa Nội Trú' sang 'Chờ Gia Hạn'.");
+                        MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Chờ gia hạn'.");
                         return;
                     }
-
-                    // Kiểm tra số lượng giường trống trong phòng
-                    string checkRoomQuery = @"SELECT SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong";
-                    int soGiuongConTrong;
-
-                    using (var checkCmd = new SqlCommand(checkRoomQuery, conn))
+                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Chờ gia hạn")
                     {
-                        checkCmd.Parameters.AddWithValue("@MaPhong", comboBoxMaPhong.SelectedValue); // Sử dụng ComboBox để chọn phòng
-                        soGiuongConTrong = Convert.ToInt32(checkCmd.ExecuteScalar());
-                    }
-
-                    if (soGiuongConTrong <= 0)
-                    {
-                        MessageBox.Show("Phòng đã đầy. Vui lòng chọn phòng khác.");
+                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần Chú Ý'.");
                         return;
                     }
+                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Đang Nội Trú")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Đang Nội Trú' sang 'Cần Chú Ý'.");
+                        return;
+                    }
+                    if (trangThaiMoi == "Đang Nội Trú" && currentStatus == "Cần Chú Ý")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Đang Nội Trú'.");
+                        return;
+                    }
+                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Cần Chú Ý")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Chờ gia hạn'.");
+                        return;
+                    }
+                    //// Kiểm tra số lượng giường trống trong phòng
+                    //string checkRoomQuery = @"SELECT SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong";
+                    //int soGiuongConTrong;
 
-                    //string query = @"
-                    //                -- Cập nhật thông tin sinh viên
-                    //                UPDATE SINH_VIEN 
-                    //                SET HOTEN_SV = @HoTenSV,
-                    //                    CCCD = @CCCD,
-                    //                    NGAY_SINH = @NgaySinh,
-                    //                    GIOI_TINH = @GioiTinh,
-                    //                    SDT_SINHVIEN = @SdtSV,
-                    //                    SDT_NGUOITHAN = @SdtNguoiThan,
-                    //                    QUE_QUAN = @QueQuan,
-                    //                    EMAIL = @Email
-                    //                WHERE MSSV = @MSSV;
+                    //using (var checkCmd = new SqlCommand(checkRoomQuery, conn))
+                    //{
+                    //    checkCmd.Parameters.AddWithValue("@MaPhong", comboBoxMaPhong.SelectedValue); // Sử dụng ComboBox để chọn phòng
+                    //    soGiuongConTrong = Convert.ToInt32(checkCmd.ExecuteScalar());
+                    //}
 
-                    //                -- Cập nhật thông tin nội trú
-                    //                DECLARE @OldMaPhong INT, @OldMaGiuong NVARCHAR(50);
+                    //if (soGiuongConTrong <= 0)
+                    //{
+                    //    MessageBox.Show("Phòng đã đầy. Vui lòng chọn phòng khác.");
+                    //    return;
+                    //}
 
-                    //                SELECT @OldMaPhong = MA_PHONG, @OldMaGiuong = MA_GIUONG 
-                    //                FROM NOI_TRU 
-                    //                WHERE MSSV = @MSSV;
+                    // Kiểm tra trạng thái giường trước khi cập nhật
+                    string checkBedStatusQuery = @"SELECT TINH_TRANG_GIUONG FROM GIUONG WHERE MA_GIUONG = @MaGiuong";
+                    string bedStatus = string.Empty;
+                    if ((trangThaiMoi == "Đang Nội Trú" || trangThaiMoi == "Chờ gia hạn") &&
+                    (currentStatus == "Đã đăng ký" || currentStatus == "Cần Chú Ý"))
+                    {
+                        using (var checkBedCmd = new SqlCommand(checkBedStatusQuery, conn))
+                        {
+                            checkBedCmd.Parameters.AddWithValue("@MaGiuong", comboBoxMaGiuong.SelectedValue);
+                            bedStatus = checkBedCmd.ExecuteScalar()?.ToString();
+                        }
 
-                    //                UPDATE NOI_TRU
-                    //                SET MA_PHONG = @MaPhong,
-                    //                    MA_GIUONG = @MaGiuong,
-                    //                    NGAY_BAT_DAU_NOI_TRU = @NgayBatDau,
-                    //                    NGAY_KET_THUC_NOI_TRU = @NgayKetThuc,
-                    //                    TRANG_THAI_NOI_TRU = @TrangThai
-                    //                WHERE MSSV = @MSSV;
+                        // Nếu giường đang được sử dụng, hiển thị thông báo và dừng xử lý
+                        if (bedStatus == "Đang Sử Dụng")
+                        {
+                            MessageBox.Show("Giường đã được sử dụng. Vui lòng chọn giường khác.");
+                            return;
+                        }
+                    }
 
-                    //                -- Nếu Mã Phòng thay đổi, cập nhật số giường còn trống và tình trạng phòng
-                    //                IF @OldMaPhong IS NOT NULL AND @OldMaPhong != @MaPhong
-                    //                BEGIN
-                    //                    -- Tăng số giường trống cho phòng cũ
-                    //                    UPDATE PHONG
-                    //                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
-                    //                    WHERE MA_PHONG = @OldMaPhong;
+                    string query = @"   -- Cập nhật thông tin sinh viên
+                                   UPDATE SINH_VIEN 
+                                   SET HOTEN_SV = @HoTenSV,
+                                       CCCD = @CCCD,
+                                       NGAY_SINH = @NgaySinh,
+                                       GIOI_TINH = @GioiTinh,
+                                       SDT_SINHVIEN = @SdtSV,
+                                       SDT_NGUOITHAN = @SdtNguoiThan,
+                                       QUE_QUAN = @QueQuan,
+                                       EMAIL = @Email
+                                   WHERE MSSV = @MSSV;
 
-                    //                    -- Kiểm tra và cập nhật tình trạng phòng cũ
-                    //                    DECLARE @OldSoGiuongConTrong INT, @OldSoGiuongToiDa INT;
-                    //                    SELECT @OldSoGiuongConTrong = SO_GIUONG_CON_TRONG, @OldSoGiuongToiDa = SO_GIUONG_TOI_DA 
-                    //                    FROM PHONG 
-                    //                    WHERE MA_PHONG = @OldMaPhong;
+                                   -- Lấy thông tin phòng cũ
+                                   DECLARE @OldMaPhong INT, @OldMaGiuong NVARCHAR(50);
+                                   SELECT @OldMaPhong = MA_PHONG, @OldMaGiuong = MA_GIUONG FROM NOI_TRU WHERE MSSV = @MSSV;
 
-                    //                    IF @OldSoGiuongConTrong = @OldSoGiuongToiDa
-                    //                    BEGIN
-                    //                        UPDATE PHONG
-                    //                        SET TINH_TRANG_PHONG = N'Trống'
-                    //                        WHERE MA_PHONG = @OldMaPhong;
-                    //                    END
-                    //                    ELSE IF @OldSoGiuongConTrong < @OldSoGiuongToiDa
-                    //                    BEGIN
-                    //                        UPDATE PHONG
-                    //                        SET TINH_TRANG_PHONG = N'Đang Sử Dụng'
-                    //                        WHERE MA_PHONG = @OldMaPhong;
-                    //                    END
-                    //                    ELSE IF @OldSoGiuongConTrong = 0
-                    //                    BEGIN
-                    //                        UPDATE PHONG
-                    //                        SET TINH_TRANG_PHONG = N'Đầy'
-                    //                        WHERE MA_PHONG = @OldMaPhong;
-                    //                    END;
+                                   -- Cập nhật thông tin nội trú
+                                   UPDATE NOI_TRU
+                                   SET MA_PHONG = @MaPhong,
+                                       MA_GIUONG = @MaGiuong,
+                                       NGAY_BAT_DAU_NOI_TRU = @NgayBatDau,
+                                       NGAY_KET_THUC_NOI_TRU = @NgayKetThuc,
+                                       TRANG_THAI_NOI_TRU = @TrangThai
+                                   WHERE MSSV = @MSSV;
 
-                    //                    -- Giảm số giường trống cho phòng mới
-                    //                    UPDATE PHONG
-                    //                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 1
-                    //                    WHERE MA_PHONG = @MaPhong;
-                    //                END;
-
-                    //                -- Kiểm tra và cập nhật tình trạng phòng mới
-                    //                DECLARE @NewSoGiuongConTrong INT, @NewSoGiuongToiDa INT;
-                    //                SELECT @NewSoGiuongConTrong = SO_GIUONG_CON_TRONG, @NewSoGiuongToiDa = SO_GIUONG_TOI_DA 
-                    //                FROM PHONG 
-                    //                WHERE MA_PHONG = @MaPhong;
-
-                    //                IF @NewSoGiuongConTrong = @NewSoGiuongToiDa
-                    //                BEGIN
-                    //                    UPDATE PHONG
-                    //                    SET TINH_TRANG_PHONG = N'Trống'
-                    //                    WHERE MA_PHONG = @MaPhong;
-                    //                END
-                    //                ELSE IF @NewSoGiuongConTrong < @NewSoGiuongToiDa
-                    //                BEGIN
-                    //                    UPDATE PHONG
-                    //                    SET TINH_TRANG_PHONG = N'Đang Sử Dụng'
-                    //                    WHERE MA_PHONG = @MaPhong;
-                    //                END
-                    //                ELSE IF @NewSoGiuongConTrong = 0
-                    //                BEGIN
-                    //                    UPDATE PHONG
-                    //                    SET TINH_TRANG_PHONG = N'Đầy'
-                    //                    WHERE MA_PHONG = @MaPhong;
-                    //                END;
-
-                    //                -- Nếu Mã Giường thay đổi, cập nhật trạng thái giường
-                    //                IF @OldMaGiuong IS NOT NULL AND @OldMaGiuong != @MaGiuong
-                    //                BEGIN
-                    //                    -- Đặt trạng thái giường cũ là 'Trống'
-                    //                    UPDATE GIUONG
-                    //                    SET TINH_TRANG_GIUONG = N'Trống'
-                    //                    WHERE MA_GIUONG = @OldMaGiuong;
-
-                    //                    -- Đặt trạng thái giường mới là 'Đang Sử Dụng'
-                    //                    UPDATE GIUONG
-                    //                    SET TINH_TRANG_GIUONG = N'Đang Sử Dụng'
-                    //                    WHERE MA_GIUONG = @MaGiuong;
-                    //                END;
-
-                    //               -- Khai báo biến trước khi sử dụng
-                    //                DECLARE @SoGiuongConLai INT;
-
-                    //                -- Nếu sinh viên chuyển từ 'Đang Nội Trú' sang 'Chưa Nội Trú'
-                    //                IF @TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Đang Nội Trú'
-                    //                BEGIN
-                    //                    -- Tăng số giường trống cho phòng cũ
-                    //                    UPDATE PHONG
-                    //                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
-                    //                    WHERE MA_PHONG = @OldMaPhong;
-
-                    //                    -- Cập nhật trạng thái giường cũ thành 'Trống'
-                    //                    UPDATE GIUONG
-                    //                    SET TINH_TRANG_GIUONG = N'Trống'
-                    //                    WHERE MA_GIUONG = @OldMaGiuong;
-
-                    //                    -- Lấy số giường còn lại sau khi cập nhật
-                    //                    SELECT @SoGiuongConLai = SO_GIUONG_CON_TRONG
-                    //                    FROM PHONG WHERE MA_PHONG = @OldMaPhong;
-
-                    //                    -- Cập nhật tình trạng phòng cũ
-                    //                    UPDATE PHONG 
-                    //                    SET TINH_TRANG_PHONG = 
-                    //                        CASE 
-                    //                            WHEN @SoGiuongConLai = 0 THEN N'Đầy'
-                    //                            WHEN @SoGiuongConLai = @OldSoGiuongToiDa THEN N'Trống'
-                    //                            ELSE N'Đang Sử Dụng'
-                    //                        END
-                    //                    WHERE MA_PHONG = @OldMaPhong;
-                    //                END;
-
-                    //                -- Nếu sinh viên chuyển từ 'Đang Nội Trú' sang 'Chờ Gia Hạn'
-                    //                ELSE IF @TrangThai = N'Chờ Gia Hạn' AND @CurrentStatus = N'Đang Nội Trú'
-                    //                BEGIN
-                    //                    UPDATE NOI_TRU
-                    //                    SET TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn'
-                    //                    WHERE MSSV = @MSSV;
-                    //                END;
-
-                    //                -- Nếu sinh viên chuyển từ 'Chờ Gia Hạn' sang 'Đang Nội Trú'
-                    //                ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                    //                BEGIN
-                    //                    UPDATE NOI_TRU
-                    //                    SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú'
-                    //                    WHERE MSSV = @MSSV;
-                    //                END;
-
-                    //                -- Nếu sinh viên chuyển từ 'Chờ Gia Hạn' sang 'Chưa Nội Trú' (Không được phép)
-                    //                ELSE IF @TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                    //                BEGIN
-                    //                    PRINT N'Không thể chuyển từ Chờ Gia Hạn sang Chưa Nội Trú';
-                    //                END;
-
-                    //                -- Nếu sinh viên chuyển từ 'Chưa Nội Trú' sang 'Đang Nội Trú'
-                    //                ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chưa Nội Trú'
-                    //                BEGIN
-                    //                    -- Kiểm tra nếu phòng đầy thì không cho phép
-                    //                    DECLARE @SoGiuongHienTai INT, @SoGiuongToiDa INT;
-                    //                    SELECT @SoGiuongHienTai = SO_GIUONG_CON_TRONG, @SoGiuongToiDa = SO_GIUONG_TOI_DA FROM PHONG WHERE MA_PHONG = @MaPhong;
-
-                    //                    IF @SoGiuongHienTai > 0
-                    //                    BEGIN
-                    //                        -- Giảm số giường trống cho phòng mới
-                    //                        UPDATE PHONG
-                    //                        SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 1
-                    //                        WHERE MA_PHONG = @MaPhong;
-
-                    //                        -- Cập nhật trạng thái giường mới thành 'Đang Sử Dụng'
-                    //                        UPDATE GIUONG
-                    //                        SET TINH_TRANG_GIUONG = N'Đang Sử Dụng'
-                    //                        WHERE MA_GIUONG = @MaGiuong;
-
-                    //                        -- Cập nhật trạng thái phòng sau khi thêm sinh viên
-                    //                        UPDATE PHONG 
-                    //                        SET TINH_TRANG_PHONG = 
-                    //                            CASE 
-                    //                                WHEN (@SoGiuongHienTai - 1) = 0 THEN N'Đầy'
-                    //                                ELSE N'Đang Sử Dụng'
-                    //                            END
-                    //                        WHERE MA_PHONG = @MaPhong;
-                    //                    END;
-                    //                END;";
-
-                    string query = @"
-                                    -- Cập nhật thông tin sinh viên
-                                    UPDATE SINH_VIEN 
-                                    SET HOTEN_SV = @HoTenSV,
-                                        CCCD = @CCCD,
-                                        NGAY_SINH = @NgaySinh,
-                                        GIOI_TINH = @GioiTinh,
-                                        SDT_SINHVIEN = @SdtSV,
-                                        SDT_NGUOITHAN = @SdtNguoiThan,
-                                        QUE_QUAN = @QueQuan,
-                                        EMAIL = @Email
-                                    WHERE MSSV = @MSSV;
-
-                                    -- Lấy thông tin phòng cũ
-                                    DECLARE @OldMaPhong INT, @OldMaGiuong NVARCHAR(50);
-                                    SELECT @OldMaPhong = MA_PHONG, @OldMaGiuong = MA_GIUONG FROM NOI_TRU WHERE MSSV = @MSSV;
-
-                                    -- Cập nhật thông tin nội trú
-                                    UPDATE NOI_TRU
-                                    SET MA_PHONG = @MaPhong,
-                                        MA_GIUONG = @MaGiuong,
-                                        NGAY_BAT_DAU_NOI_TRU = @NgayBatDau,
-                                        NGAY_KET_THUC_NOI_TRU = @NgayKetThuc,
-                                        TRANG_THAI_NOI_TRU = @TrangThai
-                                    WHERE MSSV = @MSSV;
-
-                                    -- Nếu đổi phòng, cập nhật số giường và trạng thái phòng
-                                    IF @OldMaPhong IS NOT NULL AND @OldMaPhong != @MaPhong
-                                    BEGIN
-                                        UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
-                                        UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
-
-                                        -- Cập nhật trạng thái phòng cũ
-                                        DECLARE @OldSoGiuongConTrong INT;
-                                        SELECT @OldSoGiuongConTrong = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @OldMaPhong;
-                                        UPDATE PHONG SET TINH_TRANG_PHONG = CASE
-                                            WHEN @OldSoGiuongConTrong = 0 THEN N'Đầy'
-                                            WHEN @OldSoGiuongConTrong = SO_GIUONG_TOI_DA THEN N'Trống'
-                                            ELSE N'Đang Sử Dụng'
-                                        END WHERE MA_PHONG = @OldMaPhong; 
-                                    END;
-
-                                    -- Cập nhật trạng thái phòng mới
-                                    DECLARE @NewSoGiuongConTrong INT;
-                                    SELECT @NewSoGiuongConTrong = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
-                                    UPDATE PHONG SET TINH_TRANG_PHONG = CASE
-                                        WHEN @NewSoGiuongConTrong = 0 THEN N'Đầy'
-                                        WHEN @NewSoGiuongConTrong = SO_GIUONG_TOI_DA THEN N'Trống'
-                                        ELSE N'Đang Sử Dụng'
-                                    END WHERE MA_PHONG = @MaPhong;
-
-                                    -- Nếu đổi giường, cập nhật trạng thái giường
+                                   -- Kiểm tra nếu có thay đổi giường hoặc thay đổi phòng
                                     IF @OldMaGiuong IS NOT NULL AND @OldMaGiuong != @MaGiuong
                                     BEGIN
+                                        -- Cập nhật giường cũ thành ""Trống""
                                         UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @OldMaGiuong;
-                                        UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
-                                    END;
 
-                                    -- Xử lý thay đổi trạng thái nội trú
-                                    DECLARE @SoGiuongConLai INT;
-                                    IF @TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Đang Nội Trú'
-                                    BEGIN
-                                        UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
-                                        UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @OldMaGiuong;
-                                        SELECT @SoGiuongConLai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @OldMaPhong;
+                                        -- Nếu thay đổi giường và chuyển sang phòng khác 
+                                        IF @OldMaPhong != @MaPhong
+                                        BEGIN
+                                            -- Nếu trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", tăng số giường trống của phòng cũ
+                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            BEGIN
+                                                UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
+                                            END
+
+                                            -- Nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", giảm số giường trống của phòng mới
+                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            BEGIN
+                                                UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
+                                                UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
+                                            END
+
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đang Nội Trú"" hoặc ""Chờ gia hạn"" -> ""Đã đăng ký"" hoặc ""Cần Chú Ý""
+                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
+                                            BEGIN
+                                                -- UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
+                                                UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @MaGiuong;
+                                            END
+
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đã đăng ký"" hoặc ""Cần Chú Ý"" -> ""Đang Nội Trú"" hoặc ""Chờ gia hạn""
+                                            IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            BEGIN
+                                                -- UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
+                                                UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
+                                            END
+                                        END
+                                        ELSE -- Nếu sinh viên đổi giường nhưng vẫn ở cùng phòng
+                                        BEGIN
+                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
+                                            BEGIN
+                                                -- Trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", trạng thái mới là ""Đã đăng ký"" hoặc ""Cần Chú Ý"" => tăng số giường trống
+                                                UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @MaPhong;
+                                            END
+                                            ELSE IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            BEGIN
+                                                -- Trạng thái cũ là ""Đã đăng ký"" hoặc ""Cần Chú Ý"", trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"" => giảm số giường trống
+                                                UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
+                                            END
+
+                                            -- Chỉ cần cập nhật giường mới nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn""
+                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            BEGIN
+                                                UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
+                                            END
+                                        END
+                                        -- Cập nhật trạng thái phòng cũ
+                                        DECLARE @OldSoGiuongCon INT;
+                                        SELECT @OldSoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @OldMaPhong;
                                         UPDATE PHONG SET TINH_TRANG_PHONG = CASE
-                                            WHEN @SoGiuongConLai = 0 THEN N'Đầy'
-                                            WHEN @SoGiuongConLai = SO_GIUONG_TOI_DA THEN N'Trống'
+                                            WHEN @OldSoGiuongCon = 0 THEN N'Đầy'
+                                            WHEN @OldSoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
                                             ELSE N'Đang Sử Dụng'
                                         END WHERE MA_PHONG = @OldMaPhong;
+
+                                        -- Cập nhật trạng thái phòng mới
+                                        DECLARE @NewSoGiuongCon INT;
+                                        SELECT @NewSoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+                                        UPDATE PHONG SET TINH_TRANG_PHONG = CASE
+                                            WHEN @NewSoGiuongCon = 0 THEN N'Đầy'
+                                            WHEN @NewSoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
+                                            ELSE N'Đang Sử Dụng'
+                                        END WHERE MA_PHONG = @MaPhong;
                                     END;
+                                   -- Nếu không thay đổi phòng hoặc giường, chỉ xử lý thay đổi trạng thái nội trú
+                                   IF @OldMaPhong = @MaPhong AND @OldMaGiuong = @MaGiuong
+                                   BEGIN
+                                       DECLARE @SoGiuongConLai INT;
+                                       -- Kiểm tra trạng thái cũ và mới để tránh cập nhật không hợp lệ
+                                       IF (@TrangThai = N'Đã đăng ký' OR @TrangThai = N'Cần Chú Ý') AND (@CurrentStatus = N'Đang Nội Trú')
+                                       BEGIN
+                                           UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
+                                           UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @OldMaGiuong;
+                                           SELECT @SoGiuongConLai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @OldMaPhong;
+                                           UPDATE PHONG SET TINH_TRANG_PHONG = CASE
+                                               WHEN @SoGiuongConLai = 0 THEN N'Đầy'
+                                               WHEN @SoGiuongConLai = SO_GIUONG_TOI_DA THEN N'Trống'
+                                               ELSE N'Đang Sử Dụng'
+                                           END WHERE MA_PHONG = @OldMaPhong;
+                                       END;
 
-                                    ELSE IF @TrangThai = N'Chờ Gia Hạn' AND @CurrentStatus = N'Đang Nội Trú'
-                                        UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn' WHERE MSSV = @MSSV;
+                                       ELSE IF @TrangThai = N'Chờ gia hạn' AND @CurrentStatus = N'Đang Nội Trú'
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' WHERE MSSV = @MSSV;
 
-                                    ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                                        UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú' WHERE MSSV = @MSSV;
+                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chờ gia hạn'
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú' WHERE MSSV = @MSSV;
 
-                                    ELSE IF @TrangThai = N'Chưa Nội Trú' AND @CurrentStatus = N'Chờ Gia Hạn'
-                                        PRINT N'Không thể chuyển từ Chờ Gia Hạn sang Chưa Nội Trú';
+                                       ELSE IF @TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Chờ gia hạn'
+                                           PRINT N'Không thể chuyển từ Chờ gia hạn sang Đã đăng ký';
 
-                                    ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chưa Nội Trú'
-                                    BEGIN
-                                        DECLARE @SoGiuongHienTai INT;
-                                        SELECT @SoGiuongHienTai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
-                                        IF @SoGiuongHienTai > 0
-                                        BEGIN
-                                            UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
-                                            UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
-                                            UPDATE PHONG SET TINH_TRANG_PHONG = CASE
-                                                WHEN (@SoGiuongHienTai - 1) = 0 THEN N'Đầy'
-                                                ELSE N'Đang Sử Dụng'
-                                            END WHERE MA_PHONG = @MaPhong;
-                                        END;
-                                    END;
-                                    ";
+                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND (@CurrentStatus = N'Đã đăng ký' OR @CurrentStatus = N'Cần Chú Ý')
+                                       BEGIN
+                                           DECLARE @SoGiuongHienTai INT;
+                                           SELECT @SoGiuongHienTai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+                                           IF @SoGiuongHienTai > 0
+                                           BEGIN
+                                               UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
+                                               UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
+                                               UPDATE PHONG SET TINH_TRANG_PHONG = CASE
+                                                   WHEN (@SoGiuongHienTai - 1) = 0 THEN N'Đầy'
+                                                   ELSE N'Đang Sử Dụng'
+                                               END WHERE MA_PHONG = @MaPhong;
+                                           END;
+                                       END;
+
+                                       -- Nếu chuyển đổi giữa Đã đăng ký và Cần Chú Ý thì chỉ cập nhật trạng thái
+                                       ELSE IF(@TrangThai = N'Cần Chú Ý' AND @CurrentStatus = N'Đã đăng ký') 
+                                           OR(@TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Cần Chú Ý')
+                                       BEGIN
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = @TrangThai WHERE MSSV = @MSSV;
+                                       END;
+                                   END;
+                                ";
 
                     using (var cmd = new SqlCommand(query, conn))
                     {
@@ -749,6 +946,8 @@ namespace WinformKTX
                         cmd.Parameters.AddWithValue("@SdtNguoiThan", textBoxSdtNguoiThan.Text);
                         cmd.Parameters.AddWithValue("@QueQuan", textBoxQueQuan.Text);
                         cmd.Parameters.AddWithValue("@Email", textBoxEmail.Text);
+                        cmd.Parameters.AddWithValue("@MaTang", comboBoxMaTang.SelectedValue); // Thêm mã tầng
+                        cmd.Parameters.AddWithValue("@MaLoaiPhong", comboBoxMaLoaiPhong.SelectedValue); // Thêm mã loại phòng
                         cmd.Parameters.AddWithValue("@MaPhong", comboBoxMaPhong.SelectedValue);
                         cmd.Parameters.AddWithValue("@MaGiuong", comboBoxMaGiuong.SelectedValue); // Sử dụng ComboBox để chọn giường
                         cmd.Parameters.AddWithValue("@NgayBatDau", dateTimePickerNgayBatDauNoiTru.Value);
@@ -762,6 +961,7 @@ namespace WinformKTX
                         if (rowsAffected > 0)
                         {
                             MessageBox.Show("Cập nhật thông tin sinh viên thành công!");
+                            ResetInputFields();
                             LoadData(); // Tải lại dữ liệu để cập nhật DataGridView
                         }
                         else
@@ -777,11 +977,12 @@ namespace WinformKTX
             }
         }
 
-        
+
         private void buttonXoaSV_Click(object sender, EventArgs e)
         {
             // Kiểm tra nếu MSSV không rỗng
-            if (string.IsNullOrWhiteSpace(textBoxMSSV.Text))
+            string mssv = textBoxMSSV.Text.Trim();
+            if (string.IsNullOrEmpty(mssv))
             {
                 MessageBox.Show("Mã số sinh viên không được để trống!");
                 return;
@@ -796,139 +997,106 @@ namespace WinformKTX
 
             if (dialogResult == DialogResult.Yes)
             {
-                DeleteStudent();
-            }
-        }
-
-        private void DeleteStudent()
-        {
-            using (SqlConnection conn = ketnoi.GetConnection())
-            {
-                try
+                using (SqlConnection conn = ketnoi.GetConnection())
                 {
-                    conn.Open();
-
-                    // Lấy thông tin phòng và giường trước khi xóa
-                    string getRoomAndBedQuery = @"
-                                                SELECT MA_PHONG, MA_GIUONG 
-                                                FROM NOI_TRU 
-                                                WHERE MSSV = @MSSV;";
-
-                    int? maPhong = null;
-                    int? maGiuong = null;
-
-                    using (var cmdGetInfo = new SqlCommand(getRoomAndBedQuery, conn))
+                    try
                     {
-                        cmdGetInfo.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text);
+                        conn.Open();
+                        string query = @"
+                                    -- Lưu thông tin phòng và giường của sinh viên trước khi xóa
+                                    DECLARE @MaPhong INT, @MaGiuong NVARCHAR(50), @CurrentStatus NVARCHAR(50);
 
-                        using (var reader = cmdGetInfo.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                maPhong = reader["MA_PHONG"] as int?;
-                                maGiuong = reader["MA_GIUONG"] as int?;
-                            }
-                        }
-                    }
+                                    SELECT @MaPhong = MA_PHONG, @MaGiuong = MA_GIUONG, @CurrentStatus = TRANG_THAI_NOI_TRU
+                                    FROM NOI_TRU
+                                    WHERE MSSV = @MSSV;
 
-                    // Xóa thông tin sinh viên và nội trú
-                    string deleteQuery = @"
-                                        DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
-                                        DELETE FROM SINH_VIEN WHERE MSSV = @MSSV;";
+                                    -- Xóa sinh viên khỏi NOI_TRU
+                                    DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
 
-                    using (var cmdDelete = new SqlCommand(deleteQuery, conn))
-                    {
-                        cmdDelete.Parameters.AddWithValue("@MSSV", textBoxMSSV.Text);
+                                    -- Xóa sinh viên khỏi SINH_VIEN
+                                    DELETE FROM SINH_VIEN WHERE MSSV = @MSSV;
 
-                        // Thực thi câu lệnh SQL
-                        int rowsAffected = cmdDelete.ExecuteNonQuery();
+                                    -- Nếu sinh viên đang trong trạng thái Đang Nội Trú hoặc Chờ gia hạn, cập nhật giường và phòng
+                                    IF @CurrentStatus IN(N'Đang Nội Trú', N'Chờ gia hạn')
+                                    BEGIN
+                                        -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
+                                        IF @MaGiuong IS NOT NULL
+                                        BEGIN
+                                            UPDATE GIUONG
+                                            SET TINH_TRANG_GIUONG = N'Trống'
+                                            WHERE MA_GIUONG = @MaGiuong;
+                                                            END
+
+                                                            -- Cập nhật số giường trống của phòng liên quan
+                                                            IF @MaPhong IS NOT NULL
+                                    BEGIN
+                                    UPDATE PHONG
+                                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
+                                    WHERE MA_PHONG = @MaPhong;
+
+                                    --Cập nhật trạng thái phòng dựa trên số giường còn trống
+                                    DECLARE @SoGiuongCon INT;
+                                        SELECT @SoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+
+                                    UPDATE PHONG
+                                    SET TINH_TRANG_PHONG =
+                                        CASE
+                                            WHEN @SoGiuongCon = 0 THEN N'Đầy'
+                                            WHEN @SoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
+                                            ELSE N'Đang Sử Dụng'
+                                        END
+                                    WHERE MA_PHONG = @MaPhong;
+                                    END
+                                END;";
+
+
+                        SqlCommand command = new SqlCommand(query, conn);
+                        command.Parameters.AddWithValue("@MSSV", mssv);
+
+                        int rowsAffected = command.ExecuteNonQuery();
 
                         if (rowsAffected > 0)
                         {
-                            MessageBox.Show("Xóa sinh viên thành công!");
+                            MessageBox.Show("Đã xóa sinh viên và cập nhật giường, phòng thành công.");
 
-                            // Cập nhật trạng thái giường và phòng nếu thông tin tồn tại
-                            if (maPhong.HasValue && maGiuong.HasValue)
-                            {
-                                UpdateRoomAndBedStatus(conn, maPhong.Value, maGiuong.Value);
-                            }
-
-                            LoadData(); // Tải lại dữ liệu để cập nhật DataGridView
+                            // 🔹 Reset các ô nhập liệu sau khi xóa thành công
+                            ResetInputFields();
                         }
                         else
                         {
                             MessageBox.Show("Không tìm thấy sinh viên để xóa.");
                         }
+
+                        // Load lại dữ liệu sau khi xóa
+                        LoadData();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
-                }
             }
         }
-
-        private void UpdateRoomAndBedStatus(SqlConnection conn, int maPhong, int maGiuong)
+        // Tạo hàm Reset các ô nhập liệu để dễ tái sử dụng
+        private void ResetInputFields()
         {
-            try
-            {
-                // Đặt trạng thái giường là 'Trống'
-                string updateBedQuery = @"
-                                        UPDATE GIUONG
-                                        SET TINH_TRANG_GIUONG = N'Trống'
-                                        WHERE MA_GIUONG = @MaGiuong;";
-
-                using (var cmdUpdateBed = new SqlCommand(updateBedQuery, conn))
-                {
-                    cmdUpdateBed.Parameters.AddWithValue("@MaGiuong", maGiuong);
-                    cmdUpdateBed.ExecuteNonQuery();
-                }
-
-                // Tăng số giường trống trong phòng
-                string updateRoomQuery = @"
-                                        UPDATE PHONG
-                                        SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
-                                        WHERE MA_PHONG = @MaPhong;
-
-                                        -- Cập nhật trạng thái phòng
-                                        DECLARE @SoGiuongConTrong INT, @SoGiuongToiDa INT;
-                                        SELECT @SoGiuongConTrong = SO_GIUONG_CON_TRONG, @SoGiuongToiDa = SO_GIUONG_TOI_DA
-                                        FROM PHONG
-                                        WHERE MA_PHONG = @MaPhong;
-
-                                        IF @SoGiuongConTrong = @SoGiuongToiDa
-                                        BEGIN
-                                            UPDATE PHONG
-                                            SET TINH_TRANG_PHONG = N'Trống'
-                                            WHERE MA_PHONG = @MaPhong;
-                                        END
-                                        ELSE IF @SoGiuongConTrong = 0
-                                        BEGIN
-                                            UPDATE PHONG
-                                            SET TINH_TRANG_PHONG = N'Đầy'
-                                            WHERE MA_PHONG = @MaPhong;
-                                        END
-                                        ELSE
-                                        BEGIN
-                                            UPDATE PHONG
-                                            SET TINH_TRANG_PHONG = N'Đang Sử Dụng'
-                                            WHERE MA_PHONG = @MaPhong;
-                                        END;";
-
-                using (var cmdUpdateRoom = new SqlCommand(updateRoomQuery, conn))
-                {
-                    cmdUpdateRoom.Parameters.AddWithValue("@MaPhong", maPhong);
-                    cmdUpdateRoom.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi cập nhật trạng thái giường và phòng: " + ex.Message);
-            }
+            textBoxMSSV.Text = "";
+            textBoxHoTenSV.Text = "";
+            textBoxCccd.Text = "";
+            dateTimePickerNgaySinh.Value = DateTime.Now;
+            comboBoxGioiTinh.SelectedIndex = -1;
+            textBoxSdtSV.Text = "";
+            textBoxSdtNguoiThan.Text = "";
+            textBoxQueQuan.Text = "";
+            textBoxEmail.Text = "";
+            dateTimePickerNgayBatDauNoiTru.Value = DateTime.Now;
+            dateTimePickerNgayKetThucNoiTru.Value = DateTime.Now;
+            comboBoxTrangThaiNoiTru.SelectedIndex = -1;
+            comboBoxMaLoaiPhong.SelectedIndex = -1;
+            comboBoxMaTang.SelectedIndex = -1;
+            comboBoxMaPhong.SelectedIndex = -1;
+            comboBoxMaGiuong.SelectedIndex = -1;
         }
-
-
-
         private void buttonAllSV_Click(object sender, EventArgs e)
         {
             // Gọi phương thức LoadData() để tải tất cả sinh viên
@@ -942,23 +1110,36 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"SELECT SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV, 
-                                    SINH_VIEN.CCCD, 
-                                    SINH_VIEN.NGAY_SINH, 
-                                    SINH_VIEN.GIOI_TINH, 
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN 
-                             INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                             WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên đang nội trú
+                    string query = @"
+                                    SELECT 
+                                        SINH_VIEN.MSSV,
+                                        SINH_VIEN.HOTEN_SV, 
+                                        SINH_VIEN.CCCD, 
+                                        SINH_VIEN.NGAY_SINH, 
+                                        SINH_VIEN.GIOI_TINH, 
+                                        SINH_VIEN.SDT_SINHVIEN,
+                                        SINH_VIEN.SDT_NGUOITHAN,
+                                        SINH_VIEN.QUE_QUAN,
+                                        SINH_VIEN.EMAIL,
+                                        NOI_TRU.MA_PHONG,       -- Giữ nguyên mã để xử lý dữ liệu
+                                        NOI_TRU.MA_GIUONG,      -- Giữ nguyên mã để xử lý dữ liệu
+                                        PHONG.MA_TANG,          -- Giữ nguyên mã để xử lý dữ liệu
+                                        LOAI_PHONG.MA_LOAI_PHONG, -- Giữ nguyên mã để xử lý dữ liệu
+                                        NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                                        NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                                        NOI_TRU.TRANG_THAI_NOI_TRU,
+                                        PHONG.TEN_PHONG,      -- Hiển thị thay vì MA_PHONG
+                                        GIUONG.TEN_GIUONG,    -- Hiển thị thay vì MA_GIUONG
+                                        TANG.TEN_TANG,        -- Hiển thị thay vì MA_TANG
+                                        LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                                    FROM SINH_VIEN
+                                    INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                                    INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                                    INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                                    INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                                    INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên đang nội trú
+                    // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -966,8 +1147,36 @@ namespace WinformKTX
                     // Hiển thị dữ liệu lên DataGridView
                     dataGridView1.DataSource = dataTable;
 
-                    // Gọi hàm cập nhật labelChiSo
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    // Ẩn mã nhưng giữ lại để xử lý
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_TANG"].Visible = false;
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false;
+
+                    // Hiển thị tên thay thế
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+                    // Cập nhật label chỉ số
                     UpdateLabelChiSo(dataTable.Rows.Count);
+
                 }
                 catch (Exception ex)
                 {
@@ -975,6 +1184,7 @@ namespace WinformKTX
                 }
             }
         }
+
 
         private void buttonChuaNoiTru_Click(object sender, EventArgs e)
         {
@@ -983,23 +1193,37 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"SELECT SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV, 
-                                    SINH_VIEN.CCCD, 
-                                    SINH_VIEN.NGAY_SINH, 
-                                    SINH_VIEN.GIOI_TINH, 
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN 
-                             INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                             WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chưa nội trú'"; // Điều kiện lọc sinh viên chưa nội trú
+                    string query = @"
+                            SELECT 
+                                SINH_VIEN.MSSV,
+                                SINH_VIEN.HOTEN_SV, 
+                                SINH_VIEN.CCCD, 
+                                SINH_VIEN.NGAY_SINH, 
+                                SINH_VIEN.GIOI_TINH, 
+                                SINH_VIEN.SDT_SINHVIEN,
+                                SINH_VIEN.SDT_NGUOITHAN,
+                                SINH_VIEN.QUE_QUAN,
+                                SINH_VIEN.EMAIL,
+                                NOI_TRU.MA_PHONG,
+                                NOI_TRU.MA_GIUONG,
+                                PHONG.MA_TANG,
+                                LOAI_PHONG.MA_LOAI_PHONG,
+                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                                NOI_TRU.TRANG_THAI_NOI_TRU,
+                                PHONG.TEN_PHONG,
+                                GIUONG.TEN_GIUONG,
+                                TANG.TEN_TANG,
+                                LOAI_PHONG.TEN_LOAI_PHONG
+                            FROM SINH_VIEN
+                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đã đăng ký'"; // Lọc sinh viên Đã đăng ký
+
+                    // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -1007,7 +1231,34 @@ namespace WinformKTX
                     // Hiển thị dữ liệu lên DataGridView
                     dataGridView1.DataSource = dataTable;
 
-                    // Gọi hàm cập nhật labelChiSo
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    // Ẩn mã nhưng giữ lại để xử lý
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_TANG"].Visible = false;
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false;
+
+                    // Hiển thị tên thay thế
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+                    // Cập nhật label chỉ số
                     UpdateLabelChiSo(dataTable.Rows.Count);
                 }
                 catch (Exception ex)
@@ -1016,6 +1267,91 @@ namespace WinformKTX
                 }
             }
         }
+
+
+        private void buttonCanChuY_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                            SELECT 
+                                SINH_VIEN.MSSV,
+                                SINH_VIEN.HOTEN_SV, 
+                                SINH_VIEN.CCCD, 
+                                SINH_VIEN.NGAY_SINH, 
+                                SINH_VIEN.GIOI_TINH, 
+                                SINH_VIEN.SDT_SINHVIEN,
+                                SINH_VIEN.SDT_NGUOITHAN,
+                                SINH_VIEN.QUE_QUAN,
+                                SINH_VIEN.EMAIL,
+                                NOI_TRU.MA_PHONG,
+                                NOI_TRU.MA_GIUONG,
+                                PHONG.MA_TANG,
+                                LOAI_PHONG.MA_LOAI_PHONG,
+                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                                NOI_TRU.TRANG_THAI_NOI_TRU,
+                                PHONG.TEN_PHONG,
+                                GIUONG.TEN_GIUONG,
+                                TANG.TEN_TANG,
+                                LOAI_PHONG.TEN_LOAI_PHONG
+                            FROM SINH_VIEN
+                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Cần Chú Ý'";
+
+                    // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    // Hiển thị dữ liệu lên DataGridView
+                    dataGridView1.DataSource = dataTable;
+
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    // Ẩn mã nhưng giữ lại để xử lý
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_TANG"].Visible = false;
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false;
+
+                    // Hiển thị tên thay thế
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+                    // Cập nhật label chỉ số
+                    UpdateLabelChiSo(dataTable.Rows.Count);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi tải dữ liệu: " + ex.Message);
+                }
+            }
+        }
+
+
         private void buttonChoGiaHan_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -1023,23 +1359,37 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"SELECT SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV, 
-                                    SINH_VIEN.CCCD, 
-                                    SINH_VIEN.NGAY_SINH, 
-                                    SINH_VIEN.GIOI_TINH, 
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN 
-                             INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                             WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn'"; // Điều kiện lọc sinh viên chờ gia hạn
+                    string query = @"
+                            SELECT 
+                                SINH_VIEN.MSSV,
+                                SINH_VIEN.HOTEN_SV, 
+                                SINH_VIEN.CCCD, 
+                                SINH_VIEN.NGAY_SINH, 
+                                SINH_VIEN.GIOI_TINH, 
+                                SINH_VIEN.SDT_SINHVIEN,
+                                SINH_VIEN.SDT_NGUOITHAN,
+                                SINH_VIEN.QUE_QUAN,
+                                SINH_VIEN.EMAIL,
+                                NOI_TRU.MA_PHONG,
+                                NOI_TRU.MA_GIUONG,
+                                PHONG.MA_TANG,
+                                LOAI_PHONG.MA_LOAI_PHONG,
+                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                                NOI_TRU.TRANG_THAI_NOI_TRU,
+                                PHONG.TEN_PHONG,
+                                GIUONG.TEN_GIUONG,
+                                TANG.TEN_TANG,
+                                LOAI_PHONG.TEN_LOAI_PHONG
+                            FROM SINH_VIEN
+                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ gia hạn'"; // Lọc sinh viên Chờ gia hạn
+
+                    // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -1047,7 +1397,34 @@ namespace WinformKTX
                     // Hiển thị dữ liệu lên DataGridView
                     dataGridView1.DataSource = dataTable;
 
-                    // Gọi hàm cập nhật labelChiSo
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    // Ẩn mã nhưng giữ lại để xử lý
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_TANG"].Visible = false;
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false;
+
+                    // Hiển thị tên thay thế
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+                    // Cập nhật label chỉ số
                     UpdateLabelChiSo(dataTable.Rows.Count);
                 }
                 catch (Exception ex)
@@ -1056,6 +1433,7 @@ namespace WinformKTX
                 }
             }
         }
+
 
         private void buttonHetThoiGianNoiTru_Click(object sender, EventArgs e)
         {
@@ -1064,23 +1442,37 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"SELECT SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV,
-                                    SINH_VIEN.CCCD,
-                                    SINH_VIEN.NGAY_SINH,
-                                    SINH_VIEN.GIOI_TINH,
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN
-                             INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                             WHERE NOI_TRU.NGAY_KET_THUC_NOI_TRU < GETDATE()"; // Điều kiện lọc sinh viên hết thời gian nội trú
+                    string query = @"
+                    SELECT 
+                        SINH_VIEN.MSSV,
+                        SINH_VIEN.HOTEN_SV, 
+                        SINH_VIEN.CCCD, 
+                        SINH_VIEN.NGAY_SINH, 
+                        SINH_VIEN.GIOI_TINH, 
+                        SINH_VIEN.SDT_SINHVIEN,
+                        SINH_VIEN.SDT_NGUOITHAN,
+                        SINH_VIEN.QUE_QUAN,
+                        SINH_VIEN.EMAIL,
+                        NOI_TRU.MA_PHONG,
+                        NOI_TRU.MA_GIUONG,
+                        PHONG.MA_TANG,
+                        LOAI_PHONG.MA_LOAI_PHONG,
+                        NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                        NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                        NOI_TRU.TRANG_THAI_NOI_TRU,
+                        PHONG.TEN_PHONG,
+                        GIUONG.TEN_GIUONG,
+                        TANG.TEN_TANG,
+                        LOAI_PHONG.TEN_LOAI_PHONG
+                    FROM SINH_VIEN
+                    INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    WHERE NOI_TRU.NGAY_KET_THUC_NOI_TRU < GETDATE()"; // Lọc sinh viên hết thời gian nội trú
+
+                    // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -1088,7 +1480,34 @@ namespace WinformKTX
                     // Hiển thị dữ liệu lên DataGridView
                     dataGridView1.DataSource = dataTable;
 
-                    // Gọi hàm cập nhật labelChiSo
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    // Ẩn mã nhưng giữ lại để xử lý
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_TANG"].Visible = false;
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false;
+
+                    // Hiển thị tên thay thế
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+
+                    // Cập nhật label chỉ số
                     UpdateLabelChiSo(dataTable.Rows.Count);
                 }
                 catch (Exception ex)
@@ -1099,13 +1518,14 @@ namespace WinformKTX
         }
 
 
+
         private void buttonTimTheoMSSV_Click(object sender, EventArgs e)
         {
-            string maSinhVien = textBoxTimKiemMSSV.Text.Trim(); // Lấy mã sinh viên từ TextBox
+            string maSinhVien = textBoxTimKiemMSSV.Text.Trim(); // Lấy MSSV từ ô tìm kiếm
 
             if (string.IsNullOrEmpty(maSinhVien))
             {
-                MessageBox.Show("Vui lòng nhập mã sinh viên cần tìm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng nhập MSSV để tìm kiếm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1114,46 +1534,85 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"SELECT SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV,
-                                    SINH_VIEN.CCCD,
-                                    SINH_VIEN.NGAY_SINH,
-                                    SINH_VIEN.GIOI_TINH,
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,
-                                    NOI_TRU.MA_GIUONG,
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU
-                             FROM SINH_VIEN
-                             LEFT JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                             WHERE SINH_VIEN.MSSV = @MSSV"; // Tìm sinh viên theo mã
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                    adapter.SelectCommand.Parameters.AddWithValue("@MSSV", maSinhVien); // Thêm tham số mã sinh viên
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
+                    string query = @"
+        SELECT SV.MSSV, SV.HOTEN_SV, SV.CCCD, SV.NGAY_SINH, SV.GIOI_TINH, 
+               SV.SDT_SINHVIEN, SV.SDT_NGUOITHAN, SV.QUE_QUAN, SV.EMAIL, 
+               NT.MA_PHONG, NT.MA_GIUONG, NT.NGAY_BAT_DAU_NOI_TRU, NT.NGAY_KET_THUC_NOI_TRU, NT.TRANG_THAI_NOI_TRU, 
+               P.MA_TANG, P.MA_LOAI_PHONG
+        FROM SINH_VIEN SV
+        LEFT JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+        LEFT JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+        WHERE SV.MSSV = @MSSV";
 
-                    // Kiểm tra nếu không có kết quả
-                    if (dataTable.Rows.Count == 0)
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(query, conn))
                     {
-                        MessageBox.Show("Không tìm thấy sinh viên với mã: " + maSinhVien, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        adapter.SelectCommand.Parameters.AddWithValue("@MSSV", maSinhVien);
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+
+                        if (dataTable.Rows.Count == 0)
+                        {
+                            MessageBox.Show("Không tìm thấy sinh viên với MSSV: " + maSinhVien, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            //// Xóa dữ liệu các ô nhập liệu
+                            //textBoxMSSV.Text = "";
+                            //textBoxHoTenSV.Text = "";
+                            //textBoxCccd.Text = "";
+                            //dateTimePickerNgaySinh.Value = DateTime.Now;
+                            //comboBoxGioiTinh.SelectedIndex = -1;
+                            //textBoxSdtSV.Text = "";
+                            //textBoxSdtNguoiThan.Text = "";
+                            //textBoxQueQuan.Text = "";
+                            //textBoxEmail.Text = "";
+                            //dateTimePickerNgayBatDauNoiTru.Value = DateTime.Now;
+                            //dateTimePickerNgayKetThucNoiTru.Value = DateTime.Now;
+                            //comboBoxTrangThaiNoiTru.SelectedIndex = -1;
+                            //comboBoxMaLoaiPhong.SelectedIndex = -1;
+                            //comboBoxMaTang.SelectedIndex = -1;
+                            //comboBoxMaPhong.SelectedIndex = -1;
+                            //comboBoxMaGiuong.SelectedIndex = -1;
+
+                            ResetInputFields();
+
+                            return;
+                        }
+
+                        // Lấy dòng dữ liệu đầu tiên
+                        DataRow row = dataTable.Rows[0];
+
+                        string GetSafeValue(object cellValue) =>
+                            cellValue != DBNull.Value && cellValue != null ? cellValue.ToString() : string.Empty;
+
+                        // Gán dữ liệu vào các TextBox
+                        textBoxMSSV.Text = GetSafeValue(row["MSSV"]);
+                        textBoxHoTenSV.Text = GetSafeValue(row["HOTEN_SV"]);
+                        textBoxCccd.Text = GetSafeValue(row["CCCD"]);
+                        dateTimePickerNgaySinh.Text = GetSafeValue(row["NGAY_SINH"]);
+                        comboBoxGioiTinh.Text = GetSafeValue(row["GIOI_TINH"]);
+                        textBoxSdtSV.Text = GetSafeValue(row["SDT_SINHVIEN"]);
+                        textBoxSdtNguoiThan.Text = GetSafeValue(row["SDT_NGUOITHAN"]);
+                        textBoxQueQuan.Text = GetSafeValue(row["QUE_QUAN"]);
+                        textBoxEmail.Text = GetSafeValue(row["EMAIL"]);
+                        dateTimePickerNgayBatDauNoiTru.Text = GetSafeValue(row["NGAY_BAT_DAU_NOI_TRU"]);
+                        dateTimePickerNgayKetThucNoiTru.Text = GetSafeValue(row["NGAY_KET_THUC_NOI_TRU"]);
+                        comboBoxTrangThaiNoiTru.Text = GetSafeValue(row["TRANG_THAI_NOI_TRU"]);
+
+                        // Gán dữ liệu vào ComboBox (dùng hàm SetComboBoxValue)
+                        SetComboBoxValue(comboBoxMaLoaiPhong, row["MA_LOAI_PHONG"]);
+                        SetComboBoxValue(comboBoxMaTang, row["MA_TANG"]);
+                        SetComboBoxValue(comboBoxMaPhong, row["MA_PHONG"]);
+                        SetComboBoxValue(comboBoxMaGiuong, row["MA_GIUONG"]);
+
                     }
-
-                    // Hiển thị dữ liệu lên DataGridView
-                    dataGridView1.DataSource = dataTable;
-
-                    // Gọi hàm cập nhật labelChiSo
-                    UpdateLabelChiSo(dataTable.Rows.Count);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi khi tìm kiếm: " + ex.Message);
+                    MessageBox.Show("Lỗi khi tìm kiếm sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
+
         private void UpdateLabelChiSo(int filteredCount)
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -1179,7 +1638,7 @@ namespace WinformKTX
         private void buttonXacNhanNoiTruAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xác nhận nội trú cho tất cả sinh viên chưa nội trú không?",
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn xác nhận nội trú cho tất cả sinh viên Đã đăng ký không?",
                                                   "Xác Nhận Nội Trú",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
@@ -1188,103 +1647,93 @@ namespace WinformKTX
             {
                 return;
             }
-
             using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
                     conn.Open();
 
-                    // Lấy danh sách sinh viên chưa nội trú cùng với thông tin phòng và giường
-                    string query = @"
-                SELECT MSSV, MA_PHONG, MA_GIUONG 
-                FROM NOI_TRU 
-                WHERE TRANG_THAI_NOI_TRU = N'Chưa Nội Trú'";
+                    // Bước 1: Kiểm tra nếu có sinh viên quá hạn nội trú
+                    string checkOverdueQuery = @"
+                    SELECT COUNT(*) FROM NOI_TRU
+                    WHERE NGAY_KET_THUC_NOI_TRU < GETDATE()";
 
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
+                    SqlCommand overdueCmd = new SqlCommand(checkOverdueQuery, conn);
+                    int overdueCount = Convert.ToInt32(overdueCmd.ExecuteScalar());
 
-                    if (dataTable.Rows.Count > 0)
+                    if (overdueCount > 0)
                     {
-                        foreach (DataRow row in dataTable.Rows)
-                        {
-                            string mssv = row["MSSV"].ToString();
-                            int maPhong = Convert.ToInt32(row["MA_PHONG"]);
-                            int maGiuong = Convert.ToInt32(row["MA_GIUONG"]);
+                        MessageBox.Show("Có sinh viên đã quá hạn nội trú. Không thể xác nhận tất cả!");
+                        return;
+                    }
 
-                            // Cập nhật trạng thái nội trú của sinh viên (không thay đổi NGAY_BAT_DAU_NOI_TRU)
-                            string updateQuery = @"
-                                                    UPDATE NOI_TRU 
-                                                    SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú' 
-                                                    WHERE MSSV = @MSSV";
+                    // Bước 2: Kiểm tra số lần xuất hiện nhiều nhất của một MA_GIUONG
+                    string checkDuplicateQuery = @"
+                                                SELECT MAX(SoLuong) AS SoLuongLonNhat
+                                                FROM (
+                                                    SELECT COUNT(NOI_TRU.MA_GIUONG) AS SoLuong
+                                                    FROM NOI_TRU
+                                                    GROUP BY NOI_TRU.MA_GIUONG
+                                                ) AS BangTam;";
 
-                            using (var command = new SqlCommand(updateQuery, conn))
-                            {
-                                command.Parameters.AddWithValue("@MSSV", mssv);
-                                command.ExecuteNonQuery();
-                            }
+                    SqlCommand checkCmd = new SqlCommand(checkDuplicateQuery, conn);
+                    int maxCount = Convert.ToInt32(checkCmd.ExecuteScalar());
 
-                            // Giảm số giường trống trong phòng
-                            string updatePhongQuery = @"
-                                                        UPDATE PHONG
-                                                        SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 1
-                                                        WHERE MA_PHONG = @MaPhong";
+                    if (maxCount > 1) // Nếu có giường bị trùng
+                    {
+                        MessageBox.Show($"Có giường bị đăng ký trùng. Vui lòng kiểm tra lại.");
+                        return;
+                    }
 
-                            using (var cmdUpdatePhong = new SqlCommand(updatePhongQuery, conn))
-                            {
-                                cmdUpdatePhong.Parameters.AddWithValue("@MaPhong", maPhong);
-                                cmdUpdatePhong.ExecuteNonQuery();
-                            }
 
-                            // Cập nhật trạng thái giường thành "Đang Sử Dụng"
-                            string updateGiuongQuery = @"
-                                                        UPDATE GIUONG
-                                                        SET TINH_TRANG_GIUONG = N'Đang Sử Dụng'
-                                                        WHERE MA_GIUONG = @MaGiuong";
+                    // Xác nhận nội trú cho tất cả sinh viên chưa được xác nhận
+                    string updateQuery = @"
+                                    -- Tạo bảng tạm để lưu danh sách sinh viên vừa được xác nhận nội trú
+                                    DECLARE @DanhSachSinhVienMoi TABLE (MA_PHONG INT, MA_GIUONG NVARCHAR(50));
 
-                            using (var cmdUpdateGiuong = new SqlCommand(updateGiuongQuery, conn))
-                            {
-                                cmdUpdateGiuong.Parameters.AddWithValue("@MaGiuong", maGiuong);
-                                cmdUpdateGiuong.ExecuteNonQuery();
-                            }
+                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang Nội Trú'
+                                    INSERT INTO @DanhSachSinhVienMoi (MA_PHONG, MA_GIUONG)
+                                    SELECT MA_PHONG, MA_GIUONG
+                                    FROM NOI_TRU
+                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
-                            // Cập nhật trạng thái phòng dựa trên số giường trống
-                            string updateTinhTrangPhongQuery = @"
-                                                                DECLARE @SoGiuongConTrong INT, @SoGiuongToiDa INT;
-                                                                SELECT @SoGiuongConTrong = SO_GIUONG_CON_TRONG, @SoGiuongToiDa = SO_GIUONG_TOI_DA 
-                                                                FROM PHONG 
-                                                                WHERE MA_PHONG = @MaPhong;
+                                    -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận
+                                    UPDATE NOI_TRU
+                                    SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú'
+                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
-                                                                IF @SoGiuongConTrong = 0
-                                                                BEGIN
-                                                                    UPDATE PHONG
-                                                                    SET TINH_TRANG_PHONG = N'Đầy'
-                                                                    WHERE MA_PHONG = @MaPhong;
-                                                                END
-                                                                ELSE IF @SoGiuongConTrong < @SoGiuongToiDa
-                                                                BEGIN
-                                                                    UPDATE PHONG
-                                                                    SET TINH_TRANG_PHONG = N'Đang Sử Dụng'
-                                                                    WHERE MA_PHONG = @MaPhong;
-                                                                END;";
+                                    -- Cập nhật trạng thái giường thành 'Đang Sử Dụng' cho giường của sinh viên vừa xác nhận
+                                    UPDATE GIUONG
+                                    SET TINH_TRANG_GIUONG = N'Đang Sử Dụng'
+                                    WHERE MA_GIUONG IN (SELECT MA_GIUONG FROM @DanhSachSinhVienMoi);
 
-                            using (var cmdUpdateTinhTrangPhong = new SqlCommand(updateTinhTrangPhongQuery, conn))
-                            {
-                                cmdUpdateTinhTrangPhong.Parameters.AddWithValue("@MaPhong", maPhong);
-                                cmdUpdateTinhTrangPhong.ExecuteNonQuery();
-                            }
-                        }
+                                    -- Giảm số giường còn trống trong từng phòng tương ứng với số sinh viên vừa được xác nhận
+                                    UPDATE PHONG
+                                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 
+                                        (SELECT COUNT(*) FROM @DanhSachSinhVienMoi DS WHERE DS.MA_PHONG = PHONG.MA_PHONG)
+                                    WHERE MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @DanhSachSinhVienMoi);
 
-                        MessageBox.Show("Đã xác nhận nội trú cho tất cả sinh viên chưa nội trú.");
+                                    -- Cập nhật trạng thái phòng dựa trên số giường còn trống
+                                    UPDATE PHONG
+                                    SET TINH_TRANG_PHONG =
+                                        CASE
+                                            WHEN SO_GIUONG_CON_TRONG = 0 THEN N'Đầy'
+                                            WHEN SO_GIUONG_CON_TRONG = SO_GIUONG_TOI_DA THEN N'Trống'
+                                            ELSE N'Đang Sử Dụng'
+                                        END
+                                    WHERE MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @DanhSachSinhVienMoi);";
+                    SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
+                    int rowsAffected = updateCmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Xác nhận nội trú thành công!");
+                        LoadData(); // Tải lại dữ liệu để cập nhật DataGridView
                     }
                     else
                     {
-                        MessageBox.Show("Không có sinh viên nào trong trạng thái 'Chưa Nội Trú' cần xác nhận.");
+                        MessageBox.Show("Không có sinh viên nào cần xác nhận nội trú.");
                     }
-
-                    // Cập nhật lại dữ liệu trong DataGridView
-                    LoadData();
                 }
                 catch (Exception ex)
                 {
@@ -1293,40 +1742,11 @@ namespace WinformKTX
             }
         }
 
-
-        // Kiểm tra trạng thái nút bấm trước khi Form hiển thị
-        private void QuanLiSinhVien_Load(object sender, EventArgs e)
-        {
-            CheckButtonXacNhanNoiTruAll();
-        }
-
-        // Hàm kiểm tra và bật/tắt nút Xác nhận nội trú
-        private void CheckButtonXacNhanNoiTruAll()
-        {
-            using (SqlConnection conn = ketnoi.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-                    string query = @"SELECT COUNT(*) FROM SINH_VIEN WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU)";
-                    SqlCommand command = new SqlCommand(query, conn);
-                    int count = (int)command.ExecuteScalar();
-
-                    // Bật nút nếu có sinh viên chưa nội trú, tắt nút nếu không có
-                    btnXacNhanNoiTruAll.Enabled = count > 0;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi kiểm tra sinh viên chưa nội trú: " + ex.Message);
-                }
-            }
-        }
-
         private void buttonChoGiaHanNoiTruAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Chờ Gia Hạn' cho tất cả sinh viên đã quá hạn nội trú không?",
-                                                  "Xác Nhận Chờ Gia Hạn",
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Chờ gia hạn' cho tất cả sinh viên đã quá hạn nội trú không?",
+                                                  "Xác Nhận Chờ gia hạn",
                                                   MessageBoxButtons.YesNo,
                                                   MessageBoxIcon.Question);
 
@@ -1353,12 +1773,12 @@ namespace WinformKTX
 
                     if (dataTable.Rows.Count > 0)
                     {
-                        // Chuyển trạng thái Chờ Gia Hạn cho tất cả sinh viên đã quá hạn nội trú
+                        // Chuyển trạng thái Chờ gia hạn cho tất cả sinh viên đã quá hạn nội trú
                         foreach (DataRow row in dataTable.Rows)
                         {
                             string mssv = row["MSSV"].ToString();
                             string updateQuery = @"UPDATE NOI_TRU 
-                                           SET TRANG_THAI_NOI_TRU = N'Chờ Gia Hạn' 
+                                           SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' 
                                            WHERE MSSV = @MSSV";
 
                             using (var command = new SqlCommand(updateQuery, conn))
@@ -1368,7 +1788,7 @@ namespace WinformKTX
                             }
                         }
 
-                        MessageBox.Show("Đã chuyển trạng thái 'Chờ Gia Hạn' cho tất cả sinh viên đã quá hạn nội trú.");
+                        MessageBox.Show("Đã chuyển trạng thái 'Chờ gia hạn' cho tất cả sinh viên đã quá hạn nội trú.");
                     }
                     else
                     {
@@ -1380,14 +1800,496 @@ namespace WinformKTX
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Lỗi khi cập nhật trạng thái chờ gia hạn: " + ex.Message);
+                    MessageBox.Show("Lỗi khi cập nhật trạng thái Chờ gia hạn: " + ex.Message);
                 }
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void buttonChuaNoiTruAll_Click(object sender, EventArgs e)
         {
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên không?",
+                                                  "Xác Nhận Đã đăng ký",
+                                                  MessageBoxButtons.YesNo,
+                                                  MessageBoxIcon.Question);
 
+            // Nếu người dùng chọn "No", dừng thao tác
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Lấy danh sách sinh viên có trạng thái nội trú khác 'Đã đăng ký'
+                    string query = @"SELECT MSSV, MA_PHONG, MA_GIUONG 
+                             FROM NOI_TRU 
+                             WHERE TRANG_THAI_NOI_TRU <> N'Đã đăng ký'";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    if (dataTable.Rows.Count > 0)
+                    {
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            string mssv = row["MSSV"].ToString();
+                            int maPhong = row["MA_PHONG"] != DBNull.Value ? Convert.ToInt32(row["MA_PHONG"]) : 0;
+                            string maGiuong = row["MA_GIUONG"]?.ToString();
+
+                            // Cập nhật trạng thái sinh viên về 'Đã đăng ký'
+                            string updateQuery = @"UPDATE NOI_TRU 
+                                           SET TRANG_THAI_NOI_TRU = N'Đã đăng ký' 
+                                           WHERE MSSV = @MSSV";
+
+                            using (var command = new SqlCommand(updateQuery, conn))
+                            {
+                                command.Parameters.AddWithValue("@MSSV", mssv);
+                                command.ExecuteNonQuery();
+                            }
+
+                            // Nếu có phòng cũ, cập nhật lại số giường trống
+                            if (maPhong > 0)
+                            {
+                                string updatePhongQuery = @"UPDATE PHONG 
+                                                    SET SO_GIUONG_CON_TRONG += 1 
+                                                    WHERE MA_PHONG = @MaPhong";
+
+                                using (var cmdPhong = new SqlCommand(updatePhongQuery, conn))
+                                {
+                                    cmdPhong.Parameters.AddWithValue("@MaPhong", maPhong);
+                                    cmdPhong.ExecuteNonQuery();
+                                }
+
+                                // Cập nhật tình trạng phòng
+                                string updateTinhTrangPhong = @"
+                                                                DECLARE @SoGiuongConTrong INT;
+                                                                SELECT @SoGiuongConTrong = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+                                                                UPDATE PHONG 
+                                                                SET TINH_TRANG_PHONG = 
+                                                                    CASE 
+                                                                        WHEN @SoGiuongConTrong = 0 THEN N'Đầy'
+                                                                        WHEN @SoGiuongConTrong = SO_GIUONG_TOI_DA THEN N'Trống'
+                                                                        ELSE N'Đang Sử Dụng'
+                                                                    END
+                                                                WHERE MA_PHONG = @MaPhong;";
+
+                                using (var cmdTinhTrang = new SqlCommand(updateTinhTrangPhong, conn))
+                                {
+                                    cmdTinhTrang.Parameters.AddWithValue("@MaPhong", maPhong);
+                                    cmdTinhTrang.ExecuteNonQuery();
+                                }
+                            }
+
+                            // Nếu có giường cũ, cập nhật trạng thái giường
+                            if (!string.IsNullOrEmpty(maGiuong))
+                            {
+                                string updateGiuongQuery = @"UPDATE GIUONG 
+                                                     SET TINH_TRANG_GIUONG = N'Trống' 
+                                                     WHERE MA_GIUONG = @MaGiuong";
+
+                                using (var cmdGiuong = new SqlCommand(updateGiuongQuery, conn))
+                                {
+                                    cmdGiuong.Parameters.AddWithValue("@MaGiuong", maGiuong);
+                                    cmdGiuong.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        MessageBox.Show("Đã chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không có sinh viên nào để cập nhật trạng thái.");
+                    }
+
+                    // Cập nhật lại dữ liệu trên DataGridView
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi cập nhật trạng thái 'Đã đăng ký': " + ex.Message);
+                }
+            }
+        }
+
+        private void buttonXoaAllSvChoGiaHan_Click(object sender, EventArgs e)
+        {
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' không?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            // Nếu người dùng chọn "No", thoát khỏi phương thức
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                                   -- Tạo biến bảng để lưu danh sách phòng và giường của sinh viên ""Gia hạn""
+                                    DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+                                    -- Lưu lại thông tin trước khi xóa
+                                    INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
+                                    SELECT MSSV, MA_PHONG, MA_GIUONG
+                                    FROM NOI_TRU
+                                    WHERE TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
+
+                                    -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
+                                    DELETE NT
+                                    FROM NOI_TRU NT
+                                    JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+                                    -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi SINH_VIEN
+                                    DELETE SV
+                                    FROM SINH_VIEN SV
+                                    JOIN @PhongGiuong PG ON SV.MSSV = PG.MSSV;
+
+                                    -- Cập nhật số giường trống của các phòng liên quan
+                                    UPDATE P
+                                    SET P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_CON_TRONG + 
+                                        (SELECT COUNT(*) FROM @PhongGiuong PG WHERE P.MA_PHONG = PG.MA_PHONG)
+                                    FROM PHONG P
+                                    JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+                                    -- Cập nhật trạng thái phòng
+                                    UPDATE P
+                                    SET P.TINH_TRANG_PHONG = 
+                                        CASE 
+                                            WHEN P.SO_GIUONG_CON_TRONG = 0 THEN N'Đầy'
+                                            WHEN P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_TOI_DA THEN N'Trống'
+                                            ELSE N'Đang Sử Dụng'
+                                        END
+                                    FROM PHONG P
+                                    JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+                                    -- Cập nhật trạng thái giường của các sinh viên bị xóa
+                                    UPDATE G
+                                    SET G.TINH_TRANG_GIUONG = N'Trống'
+                                    FROM GIUONG G
+                                    JOIN @PhongGiuong PG ON G.MA_GIUONG = PG.MA_GIUONG;
+                                    ";
+
+                    SqlCommand command = new SqlCommand(query, conn);
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' và cập nhật giường, phòng thành công.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Chờ gia hạn' để xóa.");
+                    }
+
+                    // Load lại dữ liệu sau khi xóa
+                    LoadData();
+                    ResetInputFields();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+                }
+            }
+        }
+
+        private void buttonXoaAllSvChuaNoiTru_Click(object sender, EventArgs e)
+        {
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Đã đăng ký' không?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            // Nếu người dùng chọn "No", thoát khỏi phương thức
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                            -- Xóa sinh viên khỏi NOI_TRU trước
+                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+
+                            -- Xóa sinh viên khỏi SINH_VIEN
+                            DELETE FROM SINH_VIEN 
+                            WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
+                        ";
+
+                    SqlCommand command = new SqlCommand(query, conn);
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Đã đăng ký' thành công.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Đã đăng ký' để xóa.");
+                    }
+
+                    // Load lại dữ liệu sau khi xóa
+                    LoadData();
+                    ResetInputFields();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+                }
+            }
+        }
+        private void buttonXoaAllSvCanChuY_Click(object sender, EventArgs e)
+        {
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Cần Chú Ý' không?",
+                "Xác nhận xóa",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            // Nếu người dùng chọn "No", thoát khỏi phương thức
+            if (result == DialogResult.No)
+            {
+                return;
+            }
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                            -- Xóa sinh viên khỏi NOI_TRU trước
+                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần Chú Ý';
+
+                            -- Xóa sinh viên khỏi SINH_VIEN
+                            DELETE FROM SINH_VIEN 
+                            WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
+                        ";
+
+                    SqlCommand command = new SqlCommand(query, conn);
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Cần Chú Ý' thành công.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Cần Chú Ý' để xóa.");
+                    }
+
+                    // Load lại dữ liệu sau khi xóa
+                    LoadData();
+                    ResetInputFields();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+                }
+            }
+        }
+
+
+        private void buttonXoaAllSinhVien_Click(object sender, EventArgs e)
+        {
+            // Hộp thoại xác nhận lần 1
+            DialogResult confirm1 = MessageBox.Show("Bạn có chắc chắn muốn xóa tất cả sinh viên không?",
+                                                    "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirm1 != DialogResult.Yes)
+            {
+                return;
+            }
+
+            // Hộp thoại xác nhận lần 2
+            DialogResult confirm2 = MessageBox.Show("Hành động này sẽ xóa tất cả sinh viên. Bạn có chắc chắn tiếp tục không?",
+                                                    "Xác nhận lần cuối", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirm2 != DialogResult.Yes)
+            {
+                return;
+            }
+
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = @"
+                            -- Lưu thông tin phòng và giường của tất cả sinh viên
+                            DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+                            INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
+                            SELECT MSSV, MA_PHONG, MA_GIUONG FROM NOI_TRU;
+
+                            -- Xóa sinh viên khỏi NOI_TRU
+                            DELETE FROM NOI_TRU;
+
+                            -- Xóa sinh viên khỏi SINH_VIEN
+                            DELETE FROM SINH_VIEN;
+
+                            -- Cập nhật số giường trống của các phòng liên quan
+                            UPDATE P
+                            SET P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_TOI_DA
+                            FROM PHONG P
+                            WHERE P.MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @PhongGiuong);
+
+                            -- Cập nhật trạng thái phòng
+                            UPDATE P
+                            SET P.TINH_TRANG_PHONG = N'Trống'
+                            FROM PHONG P
+                            WHERE P.MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @PhongGiuong);
+
+                            -- Cập nhật trạng thái giường của các sinh viên bị xóa
+                            UPDATE G
+                            SET G.TINH_TRANG_GIUONG = N'Trống'
+                            FROM GIUONG G
+                            WHERE G.MA_GIUONG IN (SELECT DISTINCT MA_GIUONG FROM @PhongGiuong);
+                        ";
+
+                    SqlCommand command = new SqlCommand(query, conn);
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    MessageBox.Show("Đã xóa tất cả sinh viên và cập nhật giường, phòng thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Load lại dữ liệu sau khi xóa
+                    LoadData();
+                    ResetInputFields();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void buttonSvDangKiTrungGiuong_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+
+                    // Bước 1: Truy vấn danh sách các giường bị trùng (xuất hiện trên 2 lần)
+                    string queryTrungGiuong = @"
+                SELECT MA_GIUONG
+                FROM NOI_TRU
+                GROUP BY MA_GIUONG
+                HAVING COUNT(*) > 1";
+
+                    SqlCommand cmdTrungGiuong = new SqlCommand(queryTrungGiuong, conn);
+                    SqlDataAdapter adapterTrungGiuong = new SqlDataAdapter(cmdTrungGiuong);
+                    DataTable dtTrungGiuong = new DataTable();
+                    adapterTrungGiuong.Fill(dtTrungGiuong);
+
+                    // Nếu không có giường nào bị trùng, hiển thị thông báo và thoát
+                    if (dtTrungGiuong.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Không có sinh viên nào đăng ký trùng giường.");
+                        dataGridView1.DataSource = null; // Xóa dữ liệu cũ
+                        return;
+                    }
+
+                    // Tạo danh sách các mã giường bị trùng để sử dụng trong truy vấn tiếp theo
+                    List<string> danhSachMaGiuong = dtTrungGiuong.AsEnumerable()
+                        .Select(row => $"'{row["MA_GIUONG"]}'")
+                        .ToList();
+                    string maGiuongTrungStr = string.Join(",", danhSachMaGiuong);
+
+                    // Bước 2: Lấy danh sách sinh viên có MA_GIUONG nằm trong danh sách bị trùng
+                    string query = $@"
+                SELECT 
+                    SINH_VIEN.MSSV,
+                    SINH_VIEN.HOTEN_SV, 
+                    SINH_VIEN.CCCD, 
+                    SINH_VIEN.NGAY_SINH, 
+                    SINH_VIEN.GIOI_TINH, 
+                    SINH_VIEN.SDT_SINHVIEN,
+                    SINH_VIEN.SDT_NGUOITHAN,
+                    SINH_VIEN.QUE_QUAN,
+                    SINH_VIEN.EMAIL,
+                    NOI_TRU.MA_PHONG,    -- Giữ lại để xử lý dữ liệu
+                    NOI_TRU.MA_GIUONG,   -- Giữ lại để xử lý dữ liệu
+                    PHONG.MA_TANG,       -- Giữ lại để xử lý dữ liệu
+                    LOAI_PHONG.MA_LOAI_PHONG,   -- Giữ lại để xử lý dữ liệu
+                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    NOI_TRU.TRANG_THAI_NOI_TRU,
+                    PHONG.TEN_PHONG,     -- Hiển thị thay vì MA_PHONG
+                    GIUONG.TEN_GIUONG,   -- Hiển thị thay vì MA_GIUONG
+                    TANG.TEN_TANG,       -- Hiển thị thay vì MA_TANG
+                    LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                FROM SINH_VIEN
+                INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                WHERE NOI_TRU.MA_GIUONG IN ({maGiuongTrungStr})";
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    // Hiển thị dữ liệu lên DataGridView
+                    dataGridView1.DataSource = dataTable;
+
+                    // Đổi tên cột hiển thị trên DataGridView
+                    dataGridView1.Columns["MSSV"].HeaderText = "Mã Số Sinh Viên";
+                    dataGridView1.Columns["HOTEN_SV"].HeaderText = "Họ và Tên";
+                    dataGridView1.Columns["CCCD"].HeaderText = "CCCD";
+                    dataGridView1.Columns["NGAY_SINH"].HeaderText = "Ngày Sinh";
+                    dataGridView1.Columns["GIOI_TINH"].HeaderText = "Giới Tính";
+                    dataGridView1.Columns["SDT_SINHVIEN"].HeaderText = "SĐT Sinh Viên";
+                    dataGridView1.Columns["SDT_NGUOITHAN"].HeaderText = "SĐT Người Thân";
+                    dataGridView1.Columns["QUE_QUAN"].HeaderText = "Quê Quán";
+                    dataGridView1.Columns["EMAIL"].HeaderText = "Email";
+
+                    dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false; // Ẩn Mã Loại Tầng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Tên Loại Tầng";
+
+                    dataGridView1.Columns["MA_TANG"].Visible = false;   // Ẩn Mã Tầng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tên Tầng";
+
+                    dataGridView1.Columns["MA_PHONG"].Visible = false;  // Ẩn Mã Phòng nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+
+                    dataGridView1.Columns["MA_GIUONG"].Visible = false; // Ẩn Mã Giường nhưng vẫn giữ giá trị xử lý
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Tên Giường";
+
+                    dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
+                    dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
+                    dataGridView1.Columns["TRANG_THAI_NOI_TRU"].HeaderText = "Trạng Thái Nội Trú";
+                    // Cập nhật label chỉ số
+                    UpdateLabelChiSo(dataTable.Rows.Count);
+
+                    MessageBox.Show($"Có {dataTable.Rows.Count} sinh viên đăng ký trùng giường.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi lấy danh sách sinh viên đăng ký trùng giường: " + ex.Message);
+                }
+            }
         }
     }
 }
