@@ -19,7 +19,7 @@ namespace WinformKTX
 {
     public partial class ThanhToan : Form
     {
-   
+
         KetnoiCSDL ketnoi = new KetnoiCSDL();
         public ThanhToan()
         {
@@ -126,10 +126,10 @@ namespace WinformKTX
                         else
                         {
                             MessageBox.Show("Không tìm thấy dữ liệu!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            txthoten.Clear();
+                            txtmasosinhvien.Clear();
                         }
                     }
-                    txthoten.Clear();
-                    txtmasosinhvien.Clear();
                 }
                 catch (Exception ex)
                 {
@@ -137,8 +137,6 @@ namespace WinformKTX
                 }
             }
         }
-
-
 
 
         private void ThanhToan_Load(object sender, EventArgs e)
@@ -151,21 +149,39 @@ namespace WinformKTX
             string hoTenSinhVien = txthoten.Text.Trim();
             string maSoSinhVien = txtmasosinhvien.Text.Trim();
 
+
             if (string.IsNullOrEmpty(hoTenSinhVien) || string.IsNullOrEmpty(maSoSinhVien))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ Họ tên và Mã số sinh viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+
+            if (string.IsNullOrEmpty(hoTenSinhVien) || string.IsNullOrEmpty(maSoSinhVien))
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ Họ tên và Mã số sinh viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+
             using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
                     conn.Open();
+
+
+                    string checkQuery = @"
+            SELECT TRANG_THAI_NOI_TRU 
+            FROM NOI_TRU 
+            WHERE MSSV = @mssv AND TRANG_THAI_NOI_TRU = N'Đang nội trú'";
+
+
                     string checkQuery = @"
                 SELECT TRANG_THAI_NOI_TRU 
                 FROM NOI_TRU 
                 WHERE MSSV = @mssv AND TRANG_THAI_NOI_TRU = N'Đang nội trú'";
+
                     using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
                     {
                         checkCmd.Parameters.AddWithValue("@mssv", maSoSinhVien);
@@ -176,6 +192,55 @@ namespace WinformKTX
                             MessageBox.Show("Sinh viên không có trạng thái 'Đang nội trú', không thể xác nhận thanh toán!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
+
+                    }
+                    string getMaNoiTruQuery = @"
+            SELECT TOP 1 MA_NOI_TRU 
+            FROM NOI_TRU 
+            WHERE MSSV = @mssv 
+            ORDER BY NGAY_BAT_DAU_NOI_TRU DESC";
+
+                    string maNoiTru = null;
+                    using (SqlCommand getMaNoiTruCmd = new SqlCommand(getMaNoiTruQuery, conn))
+                    {
+                        getMaNoiTruCmd.Parameters.AddWithValue("@mssv", maSoSinhVien);
+                        object maNoiTruResult = getMaNoiTruCmd.ExecuteScalar();
+                        if (maNoiTruResult != null)
+                        {
+                            maNoiTru = maNoiTruResult.ToString();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Không tìm thấy mã nội trú của sinh viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                    string checkPaymentQuery = @"
+            SELECT TRANG_THAI_THANH_TOAN 
+            FROM THANH_TOAN_PHONG 
+            WHERE MA_NOI_TRU = @maNoiTru";
+
+                    using (SqlCommand checkPaymentCmd = new SqlCommand(checkPaymentQuery, conn))
+                    {
+                        checkPaymentCmd.Parameters.AddWithValue("@maNoiTru", maNoiTru);
+                        object paymentStatus = checkPaymentCmd.ExecuteScalar();
+
+                        if (paymentStatus != null && paymentStatus.ToString() == "Đã thanh toán")
+                        {
+                            MessageBox.Show("Sinh viên đã thanh toán trước đó, không thể xác nhận lại!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                    string updateQuery = @"
+            UPDATE THANH_TOAN_PHONG 
+            SET TRANG_THAI_THANH_TOAN = N'Đã thanh toán', NGAY_THANH_TOAN = GETDATE() 
+            WHERE MA_NOI_TRU = @maNoiTru";
+                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@maNoiTru", maNoiTru);
+                        updateCmd.ExecuteNonQuery();
+                    }
+
                     }
                     string updateQuery = @"
                 UPDATE THANH_TOAN_PHONG 
@@ -186,6 +251,7 @@ namespace WinformKTX
                         updateCmd.Parameters.AddWithValue("@mssv", maSoSinhVien);
                         updateCmd.ExecuteNonQuery();
                     }
+
 
                     MessageBox.Show("Thanh toán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     btntracuu_Click(sender, e);
@@ -198,7 +264,6 @@ namespace WinformKTX
             txthoten.Clear();
             txtmasosinhvien.Clear();
         }
-
 
         private void btnloaiphongnam_Click(object sender, EventArgs e)
         {
@@ -381,16 +446,27 @@ namespace WinformKTX
                                    "TTP.NGAY_THANH_TOAN AS 'Ngày thanh toán phòng', " +
                                    "TTP.GIA_TIEN AS 'Giá tiền phòng', " +
                                    "TTP.TRANG_THAI_THANH_TOAN AS 'Trạng thái thanh toán phòng', " +
+
+                                   "DN.TIEN_DIEN AS 'Tiền điện', " +
+                                   "DN.TIEN_NUOC AS 'Tiền nước', " +
+                                   "DN.TINH_TRANG_TT AS 'Trạng thái thanh toán điện nước', " +
+                                   "DN.NGAY_THANH_TOAN_DIEN_NUOC AS 'Ngày thanh toán điện nước', " +
+
                                    "DN.TIEN_DIEN AS 'Tiền điện', "+
                                    "DN.TIEN_NUOC AS 'Tiền nước', "+
                                    "DN.TINH_TRANG_TT AS 'Trạng thái thanh toán điện nước', "+
                                    "DN.NGAY_THANH_TOAN_DIEN_NUOC AS 'Ngày thanh toán điện nước', "+
+
                                    "T.TEN_TANG AS 'Tên tầng' " +
                                    "FROM THANH_TOAN_PHONG TTP " +
                                    "JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU " +
                                    "JOIN SINH_VIEN SV ON NT.MSSV = SV.MSSV " +
                                    "JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG " +
+
+                                   "JOIN DIEN_NUOC DN ON P.MA_PHONG = DN.MA_PHONG " +
+
                                    "JOIN DIEN_NUOC DN ON P.MA_PHONG = DN.MA_PHONG "+
+
                                    "JOIN LOAI_PHONG LP ON P.MA_LOAI_PHONG = LP.MA_LOAI_PHONG " +
                                    "JOIN TANG T ON P.MA_TANG = T.MA_TANG " +
                                    "WHERE (@tenTang = '' OR T.TEN_TANG = @tenTang) " +
@@ -455,6 +531,23 @@ namespace WinformKTX
                 {
                     conn.Open();
                     string query = @"
+
+            SELECT TOP 1
+                tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
+                tp.GIA_TIEN, 
+                (SELECT TOP 1 TIEN_DIEN FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_DIEN,
+                (SELECT TOP 1 TIEN_NUOC FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_NUOC,
+                (SELECT MAX(NGAY_THANH_TOAN) FROM THANH_TOAN_PHONG WHERE MA_NOI_TRU = tp.MA_NOI_TRU) AS NGAY_THANH_TOAN, 
+                (SELECT MAX(NGAY_THANH_TOAN_DIEN_NUOC) FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG) AS NGAY_THANH_TOAN_DIEN_NUOC,
+                tp.TRANG_THAI_THANH_TOAN
+            FROM THANH_TOAN_PHONG tp
+            JOIN NOI_TRU nt ON tp.MA_NOI_TRU = nt.MA_NOI_TRU
+            JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
+            JOIN PHONG p ON nt.MA_PHONG = p.MA_PHONG
+            JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
+            WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan
+            ORDER BY NGAY_THANH_TOAN DESC";
+
                      SELECT 
                      tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
                      tp.GIA_TIEN, dn.TIEN_DIEN, dn.TIEN_NUOC, tp.NGAY_THANH_TOAN, tp.TRANG_THAI_THANH_TOAN
@@ -465,6 +558,7 @@ namespace WinformKTX
                      JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
                      JOIN DIEN_NUOC dn ON p.MA_PHONG = dn.MA_PHONG
                      WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan";
+
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -479,6 +573,10 @@ namespace WinformKTX
                 if (dt.Rows.Count == 0)
                 {
                     MessageBox.Show("Không tìm thấy dữ liệu hóa đơn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    txtmathanhtoan.Clear();
+
+
                     return;
                 }
 
@@ -488,6 +586,10 @@ namespace WinformKTX
                 if (trangThaiThanhToan != "Đã thanh toán")
                 {
                     MessageBox.Show("Không thể in hóa đơn do sinh viên chưa thực hiện thanh toán!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    txtmathanhtoan.Clear();
+
+
                     return;
                 }
 
@@ -499,6 +601,10 @@ namespace WinformKTX
                 decimal tienNuoc = Convert.ToDecimal(row["TIEN_NUOC"]);
                 decimal tongTien = giaTien + tienDien + tienNuoc;
                 string ngayThanhToan = Convert.ToDateTime(row["NGAY_THANH_TOAN"]).ToString("dd/MM/yyyy");
+
+                string ngayThanhToanDienNuoc = Convert.ToDateTime(row["NGAY_THANH_TOAN_DIEN_NUOC"]).ToString("dd/MM/yyyy");
+
+
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PDF Files|*.pdf";
@@ -526,11 +632,21 @@ namespace WinformKTX
                     document.Add(new Paragraph($"Ho ten SV: {hoten}", normalFont));
                     document.Add(new Paragraph($"Phong: {tenPhong}\n", normalFont));
 
+                    document.Add(new Paragraph($"Ngay thanh toan: {ngayThanhToan}", normalFont));
+                    document.Add(new Paragraph($"Ngay thanh toan dien nuoc: {ngayThanhToanDienNuoc}\n", normalFont));
+
+
                     document.Add(new Paragraph($"Gia tien phong: {giaTien:N0} VND", normalFont));
                     document.Add(new Paragraph($"Tien dien: {tienDien:N0} VND", normalFont));
                     document.Add(new Paragraph($"Tien nuoc: {tienNuoc:N0} VND", normalFont));
                     document.Add(new Paragraph("_____________________________________________", titleFont));
                     document.Add(new Paragraph($"\nTong tien: {tongTien:N0} VND", normalFont));
+
+
+                    document.Close();
+                    MessageBox.Show("In hóa đơn thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtmathanhtoan.Clear();
+
                     document.Add(new Paragraph($"\n                                           Ngay thanh toan: {ngayThanhToan}\n", normalFont));
 
                     document.Add(new Paragraph("\n                                 ", titleFont));
@@ -541,6 +657,7 @@ namespace WinformKTX
 
                     document.Close();
                     MessageBox.Show("In hóa đơn thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 }
             }
             catch (Exception ex)
@@ -564,7 +681,11 @@ namespace WinformKTX
                                    "SV.HOTEN_SV AS 'Họ tên', " +
                                    "SV.MSSV AS 'MSSV', " +
                                    "NT.MA_NOI_TRU AS 'Mã nội trú', " +
+
+                                   "NT.TRANG_THAI_NOI_TRU AS 'Trạng thái nội trú' ," +
+
                                    "NT.TRANG_THAI_NOI_TRU AS 'Trạng thái nội trú' ,"+
+
                                    "TTP.NGAY_THANH_TOAN AS 'Ngày thanh toán phòng', " +
                                    "TTP.GIA_TIEN AS 'Giá tiền phòng', " +
                                    "TTP.TRANG_THAI_THANH_TOAN AS 'Trạng thái thanh toán' " +
@@ -589,8 +710,6 @@ namespace WinformKTX
                 }
             }
         }
-
-
 
         private void Labelsoluong2_Click(object sender, EventArgs e)
         {
@@ -623,8 +742,6 @@ namespace WinformKTX
 
                     SqlCommand filterCmd = new SqlCommand(filterQuery, conn);
                     int filteredRooms = (int)filterCmd.ExecuteScalar();
-
-                    // Cập nhật Labelsoluong2
                     Labelsoluong2.Text = $"Số lượng: {filteredRooms}/{totalRooms}";
                 }
                 catch (Exception ex)
@@ -687,7 +804,51 @@ namespace WinformKTX
                     try
                     {
                         conn.Open();
-                        string updateQuery = "UPDATE DIEN_NUOC SET TINH_TRANG_TT = N'Đã thanh toán', NGAY_THANH_TOAN_DIEN_NUOC = GETDATE() WHERE MA_PHONG = @maPhong";
+
+                        string checkQuery = @"
+                SELECT TOP 1 TINH_TRANG_TT 
+                FROM DIEN_NUOC 
+                WHERE MA_PHONG = @maPhong 
+                ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC";
+
+                        object tinhTrangTT = null;
+                        using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                        {
+                            checkCmd.Parameters.AddWithValue("@maPhong", maPhong);
+                            tinhTrangTT = checkCmd.ExecuteScalar();
+                        }
+
+                        if (tinhTrangTT == null)
+                        {
+                            MessageBox.Show("Không tìm thấy thông tin thanh toán cho phòng này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+
+                        if (tinhTrangTT.ToString() == "Đã thanh toán")
+                        {
+                            string checkNewPaymentQuery = @"
+                    SELECT COUNT(*) 
+                    FROM DIEN_NUOC 
+                    WHERE MA_PHONG = @maPhong AND TINH_TRANG_TT != N'Đã thanh toán'";
+
+                            int pendingPayments = 0;
+                            using (SqlCommand checkNewPaymentCmd = new SqlCommand(checkNewPaymentQuery, conn))
+                            {
+                                checkNewPaymentCmd.Parameters.AddWithValue("@maPhong", maPhong);
+                                pendingPayments = (int)checkNewPaymentCmd.ExecuteScalar();
+                            }
+
+                            if (pendingPayments == 0)
+                            {
+                                MessageBox.Show("Phòng này đã được thanh toán và không có bản ghi mới!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
+                            }
+                        }
+
+                        string updateQuery = @"
+                UPDATE DIEN_NUOC 
+                SET TINH_TRANG_TT = N'Đã thanh toán', NGAY_THANH_TOAN_DIEN_NUOC = GETDATE() 
+                WHERE MA_PHONG = @maPhong AND TINH_TRANG_TT != N'Đã thanh toán'";
 
                         using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                         {
@@ -832,7 +993,7 @@ namespace WinformKTX
                         }
                         string condition = "dn.TINH_TRANG_TT = N'Đã thanh toán'";
                         UpdateSoluong3(condition);
-                    }  
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -915,7 +1076,7 @@ namespace WinformKTX
 
                             guna2DataGridView2.DataSource = dt;
                         }
-                        
+
                     }
                     UpdateSoluong3("1=1");
                 }
@@ -934,12 +1095,10 @@ namespace WinformKTX
                 {
                     conn.Open();
 
-                    // Tính tổng số phòng
                     string totalQuery2 = "SELECT COUNT(*) FROM DIEN_NUOC";
                     SqlCommand totalCmd2 = new SqlCommand(totalQuery2, conn);
                     int totalRooms2 = (int)totalCmd2.ExecuteScalar();
 
-                    // Tính số phòng thỏa mãn điều kiện lọc
                     string filterQuery2 = $@"
             SELECT COUNT(*) 
             FROM DIEN_NUOC dn 
@@ -950,7 +1109,6 @@ namespace WinformKTX
                     SqlCommand filterCmd2 = new SqlCommand(filterQuery2, conn);
                     int filteredRooms2 = (int)filterCmd2.ExecuteScalar();
 
-                    // Cập nhật Labelsoluong3
                     Labelsoluong3.Text = $"Số lượng: {filteredRooms2}/{totalRooms2}";
                 }
                 catch (Exception ex)
@@ -962,6 +1120,77 @@ namespace WinformKTX
         private void Labelsoluong3_Click(object sender, EventArgs e)
         {
             UpdateSoluong3();
+        }
+
+        private void btntracuulichsu_Click(object sender, EventArgs e)
+        {
+            string mssvInput = txtlichsuphong.Text.Trim();
+            string maPhongInput = txtlichsudiennuoc.Text.Trim();
+
+            if (string.IsNullOrEmpty(mssvInput) && string.IsNullOrEmpty(maPhongInput))
+            {
+                MessageBox.Show("Vui lòng nhập MSSV hoặc Mã phòng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DataTable dt = new DataTable();
+            using (SqlConnection conn = ketnoi.GetConnection())
+            {
+                conn.Open();
+                string query = "";
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                if (!string.IsNullOrEmpty(mssvInput) && mssvInput.All(char.IsDigit))
+                {
+                    query = @"
+                SELECT nt.MA_PHONG AS 'Mã phòng', lp.TEN_LOAI_PHONG AS 'Tên loại phòng', sv.HOTEN_SV AS 'Họ tên sinh viên', sv.MSSV AS 'Mã số sinh viên', nt.MA_NOI_TRU AS 'Mã nội trú', nt.TRANG_THAI_NOI_TRU AS 'Trạng thái nội trú',
+                       tp.NGAY_THANH_TOAN AS 'Ngày thanh toán', tp.GIA_TIEN AS 'Giá tiền phòng', tp.TRANG_THAI_THANH_TOAN AS 'Trạng thái thanh toán phòng'
+                FROM THANH_TOAN_PHONG tp
+                JOIN NOI_TRU nt ON tp.MA_NOI_TRU = nt.MA_NOI_TRU
+                JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
+                JOIN PHONG p ON nt.MA_PHONG = p.MA_PHONG
+                JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
+                WHERE sv.MSSV = @input
+                ORDER BY tp.NGAY_THANH_TOAN DESC";
+                    cmd.Parameters.AddWithValue("@input", mssvInput);
+                }
+                else if (!string.IsNullOrEmpty(maPhongInput))
+                {
+                    query = @"
+                SELECT dn.MA_PHONG AS 'Mã phòng', p.TEN_PHONG AS 'Tên phòng', lp.TEN_LOAI_PHONG AS 'Tên loại phòng', dn.TIEN_DIEN AS 'Tiền điện', dn.TIEN_NUOC AS 'Tiền nước', dn.TONG_TIEN AS 'Tổng tiền',
+                       dn.NGAY_THANH_TOAN_DIEN_NUOC AS 'Ngày thanh toán', dn.TINH_TRANG_TT AS 'Trạng thái thanh toán điện nước'
+                FROM DIEN_NUOC dn
+                JOIN PHONG p ON dn.MA_PHONG = p.MA_PHONG
+                JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
+                WHERE dn.MA_PHONG = @input
+                ORDER BY dn.NGAY_THANH_TOAN_DIEN_NUOC DESC";
+                    cmd.Parameters.AddWithValue("@input", maPhongInput);
+                }
+                else
+                {
+                    MessageBox.Show("Dữ liệu nhập vào không hợp lệ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                cmd.CommandText = query;
+                using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                {
+                    da.Fill(dt);
+                }
+            }
+
+            if (dt.Rows.Count > 0)
+            {
+                guna2DataGridView2.DataSource = dt;
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy lịch sử thanh toán cho MSSV hoặc Mã phòng đã nhập!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                guna2DataGridView2.DataSource = null;
+            }
+            txtlichsuphong.Clear();
+            txtlichsudiennuoc.Clear();
         }
     }
 }

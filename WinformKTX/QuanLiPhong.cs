@@ -17,7 +17,10 @@ namespace WinformKTX
 {
     public partial class QuanLiPhong : Form
     {
+
+
         //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+
         KetnoiCSDL ketnoi = new KetnoiCSDL();
 
         public QuanLiPhong()
@@ -171,6 +174,72 @@ namespace WinformKTX
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
 
+
+                try
+                {
+                    string getMaxBedsQuery = "SELECT SO_GIUONG_TOI_DA FROM PHONG WHERE MA_PHONG = @MaPhong";
+                    int soGiuongToiDa;
+
+                    using (SqlCommand getMaxBedsCmd = new SqlCommand(getMaxBedsQuery, conn, transaction))
+                    {
+                        getMaxBedsCmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        object result = getMaxBedsCmd.ExecuteScalar();
+                        soGiuongToiDa = result != null ? Convert.ToInt32(result) : 0;
+                    }
+
+                    if (soGiuongConTrong > soGiuongToiDa)
+                    {
+                        MessageBox.Show("Số giường còn trống không được vượt quá số giường tối đa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        transaction.Rollback();
+                        return;
+                    }
+
+                    string checkGiuongQuery = @"
+            SELECT COUNT(*) 
+            FROM GIUONG 
+            WHERE MA_PHONG = @MaPhong AND TINH_TRANG_GIUONG = N'Đang sử dụng'";
+
+                    int countGiuongDangSuDung;
+                    using (SqlCommand checkGiuongCmd = new SqlCommand(checkGiuongQuery, conn, transaction))
+                    {
+                        checkGiuongCmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        countGiuongDangSuDung = (int)checkGiuongCmd.ExecuteScalar();
+                    }
+
+                    if (countGiuongDangSuDung > 0)
+                    {
+                        MessageBox.Show("Không thể cập nhật số giường còn trống vì có giường đang được sử dụng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        transaction.Rollback();
+                        return;
+                    }
+                    string updatePhongQuery = @"
+            UPDATE PHONG 
+            SET TINH_TRANG_PHONG = @TinhTrang, SO_GIUONG_CON_TRONG = @SoGiuongConTrong 
+            WHERE MA_PHONG = @MaPhong";
+
+                    using (SqlCommand cmd = new SqlCommand(updatePhongQuery, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        cmd.Parameters.AddWithValue("@TinhTrang", tinhTrangPhong);
+                        cmd.Parameters.AddWithValue("@SoGiuongConTrong", soGiuongConTrong);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    string deleteGiuongQuery = "DELETE FROM GIUONG WHERE MA_PHONG = @MaPhong";
+                    using (SqlCommand cmd = new SqlCommand(deleteGiuongQuery, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    if (soGiuongConTrong > 0)
+                    {
+                        string insertGiuongQuery = @"
+                INSERT INTO GIUONG (MA_PHONG, TEN_GIUONG, TINH_TRANG_GIUONG) 
+                VALUES (@MaPhong, @TenGiuong, N'Trống')";
+
+
+
                 try
                 {
                     string updatePhongQuery = "UPDATE PHONG SET TINH_TRANG_PHONG = @TinhTrang, SO_GIUONG_CON_TRONG = @SoGiuongConTrong WHERE MA_PHONG = @MaPhong";
@@ -192,6 +261,7 @@ namespace WinformKTX
                     if (soGiuongConTrong > 0)
                     {
                         string insertGiuongQuery = "INSERT INTO GIUONG (MA_PHONG, TEN_GIUONG, TINH_TRANG_GIUONG) VALUES (@MaPhong, @TenGiuong, N'Trống')";
+
                         for (int i = 1; i <= soGiuongConTrong; i++)
                         {
                             using (SqlCommand cmd = new SqlCommand(insertGiuongQuery, conn, transaction))
@@ -289,6 +359,7 @@ namespace WinformKTX
         private void btnxoaphong_Click(object sender, EventArgs e)
         {
             string tenPhong = txtmasophong1.Text.Trim();
+
             if (string.IsNullOrEmpty(tenPhong))
             {
                 MessageBox.Show("Vui lòng nhập tên phòng để xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -297,43 +368,102 @@ namespace WinformKTX
 
             using (SqlConnection conn = ketnoi.GetConnection())
             {
+
+                try
+                {
+                    conn.Open();
+
+                    // Lấy mã phòng từ tên phòng
+                    string getMaPhongQuery = "SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TenPhong";
+                    object maPhongObj;
+
+                    using (SqlCommand getMaPhongCmd = new SqlCommand(getMaPhongQuery, conn))
+                    {
+                        getMaPhongCmd.Parameters.AddWithValue("@TenPhong", tenPhong);
+                        maPhongObj = getMaPhongCmd.ExecuteScalar();
+                    }
+
+                    if (maPhongObj == null)
+                    {
+                        MessageBox.Show("Phòng không tồn tại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    string maPhong = maPhongObj.ToString();
+
+                    // Kiểm tra nếu có giường đang sử dụng
+                    string checkGiuongQuery = @"
+            SELECT COUNT(*) 
+            FROM GIUONG 
+            WHERE MA_PHONG = @MaPhong AND TINH_TRANG_GIUONG = N'Đang sử dụng'";
+
                 string checkQuery = "SELECT COUNT(*) FROM PHONG WHERE TEN_PHONG = @TenPhong";
                 string deleteQuery = "DELETE FROM PHONG WHERE TEN_PHONG = @TenPhong";
 
-                using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
-                {
-                    checkCmd.Parameters.AddWithValue("@TenPhong", tenPhong);
 
-                    try
+                    int countGiuongDangSuDung;
+                    using (SqlCommand checkGiuongCmd = new SqlCommand(checkGiuongQuery, conn))
                     {
-                        conn.Open();
-                        int count = (int)checkCmd.ExecuteScalar();
+                        checkGiuongCmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        countGiuongDangSuDung = (int)checkGiuongCmd.ExecuteScalar();
+                    }
 
-                        if (count > 0)
+                    if (countGiuongDangSuDung > 0)
+                    {
+                        MessageBox.Show("Không thể xóa phòng vì có giường đang được sử dụng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Kiểm tra nếu SO_GIUONG_TOI_DA = SO_GIUONG_CON_TRONG
+                    string checkPhongQuery = @"
+            SELECT SO_GIUONG_TOI_DA, SO_GIUONG_CON_TRONG 
+            FROM PHONG 
+            WHERE MA_PHONG = @MaPhong";
+
+                    using (SqlCommand checkPhongCmd = new SqlCommand(checkPhongQuery, conn))
+                    {
+                        checkPhongCmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        using (SqlDataReader reader = checkPhongCmd.ExecuteReader())
                         {
-                            using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
+                            if (reader.Read())
                             {
-                                deleteCmd.Parameters.AddWithValue("@TenPhong", tenPhong);
-                                deleteCmd.ExecuteNonQuery();
-                                MessageBox.Show("Đã xóa phòng thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                DataGridView1.DataSource = null;
+                                int soGiuongToiDa = reader.GetInt32(0);
+                                int soGiuongConTrong = reader.GetInt32(1);
+
+                                if (soGiuongToiDa != soGiuongConTrong)
+                                {
+                                    MessageBox.Show("Không thể xóa phòng vì số giường tối đa và số giường còn trống không bằng nhau!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Không tìm thấy thông tin phòng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
                             }
                         }
-                        else
-                        {
-                            MessageBox.Show("Phòng không tồn tại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        txtmasophong1.Clear();
-                        txtsotang1.Clear();
                     }
 
-                    catch (Exception ex)
+                    // Xóa phòng nếu thỏa mãn điều kiện
+                    string deleteQuery = "DELETE FROM PHONG WHERE MA_PHONG = @MaPhong";
+                    using (SqlCommand deleteCmd = new SqlCommand(deleteQuery, conn))
                     {
-                        MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        deleteCmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                        deleteCmd.ExecuteNonQuery();
                     }
+
+                    MessageBox.Show("Đã xóa phòng thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DataGridView1.DataSource = null;
+                    txtmasophong1.Clear();
+                    txtsotang1.Clear();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
+
 
         private void guna2HtmlLabel6_Click(object sender, EventArgs e)
         {
@@ -674,6 +804,7 @@ namespace WinformKTX
                 UpdateSoluong();
             }
         }
+
         private void UpdateSoluong(string filterCondition = "")
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -691,17 +822,14 @@ namespace WinformKTX
 
                     int totalRooms = 0;
                     int filteredRooms = 0;
-
                     using (SqlCommand cmd = new SqlCommand(totalQuery, conn))
                     {
                         totalRooms = Convert.ToInt32(cmd.ExecuteScalar());
                     }
-
                     using (SqlCommand cmd = new SqlCommand(filteredQuery, conn))
                     {
                         filteredRooms = Convert.ToInt32(cmd.ExecuteScalar());
                     }
-
                     Labelsoluong.Text = $"Số lượng: {filteredRooms}/{totalRooms}";
                 }
                 catch (Exception ex)
