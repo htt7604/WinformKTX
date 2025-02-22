@@ -171,11 +171,12 @@ namespace WinformKTX
                 return;
             }
 
-            if (!KiemTraPhongTonTai(maPhong))
-            {
-                MessageBox.Show("Không tìm thấy phòng.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            //if (!KiemTraPhongTonTai(maPhong))
+            //{
+            //    MessageBox.Show(maPhong.ToString());
+            //    MessageBox.Show("Không tìm thấy phòng.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //    return;
+            //}
 
             if (!int.TryParse(txtChisodien.Text, out int chiSoDienMoi) || chiSoDienMoi <= 0)
             {

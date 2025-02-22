@@ -273,9 +273,11 @@
             comboBoxMaPhong.Name = "comboBoxMaPhong";
             comboBoxMaPhong.Size = new Size(210, 28);
             comboBoxMaPhong.TabIndex = 30;
+            comboBoxMaPhong.SelectedIndexChanged += comboBoxMaPhong_ThayDoi;
             // 
             // dateTimePickerNgayKetThucNoiTru
             // 
+            dateTimePickerNgayKetThucNoiTru.Enabled = false;
             dateTimePickerNgayKetThucNoiTru.Format = DateTimePickerFormat.Short;
             dateTimePickerNgayKetThucNoiTru.Location = new Point(818, 319);
             dateTimePickerNgayKetThucNoiTru.Name = "dateTimePickerNgayKetThucNoiTru";
@@ -284,6 +286,7 @@
             // 
             // dateTimePickerNgayBatDauNoiTru
             // 
+            dateTimePickerNgayBatDauNoiTru.Enabled = false;
             dateTimePickerNgayBatDauNoiTru.Format = DateTimePickerFormat.Short;
             dateTimePickerNgayBatDauNoiTru.Location = new Point(818, 270);
             dateTimePickerNgayBatDauNoiTru.Name = "dateTimePickerNgayBatDauNoiTru";

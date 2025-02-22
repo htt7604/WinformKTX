@@ -390,7 +390,6 @@ namespace WinformKTX
                     MessageBox.Show("Mã phòng không hợp lệ.");
                     return;
                 }
-
                 // Lấy mã phòng hiện tại của sinh viên
                 string currentRoomQuery = "SELECT MA_PHONG FROM NOI_TRU WHERE MSSV = @MSSV";
                 int currentRoom = 0;
@@ -422,7 +421,7 @@ namespace WinformKTX
                         SELECT MA_GIUONG, TEN_GIUONG
                         FROM GIUONG 
                         WHERE MA_PHONG = @MaPhong 
-                        AND (TINH_TRANG_GIUONG = 'Trống' OR MA_GIUONG = @MaGiuongHienTai)"; // Giữ giường hiện tại nếu có
+                        AND (TINH_TRANG_GIUONG = N'Trống' OR MA_GIUONG = @MaGiuongHienTai)"; // Giữ giường hiện tại nếu có
 
                 using (SqlCommand cmd = new SqlCommand(queryGiuong, conn))
                 {
@@ -445,6 +444,7 @@ namespace WinformKTX
                         comboBoxMaGiuong.DisplayMember = "TEN_GIUONG";
                         comboBoxMaGiuong.ValueMember = "MA_GIUONG";
 
+                        //comboBoxMaGiuong.SelectedIndex = -1;
                         //// Nếu sinh viên đã có giường, đặt lại giá trị
                         //if (!string.IsNullOrEmpty(maGiuongHienTai))
                         //{
@@ -458,7 +458,6 @@ namespace WinformKTX
                 }
             }
         }
-
 
         private void dataGridViewQLSV_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -684,12 +683,17 @@ namespace WinformKTX
                     }
 
 
-                    // Kiểm tra ngày sinh
-                    if (dateTimePickerNgaySinh.Value > DateTime.Now)
+                    // Kiểm tra ngày sinh phải từ 18 tuổi trở lên
+                    DateTime ngaySinh = dateTimePickerNgaySinh.Value;
+                    DateTime ngayHienTai = DateTime.Now;
+                    DateTime tuoiToiThieu = ngayHienTai.AddYears(-18); // Ngày phải trước hoặc bằng ngày hiện tại - 18 năm
+
+                    if (ngaySinh > tuoiToiThieu)
                     {
-                        MessageBox.Show("Ngày sinh không hợp lệ.");
+                        MessageBox.Show("Sinh viên phải đủ 18 tuổi trở lên.");
                         return;
                     }
+
 
                     //conn.Open();
 
@@ -719,9 +723,9 @@ namespace WinformKTX
                         MessageBox.Show("Chỉ có thể đặt trạng thái 'Chờ gia hạn' khi đã qua thời gian kết thúc nội trú.");
                         return;
                     }
-                    //if (trangThaiMoi == "Đang Nội Trú" && DateTime.Now > ngayKetThucNoiTru)
+                    //if (trangThaiMoi == "Đang nội trú" && DateTime.Now > ngayKetThucNoiTru)
                     //{
-                    //    MessageBox.Show("Không thể đặt trạng thái 'Đang Nội Trú' khi đã qua thời gian kết thúc nội trú.");
+                    //    MessageBox.Show("Không thể đặt trạng thái 'Đang nội trú' khi đã qua thời gian kết thúc nội trú.");
                     //    return;
                     //}
                     // Kiểm tra trạng thái mới và trạng thái hiện tại
@@ -730,24 +734,34 @@ namespace WinformKTX
                         MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Chờ gia hạn'.");
                         return;
                     }
-                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Chờ gia hạn")
+                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Chờ gia hạn")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần Chú Ý'.");
+                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần chú ý'.");
                         return;
                     }
-                    if (trangThaiMoi == "Cần Chú Ý" && currentStatus == "Đang Nội Trú")
+                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đang nội trú")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Đang Nội Trú' sang 'Cần Chú Ý'.");
+                        MessageBox.Show("Không thể chuyển từ 'Đang nội trú' sang 'Cần chú ý'.");
                         return;
                     }
-                    if (trangThaiMoi == "Đang Nội Trú" && currentStatus == "Cần Chú Ý")
+                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đã đăng ký")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Đang Nội Trú'.");
+                        MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Cần chú ý'.");
                         return;
                     }
-                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Cần Chú Ý")
+                    if (trangThaiMoi == "Đang nội trú" && currentStatus == "Cần chú ý")
                     {
-                        MessageBox.Show("Không thể chuyển từ 'Cần Chú Ý' sang 'Chờ gia hạn'.");
+                        MessageBox.Show("Không thể chuyển từ 'Cần chú ý' sang 'Đang nội trú'.");
+                        return;
+                    }
+                    if (trangThaiMoi == "Chờ gia hạn" && currentStatus == "Cần chú ý")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Cần chú ý' sang 'Chờ gia hạn'.");
+                        return;
+                    }
+                    if (trangThaiMoi == "Đã đăng ký" && currentStatus == "Cần chú ý")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Cần chú ý' sang 'Đã đăng ký'.");
                         return;
                     }
                     //// Kiểm tra số lượng giường trống trong phòng
@@ -769,8 +783,8 @@ namespace WinformKTX
                     // Kiểm tra trạng thái giường trước khi cập nhật
                     string checkBedStatusQuery = @"SELECT TINH_TRANG_GIUONG FROM GIUONG WHERE MA_GIUONG = @MaGiuong";
                     string bedStatus = string.Empty;
-                    if ((trangThaiMoi == "Đang Nội Trú" || trangThaiMoi == "Chờ gia hạn") &&
-                    (currentStatus == "Đã đăng ký" || currentStatus == "Cần Chú Ý"))
+                    if ((trangThaiMoi == "Đang nội trú" || trangThaiMoi == "Chờ gia hạn") &&
+                    (currentStatus == "Đã đăng ký" || currentStatus == "Cần chú ý"))
                     {
                         using (var checkBedCmd = new SqlCommand(checkBedStatusQuery, conn))
                         {
@@ -820,28 +834,28 @@ namespace WinformKTX
                                         -- Nếu thay đổi giường và chuyển sang phòng khác 
                                         IF @OldMaPhong != @MaPhong
                                         BEGIN
-                                            -- Nếu trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", tăng số giường trống của phòng cũ
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            -- Nếu trạng thái cũ là ""Đang nội trú"" hoặc ""Chờ gia hạn"", tăng số giường trống của phòng cũ
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                             END
 
-                                            -- Nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", giảm số giường trống của phòng mới
-                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            -- Nếu trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn"", giảm số giường trống của phòng mới
+                                            IF @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
                                             END
 
-                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đang Nội Trú"" hoặc ""Chờ gia hạn"" -> ""Đã đăng ký"" hoặc ""Cần Chú Ý""
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đang nội trú"" hoặc ""Chờ gia hạn"" -> ""Đã đăng ký "" hoặc ""Cần chú ý""
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần chú ý')
                                             BEGIN
                                                 -- UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @MaGiuong;
                                             END
 
-                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đã đăng ký"" hoặc ""Cần Chú Ý"" -> ""Đang Nội Trú"" hoặc ""Chờ gia hạn""
-                                            IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            -- Kiểm tra nếu trạng thái thay đổi từ ""Đã đăng ký"" hoặc ""Cần chú ý"" -> ""Đang nội trú"" hoặc ""Chờ gia hạn""
+                                            IF @CurrentStatus IN (N'Đã đăng ký', N'Cần chú ý') AND @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 -- UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
@@ -849,19 +863,19 @@ namespace WinformKTX
                                         END
                                         ELSE -- Nếu sinh viên đổi giường nhưng vẫn ở cùng phòng
                                         BEGIN
-                                            IF @CurrentStatus IN (N'Đang Nội Trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần Chú Ý')
+                                            IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn') AND @TrangThai IN (N'Đã đăng ký', N'Cần chú ý')
                                             BEGIN
-                                                -- Trạng thái cũ là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"", trạng thái mới là ""Đã đăng ký"" hoặc ""Cần Chú Ý"" => tăng số giường trống
+                                                -- Trạng thái cũ là ""Đang nội trú"" hoặc ""Chờ gia hạn"", trạng thái mới là ""Đã đăng ký"" hoặc ""Cần chú ý"" => tăng số giường trống
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @MaPhong;
                                             END
-                                            ELSE IF @CurrentStatus IN (N'Đã đăng ký', N'Cần Chú Ý') AND @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            ELSE IF @CurrentStatus IN (N'Đã đăng ký', N'Cần chú ý') AND @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
-                                                -- Trạng thái cũ là ""Đã đăng ký"" hoặc ""Cần Chú Ý"", trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn"" => giảm số giường trống
+                                                -- Trạng thái cũ là ""Đã đăng ký"" hoặc ""Cần chú ý"", trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn"" => giảm số giường trống
                                                 UPDATE PHONG SET SO_GIUONG_CON_TRONG -= 1 WHERE MA_PHONG = @MaPhong;
                                             END
 
-                                            -- Chỉ cần cập nhật giường mới nếu trạng thái mới là ""Đang Nội Trú"" hoặc ""Chờ gia hạn""
-                                            IF @TrangThai IN (N'Đang Nội Trú', N'Chờ gia hạn')
+                                            -- Chỉ cần cập nhật giường mới nếu trạng thái mới là ""Đang nội trú"" hoặc ""Chờ gia hạn""
+                                            IF @TrangThai IN (N'Đang nội trú', N'Chờ gia hạn')
                                             BEGIN
                                                 UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Đang Sử Dụng' WHERE MA_GIUONG = @MaGiuong;
                                             END
@@ -889,7 +903,7 @@ namespace WinformKTX
                                    BEGIN
                                        DECLARE @SoGiuongConLai INT;
                                        -- Kiểm tra trạng thái cũ và mới để tránh cập nhật không hợp lệ
-                                       IF (@TrangThai = N'Đã đăng ký' OR @TrangThai = N'Cần Chú Ý') AND (@CurrentStatus = N'Đang Nội Trú')
+                                       IF (@TrangThai = N'Đã đăng ký' OR @TrangThai = N'Cần chú ý') AND (@CurrentStatus = N'Đang nội trú')
                                        BEGIN
                                            UPDATE PHONG SET SO_GIUONG_CON_TRONG += 1 WHERE MA_PHONG = @OldMaPhong;
                                            UPDATE GIUONG SET TINH_TRANG_GIUONG = N'Trống' WHERE MA_GIUONG = @OldMaGiuong;
@@ -901,16 +915,16 @@ namespace WinformKTX
                                            END WHERE MA_PHONG = @OldMaPhong;
                                        END;
 
-                                       ELSE IF @TrangThai = N'Chờ gia hạn' AND @CurrentStatus = N'Đang Nội Trú'
+                                       ELSE IF @TrangThai = N'Chờ gia hạn' AND @CurrentStatus = N'Đang nội trú'
                                            UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' WHERE MSSV = @MSSV;
 
-                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND @CurrentStatus = N'Chờ gia hạn'
-                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú' WHERE MSSV = @MSSV;
+                                       ELSE IF @TrangThai = N'Đang nội trú' AND @CurrentStatus = N'Chờ gia hạn'
+                                           UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = N'Đang nội trú' WHERE MSSV = @MSSV;
 
                                        ELSE IF @TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Chờ gia hạn'
                                            PRINT N'Không thể chuyển từ Chờ gia hạn sang Đã đăng ký';
 
-                                       ELSE IF @TrangThai = N'Đang Nội Trú' AND (@CurrentStatus = N'Đã đăng ký' OR @CurrentStatus = N'Cần Chú Ý')
+                                       ELSE IF @TrangThai = N'Đang nội trú' AND (@CurrentStatus = N'Đã đăng ký' OR @CurrentStatus = N'Cần chú ý')
                                        BEGIN
                                            DECLARE @SoGiuongHienTai INT;
                                            SELECT @SoGiuongHienTai = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
@@ -925,9 +939,9 @@ namespace WinformKTX
                                            END;
                                        END;
 
-                                       -- Nếu chuyển đổi giữa Đã đăng ký và Cần Chú Ý thì chỉ cập nhật trạng thái
-                                       ELSE IF(@TrangThai = N'Cần Chú Ý' AND @CurrentStatus = N'Đã đăng ký') 
-                                           OR(@TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Cần Chú Ý')
+                                       -- Nếu chuyển đổi giữa Đã đăng ký và Cần chú ý thì chỉ cập nhật trạng thái
+                                       ELSE IF(@TrangThai = N'Cần chú ý' AND @CurrentStatus = N'Đã đăng ký') 
+                                           OR(@TrangThai = N'Đã đăng ký' AND @CurrentStatus = N'Cần chú ý')
                                        BEGIN
                                            UPDATE NOI_TRU SET TRANG_THAI_NOI_TRU = @TrangThai WHERE MSSV = @MSSV;
                                        END;
@@ -978,6 +992,107 @@ namespace WinformKTX
         }
 
 
+        //private void buttonXoaSV_Click(object sender, EventArgs e)
+        //{
+        //    // Kiểm tra nếu MSSV không rỗng
+        //    string mssv = textBoxMSSV.Text.Trim();
+        //    if (string.IsNullOrEmpty(mssv))
+        //    {
+        //        MessageBox.Show("Mã số sinh viên không được để trống!");
+        //        return;
+        //    }
+
+        //    // Xác nhận người dùng trước khi xóa
+        //    DialogResult dialogResult = MessageBox.Show(
+        //        "Bạn có chắc chắn muốn xóa sinh viên này không?",
+        //        "Xác nhận xóa",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Warning);
+
+        //    if (dialogResult == DialogResult.Yes)
+        //    {
+        //        using (SqlConnection conn = ketnoi.GetConnection())
+        //        {
+        //            try
+        //            {
+        //                conn.Open();
+        //                string query = @"
+        //                            -- Lưu thông tin phòng và giường của sinh viên trước khi xóa
+        //                            DECLARE @MaPhong INT, @MaGiuong NVARCHAR(50), @CurrentStatus NVARCHAR(50);
+
+        //                            SELECT @MaPhong = MA_PHONG, @MaGiuong = MA_GIUONG, @CurrentStatus = TRANG_THAI_NOI_TRU
+        //                            FROM NOI_TRU
+        //                            WHERE MSSV = @MSSV;
+
+        //                            -- Xóa sinh viên khỏi NOI_TRU
+        //                            DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
+
+        //                            -- Xóa sinh viên khỏi SINH_VIEN
+        //                            DELETE FROM SINH_VIEN WHERE MSSV = @MSSV;
+
+        //                            -- Nếu sinh viên đang trong trạng thái Đang nội trú hoặc Chờ gia hạn, cập nhật giường và phòng
+        //                            IF @CurrentStatus IN(N'Đang nội trú', N'Chờ gia hạn')
+        //                            BEGIN
+        //                                -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
+        //                                IF @MaGiuong IS NOT NULL
+        //                                BEGIN
+        //                                    UPDATE GIUONG
+        //                                    SET TINH_TRANG_GIUONG = N'Trống'
+        //                                    WHERE MA_GIUONG = @MaGiuong;
+        //                                                    END
+
+        //                                                    -- Cập nhật số giường trống của phòng liên quan
+        //                                                    IF @MaPhong IS NOT NULL
+        //                            BEGIN
+        //                            UPDATE PHONG
+        //                            SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
+        //                            WHERE MA_PHONG = @MaPhong;
+
+        //                            --Cập nhật trạng thái phòng dựa trên số giường còn trống
+        //                            DECLARE @SoGiuongCon INT;
+        //                                SELECT @SoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+
+        //                            UPDATE PHONG
+        //                            SET TINH_TRANG_PHONG =
+        //                                CASE
+        //                                    WHEN @SoGiuongCon = 0 THEN N'Đầy'
+        //                                    WHEN @SoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
+        //                                    ELSE N'Đang Sử Dụng'
+        //                                END
+        //                            WHERE MA_PHONG = @MaPhong;
+        //                            END
+        //                        END;";
+
+
+        //                SqlCommand command = new SqlCommand(query, conn);
+        //                command.Parameters.AddWithValue("@MSSV", mssv);
+
+        //                int rowsAffected = command.ExecuteNonQuery();
+
+        //                if (rowsAffected > 0)
+        //                {
+        //                    MessageBox.Show("Đã xóa sinh viên và cập nhật giường, phòng thành công.");
+
+        //                    // 🔹 Reset các ô nhập liệu sau khi xóa thành công
+        //                    ResetInputFields();
+        //                }
+        //                else
+        //                {
+        //                    MessageBox.Show("Không tìm thấy sinh viên để xóa.");
+        //                }
+
+        //                // Load lại dữ liệu sau khi xóa
+        //                LoadData();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+        //            }
+        //        }
+        //    }
+        //}
+
+
         private void buttonXoaSV_Click(object sender, EventArgs e)
         {
             // Kiểm tra nếu MSSV không rỗng
@@ -1013,11 +1128,8 @@ namespace WinformKTX
                                     -- Xóa sinh viên khỏi NOI_TRU
                                     DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
 
-                                    -- Xóa sinh viên khỏi SINH_VIEN
-                                    DELETE FROM SINH_VIEN WHERE MSSV = @MSSV;
-
-                                    -- Nếu sinh viên đang trong trạng thái Đang Nội Trú hoặc Chờ gia hạn, cập nhật giường và phòng
-                                    IF @CurrentStatus IN(N'Đang Nội Trú', N'Chờ gia hạn')
+                                    -- Nếu sinh viên đang trong trạng thái Đang nội trú hoặc Chờ gia hạn, cập nhật giường và phòng
+                                    IF @CurrentStatus IN(N'Đang nội trú', N'Chờ gia hạn')
                                     BEGIN
                                         -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
                                         IF @MaGiuong IS NOT NULL
@@ -1138,7 +1250,7 @@ namespace WinformKTX
                                     INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                                     INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                                     INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên đang nội trú
+                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên Đang nội trú
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1304,7 +1416,7 @@ namespace WinformKTX
                             INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                             INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                             INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Cần Chú Ý'";
+                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Cần chú ý'";
 
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -1621,7 +1733,7 @@ namespace WinformKTX
                 {
                     conn.Open();
                     // Đếm tổng số sinh viên
-                    string queryTotal = @"SELECT COUNT(*) FROM SINH_VIEN";
+                    string queryTotal = @"SELECT COUNT(*) FROM NOI_TRU";
                     SqlCommand command = new SqlCommand(queryTotal, conn);
                     int totalCount = (int)command.ExecuteScalar();
 
@@ -1691,7 +1803,7 @@ namespace WinformKTX
                                     -- Tạo bảng tạm để lưu danh sách sinh viên vừa được xác nhận nội trú
                                     DECLARE @DanhSachSinhVienMoi TABLE (MA_PHONG INT, MA_GIUONG NVARCHAR(50));
 
-                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang Nội Trú'
+                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang nội trú'
                                     INSERT INTO @DanhSachSinhVienMoi (MA_PHONG, MA_GIUONG)
                                     SELECT MA_PHONG, MA_GIUONG
                                     FROM NOI_TRU
@@ -1699,7 +1811,7 @@ namespace WinformKTX
 
                                     -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận
                                     UPDATE NOI_TRU
-                                    SET TRANG_THAI_NOI_TRU = N'Đang Nội Trú'
+                                    SET TRANG_THAI_NOI_TRU = N'Đang nội trú'
                                     WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
 
                                     -- Cập nhật trạng thái giường thành 'Đang Sử Dụng' cho giường của sinh viên vừa xác nhận
@@ -1765,7 +1877,7 @@ namespace WinformKTX
                     // Lấy danh sách sinh viên đã quá hạn nội trú
                     string query = @"SELECT MSSV 
                              FROM NOI_TRU 
-                             WHERE TRANG_THAI_NOI_TRU = N'Đang Nội Trú' 
+                             WHERE TRANG_THAI_NOI_TRU = N'Đang nội trú' 
                              AND NGAY_KET_THUC_NOI_TRU < GETDATE()";
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1918,6 +2030,96 @@ namespace WinformKTX
             }
         }
 
+
+        //private void buttonXoaAllSvChoGiaHan_Click(object sender, EventArgs e)
+        //{
+        //    // Hiển thị hộp thoại xác nhận
+        //    DialogResult result = MessageBox.Show(
+        //        "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' không?",
+        //        "Xác nhận xóa",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Warning
+        //    );
+
+        //    // Nếu người dùng chọn "No", thoát khỏi phương thức
+        //    if (result == DialogResult.No)
+        //    {
+        //        return;
+        //    }
+
+        //    using (SqlConnection conn = ketnoi.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //                           -- Tạo biến bảng để lưu danh sách phòng và giường của sinh viên ""Gia hạn""
+        //                            DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+        //                            -- Lưu lại thông tin trước khi xóa
+        //                            INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
+        //                            SELECT MSSV, MA_PHONG, MA_GIUONG
+        //                            FROM NOI_TRU
+        //                            WHERE TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
+
+        //                            -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
+        //                            DELETE NT
+        //                            FROM NOI_TRU NT
+        //                            JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+        //                            -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi SINH_VIEN
+        //                            DELETE SV
+        //                            FROM SINH_VIEN SV
+        //                            JOIN @PhongGiuong PG ON SV.MSSV = PG.MSSV;
+
+        //                            -- Cập nhật số giường trống của các phòng liên quan
+        //                            UPDATE P
+        //                            SET P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_CON_TRONG + 
+        //                                (SELECT COUNT(*) FROM @PhongGiuong PG WHERE P.MA_PHONG = PG.MA_PHONG)
+        //                            FROM PHONG P
+        //                            JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+        //                            -- Cập nhật trạng thái phòng
+        //                            UPDATE P
+        //                            SET P.TINH_TRANG_PHONG = 
+        //                                CASE 
+        //                                    WHEN P.SO_GIUONG_CON_TRONG = 0 THEN N'Đầy'
+        //                                    WHEN P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_TOI_DA THEN N'Trống'
+        //                                    ELSE N'Đang Sử Dụng'
+        //                                END
+        //                            FROM PHONG P
+        //                            JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+        //                            -- Cập nhật trạng thái giường của các sinh viên bị xóa
+        //                            UPDATE G
+        //                            SET G.TINH_TRANG_GIUONG = N'Trống'
+        //                            FROM GIUONG G
+        //                            JOIN @PhongGiuong PG ON G.MA_GIUONG = PG.MA_GIUONG;
+        //                            ";
+
+        //            SqlCommand command = new SqlCommand(query, conn);
+        //            int rowsAffected = command.ExecuteNonQuery();
+
+        //            if (rowsAffected > 0)
+        //            {
+        //                MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Chờ gia hạn' và cập nhật giường, phòng thành công.");
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Không có sinh viên nào có trạng thái 'Chờ gia hạn' để xóa.");
+        //            }
+
+        //            // Load lại dữ liệu sau khi xóa
+        //            LoadData();
+        //            ResetInputFields();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+        //        }
+        //    }
+        //}
+
         private void buttonXoaAllSvChoGiaHan_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
@@ -1953,11 +2155,6 @@ namespace WinformKTX
                                     DELETE NT
                                     FROM NOI_TRU NT
                                     JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
-
-                                    -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi SINH_VIEN
-                                    DELETE SV
-                                    FROM SINH_VIEN SV
-                                    JOIN @PhongGiuong PG ON SV.MSSV = PG.MSSV;
 
                                     -- Cập nhật số giường trống của các phòng liên quan
                                     UPDATE P
@@ -2007,6 +2204,58 @@ namespace WinformKTX
             }
         }
 
+        //private void buttonXoaAllSvChuaNoiTru_Click(object sender, EventArgs e)
+        //{
+        //    // Hiển thị hộp thoại xác nhận
+        //    DialogResult result = MessageBox.Show(
+        //        "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Đã đăng ký' không?",
+        //        "Xác nhận xóa",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Warning
+        //    );
+
+        //    // Nếu người dùng chọn "No", thoát khỏi phương thức
+        //    if (result == DialogResult.No)
+        //    {
+        //        return;
+        //    }
+        //    using (SqlConnection conn = ketnoi.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //                    -- Xóa sinh viên khỏi NOI_TRU trước
+        //                    DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+
+        //                    -- Xóa sinh viên khỏi SINH_VIEN
+        //                    DELETE FROM SINH_VIEN 
+        //                    WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
+        //                ";
+
+        //            SqlCommand command = new SqlCommand(query, conn);
+        //            int rowsAffected = command.ExecuteNonQuery();
+
+        //            if (rowsAffected > 0)
+        //            {
+        //                MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Đã đăng ký' thành công.");
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Không có sinh viên nào có trạng thái 'Đã đăng ký' để xóa.");
+        //            }
+
+        //            // Load lại dữ liệu sau khi xóa
+        //            LoadData();
+        //            ResetInputFields();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+        //        }
+        //    }
+        //}
+
         private void buttonXoaAllSvChuaNoiTru_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
@@ -2030,10 +2279,6 @@ namespace WinformKTX
                     string query = @"
                             -- Xóa sinh viên khỏi NOI_TRU trước
                             DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
-
-                            -- Xóa sinh viên khỏi SINH_VIEN
-                            DELETE FROM SINH_VIEN 
-                            WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
                         ";
 
                     SqlCommand command = new SqlCommand(query, conn);
@@ -2058,11 +2303,63 @@ namespace WinformKTX
                 }
             }
         }
+        //private void buttonXoaAllSvCanChuY_Click(object sender, EventArgs e)
+        //{
+        //    // Hiển thị hộp thoại xác nhận
+        //    DialogResult result = MessageBox.Show(
+        //        "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Cần chú ý' không?",
+        //        "Xác nhận xóa",
+        //        MessageBoxButtons.YesNo,
+        //        MessageBoxIcon.Warning
+        //    );
+
+        //    // Nếu người dùng chọn "No", thoát khỏi phương thức
+        //    if (result == DialogResult.No)
+        //    {
+        //        return;
+        //    }
+        //    using (SqlConnection conn = ketnoi.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //                    -- Xóa sinh viên khỏi NOI_TRU trước
+        //                    DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý';
+
+        //                    -- Xóa sinh viên khỏi SINH_VIEN
+        //                    DELETE FROM SINH_VIEN 
+        //                    WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
+        //                ";
+
+        //            SqlCommand command = new SqlCommand(query, conn);
+        //            int rowsAffected = command.ExecuteNonQuery();
+
+        //            if (rowsAffected > 0)
+        //            {
+        //                MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Cần chú ý' thành công.");
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Không có sinh viên nào có trạng thái 'Cần chú ý' để xóa.");
+        //            }
+
+        //            // Load lại dữ liệu sau khi xóa
+        //            LoadData();
+        //            ResetInputFields();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message);
+        //        }
+        //    }
+        //}
+
         private void buttonXoaAllSvCanChuY_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
             DialogResult result = MessageBox.Show(
-                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Cần Chú Ý' không?",
+                "Bạn có chắc chắn muốn xóa tất cả sinh viên có trạng thái 'Cần chú ý' không?",
                 "Xác nhận xóa",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
@@ -2080,11 +2377,7 @@ namespace WinformKTX
                     conn.Open();
                     string query = @"
                             -- Xóa sinh viên khỏi NOI_TRU trước
-                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần Chú Ý';
-
-                            -- Xóa sinh viên khỏi SINH_VIEN
-                            DELETE FROM SINH_VIEN 
-                            WHERE MSSV NOT IN (SELECT MSSV FROM NOI_TRU);
+                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý';
                         ";
 
                     SqlCommand command = new SqlCommand(query, conn);
@@ -2092,11 +2385,11 @@ namespace WinformKTX
 
                     if (rowsAffected > 0)
                     {
-                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Cần Chú Ý' thành công.");
+                        MessageBox.Show("Đã xóa tất cả sinh viên có trạng thái 'Cần chú ý' thành công.");
                     }
                     else
                     {
-                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Cần Chú Ý' để xóa.");
+                        MessageBox.Show("Không có sinh viên nào có trạng thái 'Cần chú ý' để xóa.");
                     }
 
                     // Load lại dữ liệu sau khi xóa
@@ -2110,7 +2403,76 @@ namespace WinformKTX
             }
         }
 
+        //private void buttonXoaAllSinhVien_Click(object sender, EventArgs e)
+        //{
+        //    // Hộp thoại xác nhận lần 1
+        //    DialogResult confirm1 = MessageBox.Show("Bạn có chắc chắn muốn xóa tất cả sinh viên không?",
+        //                                            "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        //    if (confirm1 != DialogResult.Yes)
+        //    {
+        //        return;
+        //    }
 
+        //    // Hộp thoại xác nhận lần 2
+        //    DialogResult confirm2 = MessageBox.Show("Hành động này sẽ xóa tất cả sinh viên. Bạn có chắc chắn tiếp tục không?",
+        //                                            "Xác nhận lần cuối", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        //    if (confirm2 != DialogResult.Yes)
+        //    {
+        //        return;
+        //    }
+
+        //    using (SqlConnection conn = ketnoi.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
+        //            string query = @"
+        //                    -- Lưu thông tin phòng và giường của tất cả sinh viên
+        //                    DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+        //                    INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
+        //                    SELECT MSSV, MA_PHONG, MA_GIUONG FROM NOI_TRU;
+
+        //                    -- Xóa sinh viên khỏi NOI_TRU
+        //                    DELETE FROM NOI_TRU;
+
+        //                    -- Xóa sinh viên khỏi SINH_VIEN
+        //                    DELETE FROM SINH_VIEN;
+
+        //                    -- Cập nhật số giường trống của các phòng liên quan
+        //                    UPDATE P
+        //                    SET P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_TOI_DA
+        //                    FROM PHONG P
+        //                    WHERE P.MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @PhongGiuong);
+
+        //                    -- Cập nhật trạng thái phòng
+        //                    UPDATE P
+        //                    SET P.TINH_TRANG_PHONG = N'Trống'
+        //                    FROM PHONG P
+        //                    WHERE P.MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @PhongGiuong);
+
+        //                    -- Cập nhật trạng thái giường của các sinh viên bị xóa
+        //                    UPDATE G
+        //                    SET G.TINH_TRANG_GIUONG = N'Trống'
+        //                    FROM GIUONG G
+        //                    WHERE G.MA_GIUONG IN (SELECT DISTINCT MA_GIUONG FROM @PhongGiuong);
+        //                ";
+
+        //            SqlCommand command = new SqlCommand(query, conn);
+        //            int rowsAffected = command.ExecuteNonQuery();
+
+        //            MessageBox.Show("Đã xóa tất cả sinh viên và cập nhật giường, phòng thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        //            // Load lại dữ liệu sau khi xóa
+        //            LoadData();
+        //            ResetInputFields();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi khi xóa sinh viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        }
+        //    }
+        //}
         private void buttonXoaAllSinhVien_Click(object sender, EventArgs e)
         {
             // Hộp thoại xác nhận lần 1
@@ -2143,9 +2505,6 @@ namespace WinformKTX
 
                             -- Xóa sinh viên khỏi NOI_TRU
                             DELETE FROM NOI_TRU;
-
-                            -- Xóa sinh viên khỏi SINH_VIEN
-                            DELETE FROM SINH_VIEN;
 
                             -- Cập nhật số giường trống của các phòng liên quan
                             UPDATE P
@@ -2291,5 +2650,7 @@ namespace WinformKTX
                 }
             }
         }
+
+        
     }
 }
