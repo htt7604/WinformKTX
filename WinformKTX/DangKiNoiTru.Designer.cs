@@ -121,7 +121,7 @@
             txtQuequan.Font = new Font("Segoe UI", 9F);
             txtQuequan.ForeColor = Color.Black;
             txtQuequan.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtQuequan.Location = new Point(372, 341);
+            txtQuequan.Location = new Point(365, 341);
             txtQuequan.Margin = new Padding(3, 4, 3, 4);
             txtQuequan.Name = "txtQuequan";
             txtQuequan.PasswordChar = '\0';
@@ -135,7 +135,7 @@
             // label17
             // 
             label17.AutoSize = true;
-            label17.Location = new Point(702, 234);
+            label17.Location = new Point(695, 234);
             label17.Name = "label17";
             label17.Size = new Size(42, 20);
             label17.TabIndex = 144;
@@ -144,7 +144,7 @@
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(1031, 158);
+            label16.Location = new Point(1025, 158);
             label16.Name = "label16";
             label16.Size = new Size(184, 20);
             label16.TabIndex = 142;
@@ -153,7 +153,7 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(1031, 234);
+            label14.Location = new Point(1025, 234);
             label14.Name = "label14";
             label14.Size = new Size(146, 20);
             label14.TabIndex = 140;
@@ -171,7 +171,7 @@
             txtThoigiannoitru.ForeColor = Color.Black;
             txtThoigiannoitru.ItemHeight = 30;
             txtThoigiannoitru.Items.AddRange(new object[] { "3" });
-            txtThoigiannoitru.Location = new Point(1031, 341);
+            txtThoigiannoitru.Location = new Point(1025, 341);
             txtThoigiannoitru.Name = "txtThoigiannoitru";
             txtThoigiannoitru.ShadowDecoration.CustomizableEdges = customizableEdges4;
             txtThoigiannoitru.Size = new Size(251, 36);
@@ -181,7 +181,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(1031, 318);
+            label15.Location = new Point(1025, 318);
             label15.Name = "label15";
             label15.Size = new Size(118, 20);
             label15.TabIndex = 138;
@@ -190,7 +190,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(702, 87);
+            label13.Location = new Point(695, 87);
             label13.Name = "label13";
             label13.Size = new Size(65, 20);
             label13.TabIndex = 136;
@@ -224,7 +224,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(372, 86);
+            label11.Location = new Point(365, 86);
             label11.Name = "label11";
             label11.Size = new Size(74, 20);
             label11.TabIndex = 133;
@@ -241,7 +241,7 @@
             txtLoaiphong.Font = new Font("Segoe UI", 10F);
             txtLoaiphong.ForeColor = Color.Black;
             txtLoaiphong.ItemHeight = 30;
-            txtLoaiphong.Location = new Point(702, 180);
+            txtLoaiphong.Location = new Point(695, 180);
             txtLoaiphong.Name = "txtLoaiphong";
             txtLoaiphong.ShadowDecoration.CustomizableEdges = customizableEdges8;
             txtLoaiphong.Size = new Size(300, 36);
@@ -252,7 +252,7 @@
             // label10
             // 
             label10.AutoSize = true;
-            label10.Location = new Point(702, 158);
+            label10.Location = new Point(695, 158);
             label10.Name = "label10";
             label10.Size = new Size(84, 20);
             label10.TabIndex = 131;
@@ -261,7 +261,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(1031, 86);
+            label3.Location = new Point(1025, 86);
             label3.Name = "label3";
             label3.Size = new Size(78, 20);
             label3.TabIndex = 129;
@@ -270,7 +270,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(372, 319);
+            label9.Location = new Point(365, 319);
             label9.Name = "label9";
             label9.Size = new Size(73, 20);
             label9.TabIndex = 127;
@@ -288,7 +288,7 @@
             txtEmail.Font = new Font("Segoe UI", 9F);
             txtEmail.ForeColor = Color.Black;
             txtEmail.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtEmail.Location = new Point(372, 257);
+            txtEmail.Location = new Point(365, 257);
             txtEmail.Margin = new Padding(3, 4, 3, 4);
             txtEmail.Name = "txtEmail";
             txtEmail.PasswordChar = '\0';
@@ -302,7 +302,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(372, 234);
+            label8.Location = new Point(365, 234);
             label8.Name = "label8";
             label8.Size = new Size(46, 20);
             label8.TabIndex = 125;
@@ -320,7 +320,7 @@
             txtSDT.Font = new Font("Segoe UI", 9F);
             txtSDT.ForeColor = Color.Black;
             txtSDT.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtSDT.Location = new Point(372, 180);
+            txtSDT.Location = new Point(365, 180);
             txtSDT.Margin = new Padding(3, 4, 3, 4);
             txtSDT.Name = "txtSDT";
             txtSDT.PasswordChar = '\0';
@@ -334,7 +334,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(372, 157);
+            label7.Location = new Point(365, 157);
             label7.Name = "label7";
             label7.Size = new Size(97, 20);
             label7.TabIndex = 123;
@@ -400,9 +400,9 @@
             label5.AutoSize = true;
             label5.Location = new Point(32, 157);
             label5.Name = "label5";
-            label5.Size = new Size(54, 20);
+            label5.Size = new Size(75, 20);
             label5.TabIndex = 119;
-            label5.Text = "Họ tên";
+            label5.Text = "Họ và Tên";
             // 
             // txtTenphong
             // 
@@ -415,7 +415,7 @@
             txtTenphong.Font = new Font("Segoe UI", 10F);
             txtTenphong.ForeColor = Color.Black;
             txtTenphong.ItemHeight = 30;
-            txtTenphong.Location = new Point(702, 341);
+            txtTenphong.Location = new Point(695, 341);
             txtTenphong.Name = "txtTenphong";
             txtTenphong.ShadowDecoration.CustomizableEdges = customizableEdges18;
             txtTenphong.Size = new Size(300, 36);
@@ -426,7 +426,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(702, 318);
+            label4.Location = new Point(695, 318);
             label4.Name = "label4";
             label4.Size = new Size(79, 20);
             label4.TabIndex = 117;
@@ -460,15 +460,15 @@
             label18.AutoSize = true;
             label18.Location = new Point(32, 87);
             label18.Name = "label18";
-            label18.Size = new Size(129, 20);
+            label18.Size = new Size(110, 20);
             label18.TabIndex = 115;
-            label18.Text = "MÃ SỐ SINH VIÊN";
+            label18.Text = "Mã số sinh viên";
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(629, 20);
+            label1.Location = new Point(597, 25);
             label1.Name = "label1";
             label1.Size = new Size(321, 46);
             label1.TabIndex = 114;
@@ -501,10 +501,10 @@
             dataGridView1Dangkynoitru.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1Dangkynoitru.BackgroundColor = Color.White;
             dataGridView1Dangkynoitru.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1Dangkynoitru.Location = new Point(12, 414);
+            dataGridView1Dangkynoitru.Location = new Point(12, 423);
             dataGridView1Dangkynoitru.Name = "dataGridView1Dangkynoitru";
             dataGridView1Dangkynoitru.RowHeadersWidth = 51;
-            dataGridView1Dangkynoitru.Size = new Size(1488, 521);
+            dataGridView1Dangkynoitru.Size = new Size(1488, 512);
             dataGridView1Dangkynoitru.TabIndex = 148;
             dataGridView1Dangkynoitru.CellClick += DataGridView1Dangkynoitru_CellClick;
             // 
@@ -519,7 +519,7 @@
             txtTang.Font = new Font("Segoe UI", 10F);
             txtTang.ForeColor = Color.Black;
             txtTang.ItemHeight = 30;
-            txtTang.Location = new Point(702, 257);
+            txtTang.Location = new Point(695, 257);
             txtTang.Name = "txtTang";
             txtTang.ShadowDecoration.CustomizableEdges = customizableEdges24;
             txtTang.Size = new Size(300, 36);
@@ -534,7 +534,7 @@
             txtNgaybatdaunoitru.FillColor = Color.FromArgb(255, 192, 128);
             txtNgaybatdaunoitru.Font = new Font("Segoe UI", 9F);
             txtNgaybatdaunoitru.Format = DateTimePickerFormat.Long;
-            txtNgaybatdaunoitru.Location = new Point(1031, 257);
+            txtNgaybatdaunoitru.Location = new Point(1025, 257);
             txtNgaybatdaunoitru.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             txtNgaybatdaunoitru.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             txtNgaybatdaunoitru.Name = "txtNgaybatdaunoitru";
@@ -559,7 +559,7 @@
             ComboBoxSogiuong.Font = new Font("Segoe UI", 10F);
             ComboBoxSogiuong.ForeColor = Color.Black;
             ComboBoxSogiuong.ItemHeight = 30;
-            ComboBoxSogiuong.Location = new Point(1031, 110);
+            ComboBoxSogiuong.Location = new Point(1025, 110);
             ComboBoxSogiuong.Name = "ComboBoxSogiuong";
             ComboBoxSogiuong.ShadowDecoration.CustomizableEdges = customizableEdges28;
             ComboBoxSogiuong.Size = new Size(251, 36);
@@ -577,7 +577,7 @@
             comboBoxGioitinh.ForeColor = Color.Black;
             comboBoxGioitinh.ItemHeight = 30;
             comboBoxGioitinh.Items.AddRange(new object[] { "Nam", "Nữ" });
-            comboBoxGioitinh.Location = new Point(702, 109);
+            comboBoxGioitinh.Location = new Point(695, 110);
             comboBoxGioitinh.Name = "comboBoxGioitinh";
             comboBoxGioitinh.ShadowDecoration.CustomizableEdges = customizableEdges30;
             comboBoxGioitinh.Size = new Size(300, 36);
@@ -592,7 +592,7 @@
             DateTimeNgaySinh.FillColor = Color.FromArgb(255, 192, 128);
             DateTimeNgaySinh.Font = new Font("Segoe UI", 9F);
             DateTimeNgaySinh.Format = DateTimePickerFormat.Long;
-            DateTimeNgaySinh.Location = new Point(372, 110);
+            DateTimeNgaySinh.Location = new Point(365, 110);
             DateTimeNgaySinh.MaxDate = new DateTime(9998, 12, 31, 0, 0, 0, 0);
             DateTimeNgaySinh.MinDate = new DateTime(1753, 1, 1, 0, 0, 0, 0);
             DateTimeNgaySinh.Name = "DateTimeNgaySinh";
@@ -613,7 +613,7 @@
             txtSdtNguoiThan.Font = new Font("Segoe UI", 9F);
             txtSdtNguoiThan.ForeColor = Color.Black;
             txtSdtNguoiThan.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtSdtNguoiThan.Location = new Point(1031, 180);
+            txtSdtNguoiThan.Location = new Point(1025, 180);
             txtSdtNguoiThan.Margin = new Padding(3, 4, 3, 4);
             txtSdtNguoiThan.Name = "txtSdtNguoiThan";
             txtSdtNguoiThan.PasswordChar = '\0';

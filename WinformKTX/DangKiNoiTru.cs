@@ -64,9 +64,7 @@ namespace WinformKTX
                 }
             }
         }
-
-       
-
+   
         private void TxtLoaiphong_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -131,8 +129,6 @@ namespace WinformKTX
             }
         }
 
-        
-
         private void TxtTang_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (txtTang.SelectedValue == null) { return; }
@@ -184,8 +180,6 @@ namespace WinformKTX
 
         }
 
-       
-
         private void TxtTenphong_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (txtTenphong.SelectedValue == null)
@@ -207,8 +201,6 @@ namespace WinformKTX
                     return;
                 }
 
-                
-
                 // Load danh sách giường còn trống hoặc giường hiện tại của sinh viên
                 string queryGiuong = @"
                         SELECT MA_GIUONG, TEN_GIUONG
@@ -225,21 +217,13 @@ namespace WinformKTX
                         DataTable table = new DataTable();
                         adapter.Fill(table);
 
-                        
-
                         ComboBoxSogiuong.DataSource = table;
                         ComboBoxSogiuong.DisplayMember = "TEN_GIUONG";
                         ComboBoxSogiuong.ValueMember = "MA_GIUONG";
-
                     }
                 }
             }
         }
-
-
-
-
-
 
         private void TxtThoigiannoitru_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -310,8 +294,6 @@ namespace WinformKTX
             }
         }
 
-
-
         private int GetValidMaGiaDn()
         {
             // Giả sử bạn có một logic để lấy giá trị MA_GIA_DN hợp lệ từ cơ sở dữ liệu hoặc một nguồn khác
@@ -335,18 +317,8 @@ namespace WinformKTX
             }
         }
 
-
-
-
         private void BtnDangkynoitru_Click(object sender, EventArgs e)
         {
-            //if (comboBoxGioitinh.SelectedItem == null || txtLoaiphong.SelectedItem == null || txtTang.SelectedItem == null ||
-            //    txtTenphong.SelectedItem == null || ComboBoxSogiuong.SelectedItem == null || txtThoigiannoitru.SelectedItem == null)
-            //{
-            //    MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            //    return;
-            //}
-
             // Kiểm tra các thuộc tính không được để trống
             if (string.IsNullOrWhiteSpace(txtMasinhvien.Text))
             {
@@ -426,7 +398,6 @@ namespace WinformKTX
                 MessageBox.Show("Giường không được để trống.");
                 return;
             }
-
 
             // Tính toán tuổi của sinh viên
             DateTime ngaySinh = DateTimeNgaySinh.Value;
@@ -584,12 +555,10 @@ namespace WinformKTX
                                 int maGiaDn = GetValidMaGiaDn();
                                 // Cập nhật thông tin vào bảng DIEN_NUOC
                                 string insertDienNuocQuery = @"
-INSERT INTO DIEN_NUOC (MA_GIA_DN, MA_PHONG, CHI_SO_DIEN_CU, CHI_SO_DIEN_MOI, SO_DIEN_DA_SU_DUNG, 
-                       CHI_SO_NUOC_CU, CHI_SO_NUOC_MOI, SO_NUOC_DA_SU_DUNG, 
-                       TIEN_DIEN, TIEN_NUOC, TONG_TIEN, TU_NGAY, DEN_NGAY, TINH_TRANG_TT) 
-VALUES (@MA_GIA_DN, (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TEN_PHONG), 0, 0, 0, 0, 0, 0, 0, 0, 0, @TU_NGAY, @DEN_NGAY, N'Chưa thanh toán')";
-
-
+                                            INSERT INTO DIEN_NUOC (MA_GIA_DN, MA_PHONG, CHI_SO_DIEN_CU, CHI_SO_DIEN_MOI, SO_DIEN_DA_SU_DUNG, 
+                                                        CHI_SO_NUOC_CU, CHI_SO_NUOC_MOI, SO_NUOC_DA_SU_DUNG, 
+                                                        TIEN_DIEN, TIEN_NUOC, TONG_TIEN, TU_NGAY, DEN_NGAY, TINH_TRANG_TT) 
+                                            VALUES (@MA_GIA_DN, (SELECT MA_PHONG FROM PHONG WHERE TEN_PHONG = @TEN_PHONG), 0, 0, 0, 0, 0, 0, 0, 0, 0, @TU_NGAY, @DEN_NGAY, N'Chưa thanh toán')";
 
                                 using (SqlCommand cmdDienNuoc = new SqlCommand(insertDienNuocQuery, conn))
                                 {
