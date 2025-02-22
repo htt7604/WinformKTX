@@ -39,8 +39,6 @@
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges8 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges9 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges10 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges11 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
-            Guna.UI2.WinForms.Suite.CustomizableEdges customizableEdges12 = new Guna.UI2.WinForms.Suite.CustomizableEdges();
             txtThoigiangiahan = new Guna.UI2.WinForms.Guna2ComboBox();
             btnTracuunoitru = new Guna.UI2.WinForms.Guna2Button();
             txtMasinhvien = new Guna.UI2.WinForms.Guna2TextBox();
@@ -51,7 +49,6 @@
             txtTienphong = new Guna.UI2.WinForms.Guna2TextBox();
             label1 = new Label();
             dataGridView1 = new DataGridView();
-            guna2Button1Doiphong = new Guna.UI2.WinForms.Guna2Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -218,36 +215,12 @@
             dataGridView1.Size = new Size(1488, 505);
             dataGridView1.TabIndex = 163;
             // 
-            // guna2Button1Doiphong
-            // 
-            guna2Button1Doiphong.BorderRadius = 10;
-            guna2Button1Doiphong.BorderThickness = 1;
-            guna2Button1Doiphong.CheckedState.BorderColor = Color.FromArgb(255, 192, 192);
-            guna2Button1Doiphong.CheckedState.FillColor = Color.White;
-            guna2Button1Doiphong.CustomizableEdges = customizableEdges11;
-            guna2Button1Doiphong.DisabledState.BorderColor = Color.DarkGray;
-            guna2Button1Doiphong.DisabledState.CustomBorderColor = Color.DarkGray;
-            guna2Button1Doiphong.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
-            guna2Button1Doiphong.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
-            guna2Button1Doiphong.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
-            guna2Button1Doiphong.ForeColor = Color.White;
-            guna2Button1Doiphong.Image = (Image)resources.GetObject("guna2Button1Doiphong.Image");
-            guna2Button1Doiphong.ImageSize = new Size(35, 35);
-            guna2Button1Doiphong.Location = new Point(979, 322);
-            guna2Button1Doiphong.Name = "guna2Button1Doiphong";
-            guna2Button1Doiphong.ShadowDecoration.CustomizableEdges = customizableEdges12;
-            guna2Button1Doiphong.Size = new Size(165, 56);
-            guna2Button1Doiphong.TabIndex = 164;
-            guna2Button1Doiphong.Text = "ĐỔI PHÒNG";
-            guna2Button1Doiphong.Click += guna2Button1Doiphong_Click;
-            // 
-            // GiaHanNoiTru1
+            // GiaHanNoiTru
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.LightGray;
             ClientSize = new Size(1512, 947);
-            Controls.Add(guna2Button1Doiphong);
             Controls.Add(dataGridView1);
             Controls.Add(txtTienphong);
             Controls.Add(label1);
@@ -259,7 +232,7 @@
             Controls.Add(label2);
             Controls.Add(label4);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "GiaHanNoiTru1";
+            Name = "GiaHanNoiTru";
             Text = "GiaHanNoiTru1";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
@@ -278,6 +251,5 @@
         private Guna.UI2.WinForms.Guna2TextBox txtTienphong;
         private Label label1;
         private DataGridView dataGridView1;
-        private Guna.UI2.WinForms.Guna2Button guna2Button1Doiphong;
     }
 }

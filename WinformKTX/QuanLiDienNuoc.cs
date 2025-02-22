@@ -151,7 +151,7 @@ OUTER APPLY (
                         }
 
                         // Đổi tên cột hiển thị trên DataGridView
-                        //dataGridView1Dien_nuoc.Columns["MA_DIEN_NUOC"].HeaderText = "Mã Điện - Nước";
+                        dataGridView1Dien_nuoc.Columns["MA_DIEN_NUOC"].HeaderText = "Mã Điện - Nước";
                         dataGridView1Dien_nuoc.Columns["MA_PHONG"].HeaderText = "Mã Phòng";
                         dataGridView1Dien_nuoc.Columns["TU_NGAY"].HeaderText = "Từ Ngày";
                         dataGridView1Dien_nuoc.Columns["DEN_NGAY"].HeaderText = "Đến Ngày";
@@ -166,6 +166,8 @@ OUTER APPLY (
                         dataGridView1Dien_nuoc.Columns["TONG_TIEN"].HeaderText = "Tổng Tiền";
                         dataGridView1Dien_nuoc.Columns["NGAY_THANH_TOAN_DIEN_NUOC"].HeaderText = "Ngày Thanh Toán Điện - Nước";
                         dataGridView1Dien_nuoc.Columns["TINH_TRANG_TT"].HeaderText = "Tình Trạng Thanh Toán";
+                        dataGridView1Dien_nuoc.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+                          
                     }
                 }
                 catch (Exception ex)
