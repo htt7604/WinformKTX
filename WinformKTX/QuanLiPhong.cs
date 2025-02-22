@@ -17,10 +17,6 @@ namespace WinformKTX
 {
     public partial class QuanLiPhong : Form
     {
-
-
-        //private string connectionString = "Data Source=LAPTOP-5VTLAM86\\SQLEXPRESS;Initial Catalog=WinFormKTX;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
-
         KetnoiCSDL ketnoi = new KetnoiCSDL();
 
         public QuanLiPhong()
@@ -174,7 +170,6 @@ namespace WinformKTX
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
 
-
                 try
                 {
                     string getMaxBedsQuery = "SELECT SO_GIUONG_TOI_DA FROM PHONG WHERE MA_PHONG = @MaPhong";
@@ -237,30 +232,6 @@ namespace WinformKTX
                         string insertGiuongQuery = @"
                 INSERT INTO GIUONG (MA_PHONG, TEN_GIUONG, TINH_TRANG_GIUONG) 
                 VALUES (@MaPhong, @TenGiuong, N'Trống')";
-
-
-
-                try
-                {
-                    string updatePhongQuery = "UPDATE PHONG SET TINH_TRANG_PHONG = @TinhTrang, SO_GIUONG_CON_TRONG = @SoGiuongConTrong WHERE MA_PHONG = @MaPhong";
-                    using (SqlCommand cmd = new SqlCommand(updatePhongQuery, conn, transaction))
-                    {
-                        cmd.Parameters.AddWithValue("@MaPhong", maPhong);
-                        cmd.Parameters.AddWithValue("@TinhTrang", tinhTrangPhong);
-                        cmd.Parameters.AddWithValue("@SoGiuongConTrong", soGiuongConTrong);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    string deleteGiuongQuery = "DELETE FROM GIUONG WHERE MA_PHONG = @MaPhong";
-                    using (SqlCommand cmd = new SqlCommand(deleteGiuongQuery, conn, transaction))
-                    {
-                        cmd.Parameters.AddWithValue("@MaPhong", maPhong);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    if (soGiuongConTrong > 0)
-                    {
-                        string insertGiuongQuery = "INSERT INTO GIUONG (MA_PHONG, TEN_GIUONG, TINH_TRANG_GIUONG) VALUES (@MaPhong, @TenGiuong, N'Trống')";
 
                         for (int i = 1; i <= soGiuongConTrong; i++)
                         {
@@ -368,7 +339,6 @@ namespace WinformKTX
 
             using (SqlConnection conn = ketnoi.GetConnection())
             {
-
                 try
                 {
                     conn.Open();
@@ -396,10 +366,6 @@ namespace WinformKTX
             SELECT COUNT(*) 
             FROM GIUONG 
             WHERE MA_PHONG = @MaPhong AND TINH_TRANG_GIUONG = N'Đang sử dụng'";
-
-                string checkQuery = "SELECT COUNT(*) FROM PHONG WHERE TEN_PHONG = @TenPhong";
-                string deleteQuery = "DELETE FROM PHONG WHERE TEN_PHONG = @TenPhong";
-
 
                     int countGiuongDangSuDung;
                     using (SqlCommand checkGiuongCmd = new SqlCommand(checkGiuongQuery, conn))
@@ -813,7 +779,6 @@ namespace WinformKTX
                 {
                     conn.Open();
                     string totalQuery = "SELECT COUNT(*) FROM PHONG";
-
                     string filteredQuery = $@"
                 SELECT COUNT(*) 
                 FROM PHONG P 

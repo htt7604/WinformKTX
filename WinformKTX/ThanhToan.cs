@@ -138,7 +138,6 @@ namespace WinformKTX
             }
         }
 
-
         private void ThanhToan_Load(object sender, EventArgs e)
         {
 
@@ -149,38 +148,21 @@ namespace WinformKTX
             string hoTenSinhVien = txthoten.Text.Trim();
             string maSoSinhVien = txtmasosinhvien.Text.Trim();
 
-
             if (string.IsNullOrEmpty(hoTenSinhVien) || string.IsNullOrEmpty(maSoSinhVien))
             {
                 MessageBox.Show("Vui lòng nhập đầy đủ Họ tên và Mã số sinh viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-
-            if (string.IsNullOrEmpty(hoTenSinhVien) || string.IsNullOrEmpty(maSoSinhVien))
-            {
-                MessageBox.Show("Vui lòng nhập đầy đủ Họ tên và Mã số sinh viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-
             using (SqlConnection conn = ketnoi.GetConnection())
             {
                 try
                 {
                     conn.Open();
 
-
                     string checkQuery = @"
             SELECT TRANG_THAI_NOI_TRU 
             FROM NOI_TRU 
             WHERE MSSV = @mssv AND TRANG_THAI_NOI_TRU = N'Đang nội trú'";
-
-
-                    string checkQuery = @"
-                SELECT TRANG_THAI_NOI_TRU 
-                FROM NOI_TRU 
-                WHERE MSSV = @mssv AND TRANG_THAI_NOI_TRU = N'Đang nội trú'";
 
                     using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
                     {
@@ -192,7 +174,6 @@ namespace WinformKTX
                             MessageBox.Show("Sinh viên không có trạng thái 'Đang nội trú', không thể xác nhận thanh toán!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
-
                     }
                     string getMaNoiTruQuery = @"
             SELECT TOP 1 MA_NOI_TRU 
@@ -240,19 +221,6 @@ namespace WinformKTX
                         updateCmd.Parameters.AddWithValue("@maNoiTru", maNoiTru);
                         updateCmd.ExecuteNonQuery();
                     }
-
-                    }
-                    string updateQuery = @"
-                UPDATE THANH_TOAN_PHONG 
-                SET TRANG_THAI_THANH_TOAN = N'Đã thanh toán', NGAY_THANH_TOAN = GETDATE() 
-                WHERE MA_NOI_TRU = (SELECT MA_NOI_TRU FROM NOI_TRU WHERE MSSV = @mssv)";
-                    using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
-                    {
-                        updateCmd.Parameters.AddWithValue("@mssv", maSoSinhVien);
-                        updateCmd.ExecuteNonQuery();
-                    }
-
-
                     MessageBox.Show("Thanh toán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     btntracuu_Click(sender, e);
                 }
@@ -307,9 +275,6 @@ namespace WinformKTX
             }
         }
 
-
-
-
         private void btnloaiphongnu_Click(object sender, EventArgs e)
         {
             using (SqlConnection conn = ketnoi.GetConnection())
@@ -351,7 +316,6 @@ namespace WinformKTX
                 }
             }
         }
-
 
         private void btnchuathanhtoan_Click(object sender, EventArgs e)
         {
@@ -446,27 +410,16 @@ namespace WinformKTX
                                    "TTP.NGAY_THANH_TOAN AS 'Ngày thanh toán phòng', " +
                                    "TTP.GIA_TIEN AS 'Giá tiền phòng', " +
                                    "TTP.TRANG_THAI_THANH_TOAN AS 'Trạng thái thanh toán phòng', " +
-
                                    "DN.TIEN_DIEN AS 'Tiền điện', " +
                                    "DN.TIEN_NUOC AS 'Tiền nước', " +
                                    "DN.TINH_TRANG_TT AS 'Trạng thái thanh toán điện nước', " +
                                    "DN.NGAY_THANH_TOAN_DIEN_NUOC AS 'Ngày thanh toán điện nước', " +
-
-                                   "DN.TIEN_DIEN AS 'Tiền điện', "+
-                                   "DN.TIEN_NUOC AS 'Tiền nước', "+
-                                   "DN.TINH_TRANG_TT AS 'Trạng thái thanh toán điện nước', "+
-                                   "DN.NGAY_THANH_TOAN_DIEN_NUOC AS 'Ngày thanh toán điện nước', "+
-
                                    "T.TEN_TANG AS 'Tên tầng' " +
                                    "FROM THANH_TOAN_PHONG TTP " +
                                    "JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU " +
                                    "JOIN SINH_VIEN SV ON NT.MSSV = SV.MSSV " +
                                    "JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG " +
-
                                    "JOIN DIEN_NUOC DN ON P.MA_PHONG = DN.MA_PHONG " +
-
-                                   "JOIN DIEN_NUOC DN ON P.MA_PHONG = DN.MA_PHONG "+
-
                                    "JOIN LOAI_PHONG LP ON P.MA_LOAI_PHONG = LP.MA_LOAI_PHONG " +
                                    "JOIN TANG T ON P.MA_TANG = T.MA_TANG " +
                                    "WHERE (@tenTang = '' OR T.TEN_TANG = @tenTang) " +
@@ -531,7 +484,6 @@ namespace WinformKTX
                 {
                     conn.Open();
                     string query = @"
-
             SELECT TOP 1
                 tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
                 tp.GIA_TIEN, 
@@ -548,18 +500,6 @@ namespace WinformKTX
             WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan
             ORDER BY NGAY_THANH_TOAN DESC";
 
-                     SELECT 
-                     tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
-                     tp.GIA_TIEN, dn.TIEN_DIEN, dn.TIEN_NUOC, tp.NGAY_THANH_TOAN, tp.TRANG_THAI_THANH_TOAN
-                     FROM THANH_TOAN_PHONG tp
-                     JOIN NOI_TRU nt ON tp.MA_NOI_TRU = nt.MA_NOI_TRU
-                     JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
-                     JOIN PHONG p ON nt.MA_PHONG = p.MA_PHONG
-                     JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
-                     JOIN DIEN_NUOC dn ON p.MA_PHONG = dn.MA_PHONG
-                     WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan";
-
-
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@maThanhToan", maThanhToan);
@@ -573,10 +513,7 @@ namespace WinformKTX
                 if (dt.Rows.Count == 0)
                 {
                     MessageBox.Show("Không tìm thấy dữ liệu hóa đơn!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                     txtmathanhtoan.Clear();
-
-
                     return;
                 }
 
@@ -586,10 +523,7 @@ namespace WinformKTX
                 if (trangThaiThanhToan != "Đã thanh toán")
                 {
                     MessageBox.Show("Không thể in hóa đơn do sinh viên chưa thực hiện thanh toán!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
                     txtmathanhtoan.Clear();
-
-
                     return;
                 }
 
@@ -601,10 +535,7 @@ namespace WinformKTX
                 decimal tienNuoc = Convert.ToDecimal(row["TIEN_NUOC"]);
                 decimal tongTien = giaTien + tienDien + tienNuoc;
                 string ngayThanhToan = Convert.ToDateTime(row["NGAY_THANH_TOAN"]).ToString("dd/MM/yyyy");
-
                 string ngayThanhToanDienNuoc = Convert.ToDateTime(row["NGAY_THANH_TOAN_DIEN_NUOC"]).ToString("dd/MM/yyyy");
-
-
 
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PDF Files|*.pdf";
@@ -631,10 +562,8 @@ namespace WinformKTX
                     document.Add(new Paragraph($"MSSV: {mssv}", normalFont));
                     document.Add(new Paragraph($"Ho ten SV: {hoten}", normalFont));
                     document.Add(new Paragraph($"Phong: {tenPhong}\n", normalFont));
-
                     document.Add(new Paragraph($"Ngay thanh toan: {ngayThanhToan}", normalFont));
                     document.Add(new Paragraph($"Ngay thanh toan dien nuoc: {ngayThanhToanDienNuoc}\n", normalFont));
-
 
                     document.Add(new Paragraph($"Gia tien phong: {giaTien:N0} VND", normalFont));
                     document.Add(new Paragraph($"Tien dien: {tienDien:N0} VND", normalFont));
@@ -642,22 +571,9 @@ namespace WinformKTX
                     document.Add(new Paragraph("_____________________________________________", titleFont));
                     document.Add(new Paragraph($"\nTong tien: {tongTien:N0} VND", normalFont));
 
-
                     document.Close();
                     MessageBox.Show("In hóa đơn thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     txtmathanhtoan.Clear();
-
-                    document.Add(new Paragraph($"\n                                           Ngay thanh toan: {ngayThanhToan}\n", normalFont));
-
-                    document.Add(new Paragraph("\n                                 ", titleFont));
-                    document.Add(new Paragraph("*Chu ky cua:", normalFont));
-                    document.Add(new Paragraph("\nNguoi lap phieu\t\t               Nguoi nop tien\t\t           Thu quy", normalFont));
-                    document.Add(new Paragraph("\n                                 ", titleFont));
-                    document.Add(new Paragraph("\n\n\nKe toan truong\t\t             Hieu truong", normalFont));
-
-                    document.Close();
-                    MessageBox.Show("In hóa đơn thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 }
             }
             catch (Exception ex)
@@ -665,7 +581,6 @@ namespace WinformKTX
                 MessageBox.Show("Lỗi in hóa đơn: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
 
         private void btntatcasinhvien_Click(object sender, EventArgs e)
@@ -681,11 +596,7 @@ namespace WinformKTX
                                    "SV.HOTEN_SV AS 'Họ tên', " +
                                    "SV.MSSV AS 'MSSV', " +
                                    "NT.MA_NOI_TRU AS 'Mã nội trú', " +
-
                                    "NT.TRANG_THAI_NOI_TRU AS 'Trạng thái nội trú' ," +
-
-                                   "NT.TRANG_THAI_NOI_TRU AS 'Trạng thái nội trú' ,"+
-
                                    "TTP.NGAY_THANH_TOAN AS 'Ngày thanh toán phòng', " +
                                    "TTP.GIA_TIEN AS 'Giá tiền phòng', " +
                                    "TTP.TRANG_THAI_THANH_TOAN AS 'Trạng thái thanh toán' " +
@@ -750,7 +661,6 @@ namespace WinformKTX
                 }
             }
         }
-
 
         private void btntracuu2_Click(object sender, EventArgs e)
         {
@@ -871,7 +781,6 @@ namespace WinformKTX
                 MessageBox.Show("Vui lòng chọn một dòng để xác nhận thanh toán!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
 
         private void btnloaiphongnam2_Click(object sender, EventArgs e)
         {
