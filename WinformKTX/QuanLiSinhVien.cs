@@ -45,34 +45,68 @@ namespace WinformKTX
                     conn.Open();
 
                     // Truy vấn lấy dữ liệu sinh viên + nội trú + tên tầng + tên loại tầng + tên phòng + tên giường
+                    //string query = @"
+                    //            SELECT 
+                    //                SINH_VIEN.MSSV,
+                    //                SINH_VIEN.HOTEN_SV, 
+                    //                SINH_VIEN.CCCD, 
+                    //                SINH_VIEN.NGAY_SINH, 
+                    //                SINH_VIEN.GIOI_TINH, 
+                    //                SINH_VIEN.SDT_SINHVIEN,
+                    //                SINH_VIEN.SDT_NGUOITHAN,
+                    //                SINH_VIEN.QUE_QUAN,
+                    //                SINH_VIEN.EMAIL,
+                    //                NOI_TRU.MA_PHONG,    -- Giữ lại để xử lý dữ liệu
+                    //                NOI_TRU.MA_GIUONG,   -- Giữ lại để xử lý dữ liệu
+                    //                PHONG.MA_TANG,       -- Giữ lại để xử lý dữ liệu
+                    //                LOAI_PHONG.MA_LOAI_PHONG,   -- Giữ lại để xử lý dữ liệu
+                    //                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //                NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //                PHONG.TEN_PHONG,     -- Hiển thị thay vì MA_PHONG
+                    //                GIUONG.TEN_GIUONG,   -- Hiển thị thay vì MA_GIUONG
+                    //                TANG.TEN_TANG,       -- Hiển thị thay vì MA_TANG
+                    //                LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                    //            FROM SINH_VIEN
+                    //            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG";
+
                     string query = @"
-                                SELECT 
-                                    SINH_VIEN.MSSV,
-                                    SINH_VIEN.HOTEN_SV, 
-                                    SINH_VIEN.CCCD, 
-                                    SINH_VIEN.NGAY_SINH, 
-                                    SINH_VIEN.GIOI_TINH, 
-                                    SINH_VIEN.SDT_SINHVIEN,
-                                    SINH_VIEN.SDT_NGUOITHAN,
-                                    SINH_VIEN.QUE_QUAN,
-                                    SINH_VIEN.EMAIL,
-                                    NOI_TRU.MA_PHONG,    -- Giữ lại để xử lý dữ liệu
-                                    NOI_TRU.MA_GIUONG,   -- Giữ lại để xử lý dữ liệu
-                                    PHONG.MA_TANG,       -- Giữ lại để xử lý dữ liệu
-                                    LOAI_PHONG.MA_LOAI_PHONG,   -- Giữ lại để xử lý dữ liệu
-                                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                    NOI_TRU.TRANG_THAI_NOI_TRU,
-                                    PHONG.TEN_PHONG,     -- Hiển thị thay vì MA_PHONG
-                                    GIUONG.TEN_GIUONG,   -- Hiển thị thay vì MA_GIUONG
-                                    TANG.TEN_TANG,       -- Hiển thị thay vì MA_TANG
-                                    LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
-                                FROM SINH_VIEN
-                                INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                                INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                                INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                                INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                                INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG";
+             WITH LatestNoiTru AS (
+                 SELECT *,
+                        ROW_NUMBER() OVER (PARTITION BY MSSV ORDER BY NGAY_DANG_KY_NOI_TRU DESC) AS rn
+                 FROM NOI_TRU
+             )
+             SELECT 
+                 SV.MSSV,
+                 SV.HOTEN_SV, 
+                 SV.CCCD, 
+                 SV.NGAY_SINH, 
+                 SV.GIOI_TINH, 
+                 SV.SDT_SINHVIEN,
+                 SV.SDT_NGUOITHAN,
+                 SV.QUE_QUAN,
+                 SV.EMAIL,
+                 NT.MA_PHONG,  
+                 NT.MA_GIUONG,   
+                 P.MA_TANG,       
+                 LP.MA_LOAI_PHONG,   
+                 NT.NGAY_BAT_DAU_NOI_TRU,
+                 NT.NGAY_KET_THUC_NOI_TRU,
+                 NT.TRANG_THAI_NOI_TRU,
+                 P.TEN_PHONG,     
+                 G.TEN_GIUONG,   
+                 T.TEN_TANG,       
+                 LP.TEN_LOAI_PHONG 
+             FROM SINH_VIEN SV
+             INNER JOIN LatestNoiTru NT ON SV.MSSV = NT.MSSV AND NT.rn = 1
+             INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+             INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+             INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+             INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -93,16 +127,16 @@ namespace WinformKTX
                     dataGridView1.Columns["EMAIL"].HeaderText = "Email";
 
                     dataGridView1.Columns["MA_LOAI_PHONG"].Visible = false; // Ẩn Mã Loại Tầng nhưng vẫn giữ giá trị xử lý
-                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Tên Loại Tầng";
+                    dataGridView1.Columns["TEN_LOAI_PHONG"].HeaderText = "Loại Phòng";
 
                     dataGridView1.Columns["MA_TANG"].Visible = false;   // Ẩn Mã Tầng nhưng vẫn giữ giá trị xử lý
-                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tên Tầng";
+                    dataGridView1.Columns["TEN_TANG"].HeaderText = "Tầng";
 
                     dataGridView1.Columns["MA_PHONG"].Visible = false;  // Ẩn Mã Phòng nhưng vẫn giữ giá trị xử lý
-                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Tên Phòng";
+                    dataGridView1.Columns["TEN_PHONG"].HeaderText = "Phòng";
 
                     dataGridView1.Columns["MA_GIUONG"].Visible = false; // Ẩn Mã Giường nhưng vẫn giữ giá trị xử lý
-                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Tên Giường";
+                    dataGridView1.Columns["TEN_GIUONG"].HeaderText = "Giường";
 
                     dataGridView1.Columns["NGAY_BAT_DAU_NOI_TRU"].HeaderText = "Ngày Bắt Đầu Nội Trú";
                     dataGridView1.Columns["NGAY_KET_THUC_NOI_TRU"].HeaderText = "Ngày Kết Thúc Nội Trú";
@@ -764,6 +798,16 @@ namespace WinformKTX
                         MessageBox.Show("Không thể chuyển từ 'Cần chú ý' sang 'Đã đăng ký'.");
                         return;
                     }
+                    if (trangThaiMoi == "Đã đăng ký" && currentStatus == "Chờ gia hạn")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Đã đăng ký'.");
+                        return;
+                    }
+                    if (trangThaiMoi == "Đã đăng ký" && currentStatus == "Đang nội trú")
+                    {
+                        MessageBox.Show("Không thể chuyển từ 'Đang nội trú' sang 'Đã đăng ký'.");
+                        return;
+                    }
                     //// Kiểm tra số lượng giường trống trong phòng
                     //string checkRoomQuery = @"SELECT SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong";
                     //int soGiuongConTrong;
@@ -1117,51 +1161,102 @@ namespace WinformKTX
                     try
                     {
                         conn.Open();
+                        //string query = @"
+                        //            -- Lưu thông tin phòng và giường của sinh viên trước khi xóa
+                        //            DECLARE @MaPhong INT, @MaGiuong NVARCHAR(50), @CurrentStatus NVARCHAR(50);
+
+                        //            SELECT @MaPhong = MA_PHONG, @MaGiuong = MA_GIUONG, @CurrentStatus = TRANG_THAI_NOI_TRU
+                        //            FROM NOI_TRU
+                        //            WHERE MSSV = @MSSV;
+
+                        //            -- Xóa sinh viên khỏi NOI_TRU
+                        //            DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
+
+                        //            -- Nếu sinh viên đang trong trạng thái Đang nội trú hoặc Chờ gia hạn, cập nhật giường và phòng
+                        //            IF @CurrentStatus IN(N'Đang nội trú', N'Chờ gia hạn')
+                        //            BEGIN
+                        //                -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
+                        //                IF @MaGiuong IS NOT NULL
+                        //                BEGIN
+                        //                    UPDATE GIUONG
+                        //                    SET TINH_TRANG_GIUONG = N'Trống'
+                        //                    WHERE MA_GIUONG = @MaGiuong;
+                        //                                    END
+
+                        //                                    -- Cập nhật số giường trống của phòng liên quan
+                        //                                    IF @MaPhong IS NOT NULL
+                        //            BEGIN
+                        //            UPDATE PHONG
+                        //            SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
+                        //            WHERE MA_PHONG = @MaPhong;
+
+                        //            --Cập nhật trạng thái phòng dựa trên số giường còn trống
+                        //            DECLARE @SoGiuongCon INT;
+                        //                SELECT @SoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+
+                        //            UPDATE PHONG
+                        //            SET TINH_TRANG_PHONG =
+                        //                CASE
+                        //                    WHEN @SoGiuongCon = 0 THEN N'Đầy'
+                        //                    WHEN @SoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
+                        //                    ELSE N'Đang Sử Dụng'
+                        //                END
+                        //            WHERE MA_PHONG = @MaPhong;
+                        //            END
+                        //        END;";
+
                         string query = @"
-                                    -- Lưu thông tin phòng và giường của sinh viên trước khi xóa
-                                    DECLARE @MaPhong INT, @MaGiuong NVARCHAR(50), @CurrentStatus NVARCHAR(50);
+  -- Lưu thông tin phòng và giường của sinh viên trước khi xóa
+DECLARE @MaPhong INT, @MaGiuong NVARCHAR(50), @MaNoiTru INT, @CurrentStatus NVARCHAR(50), @SoGiuongCon INT;
 
-                                    SELECT @MaPhong = MA_PHONG, @MaGiuong = MA_GIUONG, @CurrentStatus = TRANG_THAI_NOI_TRU
-                                    FROM NOI_TRU
-                                    WHERE MSSV = @MSSV;
+-- Lấy thông tin MA_NOI_TRU mới nhất của sinh viên dựa trên MSSV
+SELECT TOP 1 @MaNoiTru = MA_NOI_TRU, @MaPhong = MA_PHONG, @MaGiuong = MA_GIUONG, @CurrentStatus = TRANG_THAI_NOI_TRU
+FROM NOI_TRU
+WHERE MSSV = @MSSV
+ORDER BY NGAY_DANG_KY_NOI_TRU DESC;
 
-                                    -- Xóa sinh viên khỏi NOI_TRU
-                                    DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
+-- Xóa tất cả thanh toán phòng liên quan đến sinh viên trước khi xóa nội trú
+DELETE TTP
+FROM THANH_TOAN_PHONG TTP
+JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU
+WHERE NT.MSSV = @MSSV;
 
-                                    -- Nếu sinh viên đang trong trạng thái Đang nội trú hoặc Chờ gia hạn, cập nhật giường và phòng
-                                    IF @CurrentStatus IN(N'Đang nội trú', N'Chờ gia hạn')
-                                    BEGIN
-                                        -- Cập nhật trạng thái giường của sinh viên bị xóa thành Trống
-                                        IF @MaGiuong IS NOT NULL
-                                        BEGIN
-                                            UPDATE GIUONG
-                                            SET TINH_TRANG_GIUONG = N'Trống'
-                                            WHERE MA_GIUONG = @MaGiuong;
-                                                            END
+-- Xóa tất cả bản ghi nội trú của sinh viên khỏi NOI_TRU
+DELETE FROM NOI_TRU WHERE MSSV = @MSSV;
 
-                                                            -- Cập nhật số giường trống của phòng liên quan
-                                                            IF @MaPhong IS NOT NULL
-                                    BEGIN
-                                    UPDATE PHONG
-                                    SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
-                                    WHERE MA_PHONG = @MaPhong;
+-- Nếu sinh viên đang trong trạng thái ""Đang nội trú"" hoặc ""Chờ gia hạn"", cập nhật giường và phòng
+IF @CurrentStatus IN (N'Đang nội trú', N'Chờ gia hạn')
+BEGIN
+    -- Cập nhật trạng thái giường của sinh viên bị xóa thành ""Trống""
+    IF @MaGiuong IS NOT NULL
+    BEGIN
+        UPDATE GIUONG
+        SET TINH_TRANG_GIUONG = N'Trống'
+        WHERE MA_GIUONG = @MaGiuong;
+    END
 
-                                    --Cập nhật trạng thái phòng dựa trên số giường còn trống
-                                    DECLARE @SoGiuongCon INT;
-                                        SELECT @SoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+    -- Cập nhật số giường trống của phòng liên quan
+    IF @MaPhong IS NOT NULL
+    BEGIN
+        UPDATE PHONG
+        SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG + 1
+        WHERE MA_PHONG = @MaPhong;
 
-                                    UPDATE PHONG
-                                    SET TINH_TRANG_PHONG =
-                                        CASE
-                                            WHEN @SoGiuongCon = 0 THEN N'Đầy'
-                                            WHEN @SoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
-                                            ELSE N'Đang Sử Dụng'
-                                        END
-                                    WHERE MA_PHONG = @MaPhong;
-                                    END
-                                END;";
+        -- Lấy lại số giường trống để cập nhật trạng thái phòng
+        SELECT @SoGiuongCon = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
 
-
+        -- Cập nhật trạng thái phòng dựa trên số giường còn trống
+        UPDATE PHONG
+        SET TINH_TRANG_PHONG =
+            CASE
+                WHEN @SoGiuongCon = 0 THEN N'Đầy'
+                WHEN @SoGiuongCon = SO_GIUONG_TOI_DA THEN N'Trống'
+                ELSE N'Đang Sử Dụng'
+            END
+        WHERE MA_PHONG = @MaPhong;
+    END
+END;
+";
                         SqlCommand command = new SqlCommand(query, conn);
                         command.Parameters.AddWithValue("@MSSV", mssv);
 
@@ -1222,35 +1317,72 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
+                    //string query = @"
+                    //                SELECT 
+                    //                    SINH_VIEN.MSSV,
+                    //                    SINH_VIEN.HOTEN_SV, 
+                    //                    SINH_VIEN.CCCD, 
+                    //                    SINH_VIEN.NGAY_SINH, 
+                    //                    SINH_VIEN.GIOI_TINH, 
+                    //                    SINH_VIEN.SDT_SINHVIEN,
+                    //                    SINH_VIEN.SDT_NGUOITHAN,
+                    //                    SINH_VIEN.QUE_QUAN,
+                    //                    SINH_VIEN.EMAIL,
+                    //                    NOI_TRU.MA_PHONG,       -- Giữ nguyên mã để xử lý dữ liệu
+                    //                    NOI_TRU.MA_GIUONG,      -- Giữ nguyên mã để xử lý dữ liệu
+                    //                    PHONG.MA_TANG,          -- Giữ nguyên mã để xử lý dữ liệu
+                    //                    LOAI_PHONG.MA_LOAI_PHONG, -- Giữ nguyên mã để xử lý dữ liệu
+                    //                    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //                    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //                    NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //                    PHONG.TEN_PHONG,      -- Hiển thị thay vì MA_PHONG
+                    //                    GIUONG.TEN_GIUONG,    -- Hiển thị thay vì MA_GIUONG
+                    //                    TANG.TEN_TANG,        -- Hiển thị thay vì MA_TANG
+                    //                    LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                    //                FROM SINH_VIEN
+                    //                INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //                INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //                INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //                INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //                INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //                WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên Đang nội trú
+
                     string query = @"
-                                    SELECT 
-                                        SINH_VIEN.MSSV,
-                                        SINH_VIEN.HOTEN_SV, 
-                                        SINH_VIEN.CCCD, 
-                                        SINH_VIEN.NGAY_SINH, 
-                                        SINH_VIEN.GIOI_TINH, 
-                                        SINH_VIEN.SDT_SINHVIEN,
-                                        SINH_VIEN.SDT_NGUOITHAN,
-                                        SINH_VIEN.QUE_QUAN,
-                                        SINH_VIEN.EMAIL,
-                                        NOI_TRU.MA_PHONG,       -- Giữ nguyên mã để xử lý dữ liệu
-                                        NOI_TRU.MA_GIUONG,      -- Giữ nguyên mã để xử lý dữ liệu
-                                        PHONG.MA_TANG,          -- Giữ nguyên mã để xử lý dữ liệu
-                                        LOAI_PHONG.MA_LOAI_PHONG, -- Giữ nguyên mã để xử lý dữ liệu
-                                        NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                        NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                        NOI_TRU.TRANG_THAI_NOI_TRU,
-                                        PHONG.TEN_PHONG,      -- Hiển thị thay vì MA_PHONG
-                                        GIUONG.TEN_GIUONG,    -- Hiển thị thay vì MA_GIUONG
-                                        TANG.TEN_TANG,        -- Hiển thị thay vì MA_TANG
-                                        LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
-                                    FROM SINH_VIEN
-                                    INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                                    INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                                    INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                                    INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                                    INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                                    WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đang nội trú'"; // Điều kiện lọc sinh viên Đang nội trú
+    SELECT 
+        SV.MSSV,
+        SV.HOTEN_SV, 
+        SV.CCCD, 
+        SV.NGAY_SINH, 
+        SV.GIOI_TINH, 
+        SV.SDT_SINHVIEN,
+        SV.SDT_NGUOITHAN,
+        SV.QUE_QUAN,
+        SV.EMAIL,
+        NT.MA_PHONG,       
+        NT.MA_GIUONG,      
+        P.MA_TANG,          
+        LP.MA_LOAI_PHONG,   
+        NT.NGAY_BAT_DAU_NOI_TRU,
+        NT.NGAY_KET_THUC_NOI_TRU,
+        NT.TRANG_THAI_NOI_TRU,
+        P.TEN_PHONG,       
+        G.TEN_GIUONG,      
+        T.TEN_TANG,        
+        LP.TEN_LOAI_PHONG  
+    FROM SINH_VIEN SV
+    INNER JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+    INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+    INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+    INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+    INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+    WHERE NT.TRANG_THAI_NOI_TRU = N'Đang nội trú'
+    AND NT.MA_NOI_TRU = (
+        SELECT MAX(MA_NOI_TRU)  
+        FROM NOI_TRU 
+        WHERE MSSV = SV.MSSV
+    )";
+
+
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1305,36 +1437,70 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"
-                            SELECT 
-                                SINH_VIEN.MSSV,
-                                SINH_VIEN.HOTEN_SV, 
-                                SINH_VIEN.CCCD, 
-                                SINH_VIEN.NGAY_SINH, 
-                                SINH_VIEN.GIOI_TINH, 
-                                SINH_VIEN.SDT_SINHVIEN,
-                                SINH_VIEN.SDT_NGUOITHAN,
-                                SINH_VIEN.QUE_QUAN,
-                                SINH_VIEN.EMAIL,
-                                NOI_TRU.MA_PHONG,
-                                NOI_TRU.MA_GIUONG,
-                                PHONG.MA_TANG,
-                                LOAI_PHONG.MA_LOAI_PHONG,
-                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                NOI_TRU.TRANG_THAI_NOI_TRU,
-                                PHONG.TEN_PHONG,
-                                GIUONG.TEN_GIUONG,
-                                TANG.TEN_TANG,
-                                LOAI_PHONG.TEN_LOAI_PHONG
-                            FROM SINH_VIEN
-                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đã đăng ký'"; // Lọc sinh viên Đã đăng ký
+                    //string query = @"
+                    //        SELECT 
+                    //            SINH_VIEN.MSSV,
+                    //            SINH_VIEN.HOTEN_SV, 
+                    //            SINH_VIEN.CCCD, 
+                    //            SINH_VIEN.NGAY_SINH, 
+                    //            SINH_VIEN.GIOI_TINH, 
+                    //            SINH_VIEN.SDT_SINHVIEN,
+                    //            SINH_VIEN.SDT_NGUOITHAN,
+                    //            SINH_VIEN.QUE_QUAN,
+                    //            SINH_VIEN.EMAIL,
+                    //            NOI_TRU.MA_PHONG,
+                    //            NOI_TRU.MA_GIUONG,
+                    //            PHONG.MA_TANG,
+                    //            LOAI_PHONG.MA_LOAI_PHONG,
+                    //            NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //            NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //            NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //            PHONG.TEN_PHONG,
+                    //            GIUONG.TEN_GIUONG,
+                    //            TANG.TEN_TANG,
+                    //            LOAI_PHONG.TEN_LOAI_PHONG
+                    //        FROM SINH_VIEN
+                    //        INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //        INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //        INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //        INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //        INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //        WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Đã đăng ký'"; // Lọc sinh viên Đã đăng ký
 
+                    string query = @"
+    SELECT 
+        SV.MSSV,
+        SV.HOTEN_SV, 
+        SV.CCCD, 
+        SV.NGAY_SINH, 
+        SV.GIOI_TINH, 
+        SV.SDT_SINHVIEN,
+        SV.SDT_NGUOITHAN,
+        SV.QUE_QUAN,
+        SV.EMAIL,
+        NT.MA_PHONG,       
+        NT.MA_GIUONG,      
+        P.MA_TANG,          
+        LP.MA_LOAI_PHONG,   
+        NT.NGAY_BAT_DAU_NOI_TRU,
+        NT.NGAY_KET_THUC_NOI_TRU,
+        NT.TRANG_THAI_NOI_TRU,
+        P.TEN_PHONG,       
+        G.TEN_GIUONG,      
+        T.TEN_TANG,        
+        LP.TEN_LOAI_PHONG  
+    FROM SINH_VIEN SV
+    INNER JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+    INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+    INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+    INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+    INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+    WHERE NT.TRANG_THAI_NOI_TRU = N'Đã đăng ký'
+    AND NT.MA_NOI_TRU = (
+        SELECT MAX(MA_NOI_TRU)  
+        FROM NOI_TRU 
+        WHERE MSSV = SV.MSSV
+    )";
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1388,35 +1554,71 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
+                    //string query = @"
+                    //        SELECT 
+                    //            SINH_VIEN.MSSV,
+                    //            SINH_VIEN.HOTEN_SV, 
+                    //            SINH_VIEN.CCCD, 
+                    //            SINH_VIEN.NGAY_SINH, 
+                    //            SINH_VIEN.GIOI_TINH, 
+                    //            SINH_VIEN.SDT_SINHVIEN,
+                    //            SINH_VIEN.SDT_NGUOITHAN,
+                    //            SINH_VIEN.QUE_QUAN,
+                    //            SINH_VIEN.EMAIL,
+                    //            NOI_TRU.MA_PHONG,
+                    //            NOI_TRU.MA_GIUONG,
+                    //            PHONG.MA_TANG,
+                    //            LOAI_PHONG.MA_LOAI_PHONG,
+                    //            NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //            NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //            NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //            PHONG.TEN_PHONG,
+                    //            GIUONG.TEN_GIUONG,
+                    //            TANG.TEN_TANG,
+                    //            LOAI_PHONG.TEN_LOAI_PHONG
+                    //        FROM SINH_VIEN
+                    //        INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //        INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //        INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //        INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //        INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //        WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Cần chú ý'";
+
+
                     string query = @"
-                            SELECT 
-                                SINH_VIEN.MSSV,
-                                SINH_VIEN.HOTEN_SV, 
-                                SINH_VIEN.CCCD, 
-                                SINH_VIEN.NGAY_SINH, 
-                                SINH_VIEN.GIOI_TINH, 
-                                SINH_VIEN.SDT_SINHVIEN,
-                                SINH_VIEN.SDT_NGUOITHAN,
-                                SINH_VIEN.QUE_QUAN,
-                                SINH_VIEN.EMAIL,
-                                NOI_TRU.MA_PHONG,
-                                NOI_TRU.MA_GIUONG,
-                                PHONG.MA_TANG,
-                                LOAI_PHONG.MA_LOAI_PHONG,
-                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                NOI_TRU.TRANG_THAI_NOI_TRU,
-                                PHONG.TEN_PHONG,
-                                GIUONG.TEN_GIUONG,
-                                TANG.TEN_TANG,
-                                LOAI_PHONG.TEN_LOAI_PHONG
-                            FROM SINH_VIEN
-                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Cần chú ý'";
+    SELECT 
+        SV.MSSV,
+        SV.HOTEN_SV, 
+        SV.CCCD, 
+        SV.NGAY_SINH, 
+        SV.GIOI_TINH, 
+        SV.SDT_SINHVIEN,
+        SV.SDT_NGUOITHAN,
+        SV.QUE_QUAN,
+        SV.EMAIL,
+        NT.MA_PHONG,       
+        NT.MA_GIUONG,      
+        P.MA_TANG,          
+        LP.MA_LOAI_PHONG,   
+        NT.NGAY_BAT_DAU_NOI_TRU,
+        NT.NGAY_KET_THUC_NOI_TRU,
+        NT.TRANG_THAI_NOI_TRU,
+        P.TEN_PHONG,       
+        G.TEN_GIUONG,      
+        T.TEN_TANG,        
+        LP.TEN_LOAI_PHONG  
+    FROM SINH_VIEN SV
+    INNER JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+    INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+    INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+    INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+    INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+    WHERE NT.TRANG_THAI_NOI_TRU = N'Cần chú ý'
+    AND NT.MA_NOI_TRU = (
+        SELECT MAX(MA_NOI_TRU)  
+        FROM NOI_TRU 
+        WHERE MSSV = SV.MSSV
+    )";
 
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
@@ -1471,36 +1673,70 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"
-                            SELECT 
-                                SINH_VIEN.MSSV,
-                                SINH_VIEN.HOTEN_SV, 
-                                SINH_VIEN.CCCD, 
-                                SINH_VIEN.NGAY_SINH, 
-                                SINH_VIEN.GIOI_TINH, 
-                                SINH_VIEN.SDT_SINHVIEN,
-                                SINH_VIEN.SDT_NGUOITHAN,
-                                SINH_VIEN.QUE_QUAN,
-                                SINH_VIEN.EMAIL,
-                                NOI_TRU.MA_PHONG,
-                                NOI_TRU.MA_GIUONG,
-                                PHONG.MA_TANG,
-                                LOAI_PHONG.MA_LOAI_PHONG,
-                                NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                                NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                                NOI_TRU.TRANG_THAI_NOI_TRU,
-                                PHONG.TEN_PHONG,
-                                GIUONG.TEN_GIUONG,
-                                TANG.TEN_TANG,
-                                LOAI_PHONG.TEN_LOAI_PHONG
-                            FROM SINH_VIEN
-                            INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                            INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                            INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                            INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                            INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                            WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ gia hạn'"; // Lọc sinh viên Chờ gia hạn
+                    //string query = @"
+                    //        SELECT 
+                    //            SINH_VIEN.MSSV,
+                    //            SINH_VIEN.HOTEN_SV, 
+                    //            SINH_VIEN.CCCD, 
+                    //            SINH_VIEN.NGAY_SINH, 
+                    //            SINH_VIEN.GIOI_TINH, 
+                    //            SINH_VIEN.SDT_SINHVIEN,
+                    //            SINH_VIEN.SDT_NGUOITHAN,
+                    //            SINH_VIEN.QUE_QUAN,
+                    //            SINH_VIEN.EMAIL,
+                    //            NOI_TRU.MA_PHONG,
+                    //            NOI_TRU.MA_GIUONG,
+                    //            PHONG.MA_TANG,
+                    //            LOAI_PHONG.MA_LOAI_PHONG,
+                    //            NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //            NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //            NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //            PHONG.TEN_PHONG,
+                    //            GIUONG.TEN_GIUONG,
+                    //            TANG.TEN_TANG,
+                    //            LOAI_PHONG.TEN_LOAI_PHONG
+                    //        FROM SINH_VIEN
+                    //        INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //        INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //        INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //        INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //        INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //        WHERE NOI_TRU.TRANG_THAI_NOI_TRU = N'Chờ gia hạn'"; // Lọc sinh viên Chờ gia hạn
 
+                    string query = @"
+    SELECT 
+        SV.MSSV,
+        SV.HOTEN_SV, 
+        SV.CCCD, 
+        SV.NGAY_SINH, 
+        SV.GIOI_TINH, 
+        SV.SDT_SINHVIEN,
+        SV.SDT_NGUOITHAN,
+        SV.QUE_QUAN,
+        SV.EMAIL,
+        NT.MA_PHONG,       
+        NT.MA_GIUONG,      
+        P.MA_TANG,          
+        LP.MA_LOAI_PHONG,   
+        NT.NGAY_BAT_DAU_NOI_TRU,
+        NT.NGAY_KET_THUC_NOI_TRU,
+        NT.TRANG_THAI_NOI_TRU,
+        P.TEN_PHONG,       
+        G.TEN_GIUONG,      
+        T.TEN_TANG,        
+        LP.TEN_LOAI_PHONG  
+    FROM SINH_VIEN SV
+    INNER JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+    INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+    INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+    INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+    INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+    WHERE NT.TRANG_THAI_NOI_TRU = N'Chờ gia hạn'
+    AND NT.MA_NOI_TRU = (
+        SELECT MAX(MA_NOI_TRU)  
+        FROM NOI_TRU 
+        WHERE MSSV = SV.MSSV
+    )";
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1554,36 +1790,71 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"
-                    SELECT 
-                        SINH_VIEN.MSSV,
-                        SINH_VIEN.HOTEN_SV, 
-                        SINH_VIEN.CCCD, 
-                        SINH_VIEN.NGAY_SINH, 
-                        SINH_VIEN.GIOI_TINH, 
-                        SINH_VIEN.SDT_SINHVIEN,
-                        SINH_VIEN.SDT_NGUOITHAN,
-                        SINH_VIEN.QUE_QUAN,
-                        SINH_VIEN.EMAIL,
-                        NOI_TRU.MA_PHONG,
-                        NOI_TRU.MA_GIUONG,
-                        PHONG.MA_TANG,
-                        LOAI_PHONG.MA_LOAI_PHONG,
-                        NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
-                        NOI_TRU.NGAY_KET_THUC_NOI_TRU,
-                        NOI_TRU.TRANG_THAI_NOI_TRU,
-                        PHONG.TEN_PHONG,
-                        GIUONG.TEN_GIUONG,
-                        TANG.TEN_TANG,
-                        LOAI_PHONG.TEN_LOAI_PHONG
-                    FROM SINH_VIEN
-                    INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
-                    INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
-                    INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
-                    INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
-                    INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                    WHERE NOI_TRU.NGAY_KET_THUC_NOI_TRU < GETDATE()"; // Lọc sinh viên hết thời gian nội trú
+                    //string query = @"
+                    //SELECT 
+                    //    SINH_VIEN.MSSV,
+                    //    SINH_VIEN.HOTEN_SV, 
+                    //    SINH_VIEN.CCCD, 
+                    //    SINH_VIEN.NGAY_SINH, 
+                    //    SINH_VIEN.GIOI_TINH, 
+                    //    SINH_VIEN.SDT_SINHVIEN,
+                    //    SINH_VIEN.SDT_NGUOITHAN,
+                    //    SINH_VIEN.QUE_QUAN,
+                    //    SINH_VIEN.EMAIL,
+                    //    NOI_TRU.MA_PHONG,
+                    //    NOI_TRU.MA_GIUONG,
+                    //    PHONG.MA_TANG,
+                    //    LOAI_PHONG.MA_LOAI_PHONG,
+                    //    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //    NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //    PHONG.TEN_PHONG,
+                    //    GIUONG.TEN_GIUONG,
+                    //    TANG.TEN_TANG,
+                    //    LOAI_PHONG.TEN_LOAI_PHONG
+                    //FROM SINH_VIEN
+                    //INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //WHERE NOI_TRU.NGAY_KET_THUC_NOI_TRU < GETDATE()"; // Lọc sinh viên hết thời gian nội trú
 
+
+                    string query = @"
+    SELECT 
+        SV.MSSV,
+        SV.HOTEN_SV, 
+        SV.CCCD, 
+        SV.NGAY_SINH, 
+        SV.GIOI_TINH, 
+        SV.SDT_SINHVIEN,
+        SV.SDT_NGUOITHAN,
+        SV.QUE_QUAN,
+        SV.EMAIL,
+        NT.MA_PHONG,       
+        NT.MA_GIUONG,      
+        P.MA_TANG,          
+        LP.MA_LOAI_PHONG,   
+        NT.NGAY_BAT_DAU_NOI_TRU,
+        NT.NGAY_KET_THUC_NOI_TRU,
+        NT.TRANG_THAI_NOI_TRU,
+        P.TEN_PHONG,       
+        G.TEN_GIUONG,      
+        T.TEN_TANG,        
+        LP.TEN_LOAI_PHONG  
+    FROM SINH_VIEN SV
+    INNER JOIN NOI_TRU NT ON SV.MSSV = NT.MSSV
+    INNER JOIN PHONG P ON NT.MA_PHONG = P.MA_PHONG
+    INNER JOIN GIUONG G ON NT.MA_GIUONG = G.MA_GIUONG
+    INNER JOIN TANG T ON P.MA_TANG = T.MA_TANG
+    INNER JOIN LOAI_PHONG LP ON T.MA_LOAI_PHONG = LP.MA_LOAI_PHONG
+    WHERE NT.NGAY_KET_THUC_NOI_TRU < GETDATE()
+    AND NT.MA_NOI_TRU = (
+        SELECT MAX(MA_NOI_TRU)  
+        FROM NOI_TRU 
+        WHERE MSSV = SV.MSSV
+    )";
                     // Tạo DataAdapter và DataTable để lấy dữ liệu từ SQL
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
@@ -1733,7 +2004,7 @@ namespace WinformKTX
                 {
                     conn.Open();
                     // Đếm tổng số sinh viên
-                    string queryTotal = @"SELECT COUNT(*) FROM NOI_TRU";
+                    string queryTotal = @"SELECT COUNT(DISTINCT MSSV) FROM NOI_TRU";
                     SqlCommand command = new SqlCommand(queryTotal, conn);
                     int totalCount = (int)command.ExecuteScalar();
 
@@ -1766,24 +2037,44 @@ namespace WinformKTX
                     conn.Open();
 
                     // Bước 1: Kiểm tra nếu có sinh viên quá hạn nội trú
-                    string checkOverdueQuery = @"
-                    SELECT COUNT(*) FROM NOI_TRU
-                    WHERE NGAY_KET_THUC_NOI_TRU < GETDATE()";
+                    //string checkOverdueQuery = @"
+                    //SELECT COUNT(*) FROM NOI_TRU
+                    //WHERE NGAY_KET_THUC_NOI_TRU < GETDATE()";
 
-                    SqlCommand overdueCmd = new SqlCommand(checkOverdueQuery, conn);
-                    int overdueCount = Convert.ToInt32(overdueCmd.ExecuteScalar());
+                    ////Kiểm tra nếu có sinh viên quá hạn nội trú nhưng chỉ lấy mã nội trú lớn nhất của từng sinh viên
+                    //string checkOverdueQuery = @"
+                    //SELECT COUNT(*) 
+                    //FROM NOI_TRU NT
+                    //WHERE NGAY_KET_THUC_NOI_TRU < GETDATE()
+                    //AND MA_NOI_TRU = (
+                    //    SELECT MAX(MA_NOI_TRU) 
+                    //    FROM NOI_TRU 
+                    //    WHERE MSSV = NT.MSSV)";
 
-                    if (overdueCount > 0)
-                    {
-                        MessageBox.Show("Có sinh viên đã quá hạn nội trú. Không thể xác nhận tất cả!");
-                        return;
-                    }
+
+                    //SqlCommand overdueCmd = new SqlCommand(checkOverdueQuery, conn);
+                    //int overdueCount = Convert.ToInt32(overdueCmd.ExecuteScalar());
+
+                    //if (overdueCount > 0)
+                    //{
+                    //    MessageBox.Show("Có sinh viên đã quá hạn nội trú. Không thể xác nhận tất cả!");
+                    //    return;
+                    //}
 
                     // Bước 2: Kiểm tra số lần xuất hiện nhiều nhất của một MA_GIUONG
+                    //string checkDuplicateQuery = @"
+                    //                            SELECT MAX(SoLuong) AS SoLuongLonNhat
+                    //                            FROM (
+                    //                                SELECT COUNT(NOI_TRU.MA_GIUONG) AS SoLuong
+                    //                                FROM NOI_TRU
+                    //                                GROUP BY NOI_TRU.MA_GIUONG
+                    //                            ) AS BangTam;";
+
                     string checkDuplicateQuery = @"
+                                                -- Kiểm tra số lần xuất hiện nhiều nhất của một MA_GIUONG với MSSV khác nhau
                                                 SELECT MAX(SoLuong) AS SoLuongLonNhat
                                                 FROM (
-                                                    SELECT COUNT(NOI_TRU.MA_GIUONG) AS SoLuong
+                                                    SELECT COUNT(DISTINCT NOI_TRU.MSSV) AS SoLuong
                                                     FROM NOI_TRU
                                                     GROUP BY NOI_TRU.MA_GIUONG
                                                 ) AS BangTam;";
@@ -1799,20 +2090,66 @@ namespace WinformKTX
 
 
                     // Xác nhận nội trú cho tất cả sinh viên chưa được xác nhận
+                    //string updateQuery = @"
+                    //                -- Tạo bảng tạm để lưu danh sách sinh viên vừa được xác nhận nội trú
+                    //                DECLARE @DanhSachSinhVienMoi TABLE (MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+                    //                -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang nội trú'
+                    //                INSERT INTO @DanhSachSinhVienMoi (MA_PHONG, MA_GIUONG)
+                    //                SELECT MA_PHONG, MA_GIUONG
+                    //                FROM NOI_TRU
+                    //                WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+
+                    //                -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận
+                    //                UPDATE NOI_TRU
+                    //                SET TRANG_THAI_NOI_TRU = N'Đang nội trú'
+                    //                WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+
+                    //                -- Cập nhật trạng thái giường thành 'Đang Sử Dụng' cho giường của sinh viên vừa xác nhận
+                    //                UPDATE GIUONG
+                    //                SET TINH_TRANG_GIUONG = N'Đang Sử Dụng'
+                    //                WHERE MA_GIUONG IN (SELECT MA_GIUONG FROM @DanhSachSinhVienMoi);
+
+                    //                -- Giảm số giường còn trống trong từng phòng tương ứng với số sinh viên vừa được xác nhận
+                    //                UPDATE PHONG
+                    //                SET SO_GIUONG_CON_TRONG = SO_GIUONG_CON_TRONG - 
+                    //                    (SELECT COUNT(*) FROM @DanhSachSinhVienMoi DS WHERE DS.MA_PHONG = PHONG.MA_PHONG)
+                    //                WHERE MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @DanhSachSinhVienMoi);
+
+                    //                -- Cập nhật trạng thái phòng dựa trên số giường còn trống
+                    //                UPDATE PHONG
+                    //                SET TINH_TRANG_PHONG =
+                    //                    CASE
+                    //                        WHEN SO_GIUONG_CON_TRONG = 0 THEN N'Đầy'
+                    //                        WHEN SO_GIUONG_CON_TRONG = SO_GIUONG_TOI_DA THEN N'Trống'
+                    //                        ELSE N'Đang Sử Dụng'
+                    //                    END
+                    //                WHERE MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @DanhSachSinhVienMoi);";
+
                     string updateQuery = @"
                                     -- Tạo bảng tạm để lưu danh sách sinh viên vừa được xác nhận nội trú
                                     DECLARE @DanhSachSinhVienMoi TABLE (MA_PHONG INT, MA_GIUONG NVARCHAR(50));
 
-                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang nội trú'
+                                    -- Lưu danh sách sinh viên từ 'Đã đăng ký' sang 'Đang nội trú' nhưng chỉ cập nhật MA_NOI_TRU lớn nhất của mỗi sinh viên
                                     INSERT INTO @DanhSachSinhVienMoi (MA_PHONG, MA_GIUONG)
                                     SELECT MA_PHONG, MA_GIUONG
                                     FROM NOI_TRU
-                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+                                    WHERE MA_NOI_TRU IN (
+                                        SELECT MAX(MA_NOI_TRU)
+                                        FROM NOI_TRU
+                                        WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký'
+                                        GROUP BY MSSV
+                                    );
 
-                                    -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận
+                                    -- Cập nhật trạng thái nội trú cho sinh viên vừa được xác nhận (chỉ cập nhật MA_NOI_TRU lớn nhất)
                                     UPDATE NOI_TRU
                                     SET TRANG_THAI_NOI_TRU = N'Đang nội trú'
-                                    WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+                                    WHERE MA_NOI_TRU IN (
+                                        SELECT MAX(MA_NOI_TRU)
+                                        FROM NOI_TRU
+                                        WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký'
+                                        GROUP BY MSSV
+                                    );
 
                                     -- Cập nhật trạng thái giường thành 'Đang Sử Dụng' cho giường của sinh viên vừa xác nhận
                                     UPDATE GIUONG
@@ -1834,6 +2171,8 @@ namespace WinformKTX
                                             ELSE N'Đang Sử Dụng'
                                         END
                                     WHERE MA_PHONG IN (SELECT DISTINCT MA_PHONG FROM @DanhSachSinhVienMoi);";
+
+
                     SqlCommand updateCmd = new SqlCommand(updateQuery, conn);
                     int rowsAffected = updateCmd.ExecuteNonQuery();
 
@@ -1874,11 +2213,24 @@ namespace WinformKTX
                 {
                     conn.Open();
 
-                    // Lấy danh sách sinh viên đã quá hạn nội trú
-                    string query = @"SELECT MSSV 
-                             FROM NOI_TRU 
-                             WHERE TRANG_THAI_NOI_TRU = N'Đang nội trú' 
-                             AND NGAY_KET_THUC_NOI_TRU < GETDATE()";
+                    //// Lấy danh sách sinh viên đã quá hạn nội trú
+                    //string query = @"SELECT MSSV 
+                    //         FROM NOI_TRU 
+                    //         WHERE TRANG_THAI_NOI_TRU = N'Đang nội trú' 
+                    //         AND NGAY_KET_THUC_NOI_TRU < GETDATE()";
+
+                    // Lấy danh sách sinh viên đã quá hạn nội trú dựa trên mã nội trú mới nhất
+                    string query = @"
+                                SELECT MSSV 
+                                FROM NOI_TRU NT
+                                WHERE TRANG_THAI_NOI_TRU = N'Đang nội trú' 
+                                AND NGAY_KET_THUC_NOI_TRU < GETDATE()
+                                AND MA_NOI_TRU = (
+                                    SELECT MAX(MA_NOI_TRU) 
+                                    FROM NOI_TRU 
+                                    WHERE MSSV = NT.MSSV
+                                )";
+
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     adapter.Fill(dataTable);
@@ -1889,10 +2241,17 @@ namespace WinformKTX
                         foreach (DataRow row in dataTable.Rows)
                         {
                             string mssv = row["MSSV"].ToString();
-                            string updateQuery = @"UPDATE NOI_TRU 
-                                           SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' 
-                                           WHERE MSSV = @MSSV";
-
+                            //string updateQuery = @"UPDATE NOI_TRU 
+                            //               SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' 
+                            //               WHERE MSSV = @MSSV";
+                            string updateQuery = @"
+                                                UPDATE NOI_TRU 
+                                                SET TRANG_THAI_NOI_TRU = N'Chờ gia hạn' 
+                                                WHERE MA_NOI_TRU = (
+                                                    SELECT MAX(MA_NOI_TRU) 
+                                                    FROM NOI_TRU 
+                                                    WHERE MSSV = @MSSV
+                                                )";
                             using (var command = new SqlCommand(updateQuery, conn))
                             {
                                 command.Parameters.AddWithValue("@MSSV", mssv);
@@ -1917,118 +2276,118 @@ namespace WinformKTX
             }
         }
 
-        private void buttonChuaNoiTruAll_Click(object sender, EventArgs e)
-        {
-            // Hiển thị hộp thoại xác nhận
-            DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên không?",
-                                                  "Xác Nhận Đã đăng ký",
-                                                  MessageBoxButtons.YesNo,
-                                                  MessageBoxIcon.Question);
+        //private void buttonChuaNoiTruAll_Click(object sender, EventArgs e)
+        //{
+        //    // Hiển thị hộp thoại xác nhận
+        //    DialogResult result = MessageBox.Show("Bạn có chắc chắn muốn chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên không?",
+        //                                          "Xác Nhận Đã đăng ký",
+        //                                          MessageBoxButtons.YesNo,
+        //                                          MessageBoxIcon.Question);
 
-            // Nếu người dùng chọn "No", dừng thao tác
-            if (result == DialogResult.No)
-            {
-                return;
-            }
+        //    // Nếu người dùng chọn "No", dừng thao tác
+        //    if (result == DialogResult.No)
+        //    {
+        //        return;
+        //    }
 
-            using (SqlConnection conn = ketnoi.GetConnection())
-            {
-                try
-                {
-                    conn.Open();
+        //    using (SqlConnection conn = ketnoi.GetConnection())
+        //    {
+        //        try
+        //        {
+        //            conn.Open();
 
-                    // Lấy danh sách sinh viên có trạng thái nội trú khác 'Đã đăng ký'
-                    string query = @"SELECT MSSV, MA_PHONG, MA_GIUONG 
-                             FROM NOI_TRU 
-                             WHERE TRANG_THAI_NOI_TRU <> N'Đã đăng ký'";
+        //            // Lấy danh sách sinh viên có trạng thái nội trú khác 'Đã đăng ký'
+        //            string query = @"SELECT MSSV, MA_PHONG, MA_GIUONG 
+        //                     FROM NOI_TRU 
+        //                     WHERE TRANG_THAI_NOI_TRU <> N'Đã đăng ký'";
 
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
+        //            SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+        //            DataTable dataTable = new DataTable();
+        //            adapter.Fill(dataTable);
 
-                    if (dataTable.Rows.Count > 0)
-                    {
-                        foreach (DataRow row in dataTable.Rows)
-                        {
-                            string mssv = row["MSSV"].ToString();
-                            int maPhong = row["MA_PHONG"] != DBNull.Value ? Convert.ToInt32(row["MA_PHONG"]) : 0;
-                            string maGiuong = row["MA_GIUONG"]?.ToString();
+        //            if (dataTable.Rows.Count > 0)
+        //            {
+        //                foreach (DataRow row in dataTable.Rows)
+        //                {
+        //                    string mssv = row["MSSV"].ToString();
+        //                    int maPhong = row["MA_PHONG"] != DBNull.Value ? Convert.ToInt32(row["MA_PHONG"]) : 0;
+        //                    string maGiuong = row["MA_GIUONG"]?.ToString();
 
-                            // Cập nhật trạng thái sinh viên về 'Đã đăng ký'
-                            string updateQuery = @"UPDATE NOI_TRU 
-                                           SET TRANG_THAI_NOI_TRU = N'Đã đăng ký' 
-                                           WHERE MSSV = @MSSV";
+        //                    // Cập nhật trạng thái sinh viên về 'Đã đăng ký'
+        //                    string updateQuery = @"UPDATE NOI_TRU 
+        //                                   SET TRANG_THAI_NOI_TRU = N'Đã đăng ký' 
+        //                                   WHERE MSSV = @MSSV";
 
-                            using (var command = new SqlCommand(updateQuery, conn))
-                            {
-                                command.Parameters.AddWithValue("@MSSV", mssv);
-                                command.ExecuteNonQuery();
-                            }
+        //                    using (var command = new SqlCommand(updateQuery, conn))
+        //                    {
+        //                        command.Parameters.AddWithValue("@MSSV", mssv);
+        //                        command.ExecuteNonQuery();
+        //                    }
 
-                            // Nếu có phòng cũ, cập nhật lại số giường trống
-                            if (maPhong > 0)
-                            {
-                                string updatePhongQuery = @"UPDATE PHONG 
-                                                    SET SO_GIUONG_CON_TRONG += 1 
-                                                    WHERE MA_PHONG = @MaPhong";
+        //                    // Nếu có phòng cũ, cập nhật lại số giường trống
+        //                    if (maPhong > 0)
+        //                    {
+        //                        string updatePhongQuery = @"UPDATE PHONG 
+        //                                            SET SO_GIUONG_CON_TRONG += 1 
+        //                                            WHERE MA_PHONG = @MaPhong";
 
-                                using (var cmdPhong = new SqlCommand(updatePhongQuery, conn))
-                                {
-                                    cmdPhong.Parameters.AddWithValue("@MaPhong", maPhong);
-                                    cmdPhong.ExecuteNonQuery();
-                                }
+        //                        using (var cmdPhong = new SqlCommand(updatePhongQuery, conn))
+        //                        {
+        //                            cmdPhong.Parameters.AddWithValue("@MaPhong", maPhong);
+        //                            cmdPhong.ExecuteNonQuery();
+        //                        }
 
-                                // Cập nhật tình trạng phòng
-                                string updateTinhTrangPhong = @"
-                                                                DECLARE @SoGiuongConTrong INT;
-                                                                SELECT @SoGiuongConTrong = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
-                                                                UPDATE PHONG 
-                                                                SET TINH_TRANG_PHONG = 
-                                                                    CASE 
-                                                                        WHEN @SoGiuongConTrong = 0 THEN N'Đầy'
-                                                                        WHEN @SoGiuongConTrong = SO_GIUONG_TOI_DA THEN N'Trống'
-                                                                        ELSE N'Đang Sử Dụng'
-                                                                    END
-                                                                WHERE MA_PHONG = @MaPhong;";
+        //                        // Cập nhật tình trạng phòng
+        //                        string updateTinhTrangPhong = @"
+        //                                                        DECLARE @SoGiuongConTrong INT;
+        //                                                        SELECT @SoGiuongConTrong = SO_GIUONG_CON_TRONG FROM PHONG WHERE MA_PHONG = @MaPhong;
+        //                                                        UPDATE PHONG 
+        //                                                        SET TINH_TRANG_PHONG = 
+        //                                                            CASE 
+        //                                                                WHEN @SoGiuongConTrong = 0 THEN N'Đầy'
+        //                                                                WHEN @SoGiuongConTrong = SO_GIUONG_TOI_DA THEN N'Trống'
+        //                                                                ELSE N'Đang Sử Dụng'
+        //                                                            END
+        //                                                        WHERE MA_PHONG = @MaPhong;";
 
-                                using (var cmdTinhTrang = new SqlCommand(updateTinhTrangPhong, conn))
-                                {
-                                    cmdTinhTrang.Parameters.AddWithValue("@MaPhong", maPhong);
-                                    cmdTinhTrang.ExecuteNonQuery();
-                                }
-                            }
+        //                        using (var cmdTinhTrang = new SqlCommand(updateTinhTrangPhong, conn))
+        //                        {
+        //                            cmdTinhTrang.Parameters.AddWithValue("@MaPhong", maPhong);
+        //                            cmdTinhTrang.ExecuteNonQuery();
+        //                        }
+        //                    }
 
-                            // Nếu có giường cũ, cập nhật trạng thái giường
-                            if (!string.IsNullOrEmpty(maGiuong))
-                            {
-                                string updateGiuongQuery = @"UPDATE GIUONG 
-                                                     SET TINH_TRANG_GIUONG = N'Trống' 
-                                                     WHERE MA_GIUONG = @MaGiuong";
+        //                    // Nếu có giường cũ, cập nhật trạng thái giường
+        //                    if (!string.IsNullOrEmpty(maGiuong))
+        //                    {
+        //                        string updateGiuongQuery = @"UPDATE GIUONG 
+        //                                             SET TINH_TRANG_GIUONG = N'Trống' 
+        //                                             WHERE MA_GIUONG = @MaGiuong";
 
-                                using (var cmdGiuong = new SqlCommand(updateGiuongQuery, conn))
-                                {
-                                    cmdGiuong.Parameters.AddWithValue("@MaGiuong", maGiuong);
-                                    cmdGiuong.ExecuteNonQuery();
-                                }
-                            }
-                        }
+        //                        using (var cmdGiuong = new SqlCommand(updateGiuongQuery, conn))
+        //                        {
+        //                            cmdGiuong.Parameters.AddWithValue("@MaGiuong", maGiuong);
+        //                            cmdGiuong.ExecuteNonQuery();
+        //                        }
+        //                    }
+        //                }
 
-                        MessageBox.Show("Đã chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Không có sinh viên nào để cập nhật trạng thái.");
-                    }
+        //                MessageBox.Show("Đã chuyển trạng thái 'Đã đăng ký' cho tất cả sinh viên.");
+        //            }
+        //            else
+        //            {
+        //                MessageBox.Show("Không có sinh viên nào để cập nhật trạng thái.");
+        //            }
 
-                    // Cập nhật lại dữ liệu trên DataGridView
-                    LoadData();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi cập nhật trạng thái 'Đã đăng ký': " + ex.Message);
-                }
-            }
-        }
+        //            // Cập nhật lại dữ liệu trên DataGridView
+        //            LoadData();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Lỗi khi cập nhật trạng thái 'Đã đăng ký': " + ex.Message);
+        //        }
+        //    }
+        //}
 
 
         //private void buttonXoaAllSvChoGiaHan_Click(object sender, EventArgs e)
@@ -2141,20 +2500,74 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
+                    //string query = @"
+                    //               -- Tạo biến bảng để lưu danh sách phòng và giường của sinh viên ""Gia hạn""
+                    //                DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+
+                    //                -- Lưu lại thông tin trước khi xóa
+                    //                INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
+                    //                SELECT MSSV, MA_PHONG, MA_GIUONG
+                    //                FROM NOI_TRU
+                    //                WHERE TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
+
+                    //                -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
+                    //                DELETE NT
+                    //                FROM NOI_TRU NT
+                    //                JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+                    //                -- Cập nhật số giường trống của các phòng liên quan
+                    //                UPDATE P
+                    //                SET P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_CON_TRONG + 
+                    //                    (SELECT COUNT(*) FROM @PhongGiuong PG WHERE P.MA_PHONG = PG.MA_PHONG)
+                    //                FROM PHONG P
+                    //                JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+                    //                -- Cập nhật trạng thái phòng
+                    //                UPDATE P
+                    //                SET P.TINH_TRANG_PHONG = 
+                    //                    CASE 
+                    //                        WHEN P.SO_GIUONG_CON_TRONG = 0 THEN N'Đầy'
+                    //                        WHEN P.SO_GIUONG_CON_TRONG = P.SO_GIUONG_TOI_DA THEN N'Trống'
+                    //                        ELSE N'Đang Sử Dụng'
+                    //                    END
+                    //                FROM PHONG P
+                    //                JOIN @PhongGiuong PG ON P.MA_PHONG = PG.MA_PHONG;
+
+                    //                -- Cập nhật trạng thái giường của các sinh viên bị xóa
+                    //                UPDATE G
+                    //                SET G.TINH_TRANG_GIUONG = N'Trống'
+                    //                FROM GIUONG G
+                    //                JOIN @PhongGiuong PG ON G.MA_GIUONG = PG.MA_GIUONG;
+                    //                ";
+
                     string query = @"
-                                   -- Tạo biến bảng để lưu danh sách phòng và giường của sinh viên ""Gia hạn""
-                                    DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+                                   -- Tạo biến bảng để lưu danh sách phòng, giường và mã nội trú của sinh viên ""Gia hạn""
+DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50), MA_NOI_TRU INT);
 
-                                    -- Lưu lại thông tin trước khi xóa
-                                    INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
-                                    SELECT MSSV, MA_PHONG, MA_GIUONG
-                                    FROM NOI_TRU
-                                    WHERE TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
+-- Lưu thông tin sinh viên ""Chờ gia hạn"" (chỉ lấy MA_NOI_TRU mới nhất)
+INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG, MA_NOI_TRU)
+SELECT NT.MSSV, NT.MA_PHONG, NT.MA_GIUONG, Latest.MA_NOI_TRU
+FROM NOI_TRU NT
+CROSS APPLY (
+    SELECT TOP 1 MA_NOI_TRU 
+    FROM NOI_TRU 
+    WHERE MSSV = NT.MSSV
+    ORDER BY MA_NOI_TRU DESC
+) Latest
+WHERE NT.MA_NOI_TRU = Latest.MA_NOI_TRU
+AND NT.TRANG_THAI_NOI_TRU = N'Chờ gia hạn';
 
-                                    -- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
-                                    DELETE NT
-                                    FROM NOI_TRU NT
-                                    JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+-- Xóa dữ liệu thanh toán phòng liên quan đến sinh viên bị xóa khỏi NOI_TRU (dựa vào MSSV)
+DELETE TTP
+FROM THANH_TOAN_PHONG TTP
+JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+-- Xóa dữ liệu sinh viên ""Gia hạn"" khỏi NOI_TRU trước
+DELETE NT
+FROM NOI_TRU NT
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
 
                                     -- Cập nhật số giường trống của các phòng liên quan
                                     UPDATE P
@@ -2276,11 +2689,47 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
-                    string query = @"
-                            -- Xóa sinh viên khỏi NOI_TRU trước
-                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
-                        ";
+                    //string query = @"
+                    //        -- Xóa sinh viên khỏi NOI_TRU trước
+                    //        DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+                    //    ";
 
+                    //string query = @"
+                    //                -- Xóa thanh toán phòng trước khi xóa sinh viên khỏi NOI_TRU
+                    //                DELETE FROM THANH_TOAN_PHONG 
+                    //                WHERE MA_NOI_TRU IN (SELECT MA_NOI_TRU FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký');
+
+                    //                -- Xóa sinh viên khỏi NOI_TRU
+                    //                DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Đã đăng ký';";
+
+                    string query = @"
+                                    -- Tạo biến bảng để lưu danh sách sinh viên ""Đã đăng ký""
+DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50), MA_NOI_TRU INT);
+
+-- Lưu thông tin sinh viên ""Đã đăng ký"" (chỉ lấy MA_NOI_TRU mới nhất)
+INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG, MA_NOI_TRU)
+SELECT NT.MSSV, NT.MA_PHONG, NT.MA_GIUONG, Latest.MA_NOI_TRU
+FROM NOI_TRU NT
+CROSS APPLY (
+    SELECT TOP 1 MA_NOI_TRU 
+    FROM NOI_TRU 
+    WHERE MSSV = NT.MSSV
+    ORDER BY MA_NOI_TRU DESC
+) Latest
+WHERE NT.MA_NOI_TRU = Latest.MA_NOI_TRU
+AND NT.TRANG_THAI_NOI_TRU = N'Đã đăng ký';
+
+-- Xóa dữ liệu thanh toán phòng liên quan đến sinh viên bị xóa khỏi NOI_TRU (dựa vào MSSV)
+DELETE TTP
+FROM THANH_TOAN_PHONG TTP
+JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+-- Xóa dữ liệu sinh viên ""Đã đăng ký"" khỏi NOI_TRU
+DELETE NT
+FROM NOI_TRU NT
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+";
                     SqlCommand command = new SqlCommand(query, conn);
                     int rowsAffected = command.ExecuteNonQuery();
 
@@ -2375,10 +2824,46 @@ namespace WinformKTX
                 try
                 {
                     conn.Open();
+                    //string query = @"
+                    //        -- Xóa sinh viên khỏi NOI_TRU trước
+                    //        DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý';
+                    //    ";
+                    //string query = @"
+                    //                -- Xóa dữ liệu trong THANH_TOAN_PHONG trước khi xóa NOI_TRU
+                    //                DELETE FROM THANH_TOAN_PHONG 
+                    //                WHERE MA_NOI_TRU IN (SELECT MA_NOI_TRU FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý');
+
+                    //                -- Xóa sinh viên khỏi NOI_TRU
+                    //                DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý';
+                    //            ";
                     string query = @"
-                            -- Xóa sinh viên khỏi NOI_TRU trước
-                            DELETE FROM NOI_TRU WHERE TRANG_THAI_NOI_TRU = N'Cần chú ý';
-                        ";
+                                                                       -- Tạo biến bảng để lưu danh sách sinh viên ""Đã đăng ký""
+DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50), MA_NOI_TRU INT);
+
+-- Lưu thông tin sinh viên ""Đã đăng ký"" (chỉ lấy MA_NOI_TRU mới nhất)
+INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG, MA_NOI_TRU)
+SELECT NT.MSSV, NT.MA_PHONG, NT.MA_GIUONG, Latest.MA_NOI_TRU
+FROM NOI_TRU NT
+CROSS APPLY (
+    SELECT TOP 1 MA_NOI_TRU 
+    FROM NOI_TRU 
+    WHERE MSSV = NT.MSSV
+    ORDER BY MA_NOI_TRU DESC
+) Latest
+WHERE NT.MA_NOI_TRU = Latest.MA_NOI_TRU
+AND NT.TRANG_THAI_NOI_TRU = N'Cần chú ý';
+
+-- Xóa dữ liệu thanh toán phòng liên quan đến sinh viên bị xóa khỏi NOI_TRU (dựa vào MSSV)
+DELETE TTP
+FROM THANH_TOAN_PHONG TTP
+JOIN NOI_TRU NT ON TTP.MA_NOI_TRU = NT.MA_NOI_TRU
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+
+-- Xóa dữ liệu sinh viên ""Đã đăng ký"" khỏi NOI_TRU
+DELETE NT
+FROM NOI_TRU NT
+JOIN @PhongGiuong PG ON NT.MSSV = PG.MSSV;
+                                ";
 
                     SqlCommand command = new SqlCommand(query, conn);
                     int rowsAffected = command.ExecuteNonQuery();
@@ -2498,10 +2983,14 @@ namespace WinformKTX
                     conn.Open();
                     string query = @"
                             -- Lưu thông tin phòng và giường của tất cả sinh viên
-                            DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50));
+                            DECLARE @PhongGiuong TABLE (MSSV NVARCHAR(50), MA_PHONG INT, MA_GIUONG NVARCHAR(50), MA_NOI_TRU INT);
 
-                            INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG)
-                            SELECT MSSV, MA_PHONG, MA_GIUONG FROM NOI_TRU;
+                            INSERT INTO @PhongGiuong (MSSV, MA_PHONG, MA_GIUONG, MA_NOI_TRU)
+                            SELECT MSSV, MA_PHONG, MA_GIUONG, MA_NOI_TRU FROM NOI_TRU;
+
+                            -- Xóa dữ liệu trong THANH_TOAN_PHONG trước khi xóa NOI_TRU
+                            DELETE FROM THANH_TOAN_PHONG 
+                            WHERE MA_NOI_TRU IN (SELECT DISTINCT MA_NOI_TRU FROM @PhongGiuong);
 
                             -- Xóa sinh viên khỏi NOI_TRU
                             DELETE FROM NOI_TRU;
@@ -2550,11 +3039,17 @@ namespace WinformKTX
                     conn.Open();
 
                     // Bước 1: Truy vấn danh sách các giường bị trùng (xuất hiện trên 2 lần)
+                    //    string queryTrungGiuong = @"
+                    //SELECT MA_GIUONG
+                    //FROM NOI_TRU
+                    //GROUP BY MA_GIUONG
+                    //HAVING COUNT(*) > 1";
+
                     string queryTrungGiuong = @"
-                SELECT MA_GIUONG
-                FROM NOI_TRU
-                GROUP BY MA_GIUONG
-                HAVING COUNT(*) > 1";
+                                    SELECT MA_GIUONG
+                                    FROM NOI_TRU
+                                    GROUP BY MA_GIUONG
+                                    HAVING COUNT(DISTINCT MSSV) > 1";  // MSSV phải khác nhau
 
                     SqlCommand cmdTrungGiuong = new SqlCommand(queryTrungGiuong, conn);
                     SqlDataAdapter adapterTrungGiuong = new SqlDataAdapter(cmdTrungGiuong);
@@ -2576,6 +3071,36 @@ namespace WinformKTX
                     string maGiuongTrungStr = string.Join(",", danhSachMaGiuong);
 
                     // Bước 2: Lấy danh sách sinh viên có MA_GIUONG nằm trong danh sách bị trùng
+                    //    string query = $@"
+                    //SELECT 
+                    //    SINH_VIEN.MSSV,
+                    //    SINH_VIEN.HOTEN_SV, 
+                    //    SINH_VIEN.CCCD, 
+                    //    SINH_VIEN.NGAY_SINH, 
+                    //    SINH_VIEN.GIOI_TINH, 
+                    //    SINH_VIEN.SDT_SINHVIEN,
+                    //    SINH_VIEN.SDT_NGUOITHAN,
+                    //    SINH_VIEN.QUE_QUAN,
+                    //    SINH_VIEN.EMAIL,
+                    //    NOI_TRU.MA_PHONG,    -- Giữ lại để xử lý dữ liệu
+                    //    NOI_TRU.MA_GIUONG,   -- Giữ lại để xử lý dữ liệu
+                    //    PHONG.MA_TANG,       -- Giữ lại để xử lý dữ liệu
+                    //    LOAI_PHONG.MA_LOAI_PHONG,   -- Giữ lại để xử lý dữ liệu
+                    //    NOI_TRU.NGAY_BAT_DAU_NOI_TRU,
+                    //    NOI_TRU.NGAY_KET_THUC_NOI_TRU,
+                    //    NOI_TRU.TRANG_THAI_NOI_TRU,
+                    //    PHONG.TEN_PHONG,     -- Hiển thị thay vì MA_PHONG
+                    //    GIUONG.TEN_GIUONG,   -- Hiển thị thay vì MA_GIUONG
+                    //    TANG.TEN_TANG,       -- Hiển thị thay vì MA_TANG
+                    //    LOAI_PHONG.TEN_LOAI_PHONG -- Hiển thị thay vì MA_LOAI_PHONG
+                    //FROM SINH_VIEN
+                    //INNER JOIN NOI_TRU ON SINH_VIEN.MSSV = NOI_TRU.MSSV
+                    //INNER JOIN PHONG ON NOI_TRU.MA_PHONG = PHONG.MA_PHONG
+                    //INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
+                    //INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
+                    //INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
+                    //WHERE NOI_TRU.MA_GIUONG IN ({maGiuongTrungStr})";
+
                     string query = $@"
                 SELECT 
                     SINH_VIEN.MSSV,
@@ -2604,7 +3129,8 @@ namespace WinformKTX
                 INNER JOIN GIUONG ON NOI_TRU.MA_GIUONG = GIUONG.MA_GIUONG
                 INNER JOIN TANG ON PHONG.MA_TANG = TANG.MA_TANG
                 INNER JOIN LOAI_PHONG ON TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG
-                WHERE NOI_TRU.MA_GIUONG IN ({maGiuongTrungStr})";
+                WHERE NOI_TRU.MA_GIUONG IN (
+                SELECT MA_GIUONG FROM NOI_TRU GROUP BY MA_GIUONG HAVING COUNT(DISTINCT MSSV) > 1)";
 
                     SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();

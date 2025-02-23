@@ -73,7 +73,6 @@
             tableLayoutPanelBottom = new TableLayoutPanel();
             groupBoxCacThucHien = new GroupBox();
             btnXoaAllSvCanChuY = new Button();
-            btnChuaNoiTruAll = new Button();
             btnXoaAllSinhVien = new Button();
             btnXoaAllSvChuaNoiTru = new Button();
             btnXoaAllSvChoGiaHan = new Button();
@@ -138,9 +137,9 @@
             label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
             label1.Location = new Point(622, 15);
             label1.Name = "label1";
-            label1.Size = new Size(250, 38);
+            label1.Size = new Size(222, 38);
             label1.TabIndex = 0;
-            label1.Text = "Quản Lí Sinh Viên";
+            label1.Text = "Quản Lí Nội Trú";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanelManage
@@ -561,7 +560,6 @@
             // groupBoxCacThucHien
             // 
             groupBoxCacThucHien.Controls.Add(btnXoaAllSvCanChuY);
-            groupBoxCacThucHien.Controls.Add(btnChuaNoiTruAll);
             groupBoxCacThucHien.Controls.Add(btnXoaAllSinhVien);
             groupBoxCacThucHien.Controls.Add(btnXoaAllSvChuaNoiTru);
             groupBoxCacThucHien.Controls.Add(btnXoaAllSvChoGiaHan);
@@ -578,30 +576,20 @@
             // 
             // btnXoaAllSvCanChuY
             // 
-            btnXoaAllSvCanChuY.Location = new Point(6, 244);
+            btnXoaAllSvCanChuY.Location = new Point(9, 223);
             btnXoaAllSvCanChuY.Name = "btnXoaAllSvCanChuY";
-            btnXoaAllSvCanChuY.Size = new Size(279, 29);
+            btnXoaAllSvCanChuY.Size = new Size(279, 35);
             btnXoaAllSvCanChuY.TabIndex = 6;
             btnXoaAllSvCanChuY.Text = "Xóa Tất Cả Sinh Viên Cần Chú Ý";
             btnXoaAllSvCanChuY.UseVisualStyleBackColor = true;
             btnXoaAllSvCanChuY.Click += buttonXoaAllSvCanChuY_Click;
             // 
-            // btnChuaNoiTruAll
-            // 
-            btnChuaNoiTruAll.Location = new Point(6, 119);
-            btnChuaNoiTruAll.Name = "btnChuaNoiTruAll";
-            btnChuaNoiTruAll.Size = new Size(279, 51);
-            btnChuaNoiTruAll.TabIndex = 5;
-            btnChuaNoiTruAll.Text = "Thiết Lập Chưa Nội Trú Cho Tất Cả Sinh Viên";
-            btnChuaNoiTruAll.UseVisualStyleBackColor = true;
-            btnChuaNoiTruAll.Click += buttonChuaNoiTruAll_Click;
-            // 
             // btnXoaAllSinhVien
             // 
             btnXoaAllSinhVien.BackColor = SystemColors.ControlLight;
-            btnXoaAllSinhVien.Location = new Point(6, 279);
+            btnXoaAllSinhVien.Location = new Point(6, 264);
             btnXoaAllSinhVien.Name = "btnXoaAllSinhVien";
-            btnXoaAllSinhVien.Size = new Size(279, 29);
+            btnXoaAllSinhVien.Size = new Size(279, 35);
             btnXoaAllSinhVien.TabIndex = 4;
             btnXoaAllSinhVien.Text = "Xóa Tất Cả Sinh Viên";
             btnXoaAllSinhVien.UseVisualStyleBackColor = false;
@@ -609,9 +597,9 @@
             // 
             // btnXoaAllSvChuaNoiTru
             // 
-            btnXoaAllSvChuaNoiTru.Location = new Point(6, 210);
+            btnXoaAllSvChuaNoiTru.Location = new Point(9, 182);
             btnXoaAllSvChuaNoiTru.Name = "btnXoaAllSvChuaNoiTru";
-            btnXoaAllSvChuaNoiTru.Size = new Size(279, 28);
+            btnXoaAllSvChuaNoiTru.Size = new Size(279, 35);
             btnXoaAllSvChuaNoiTru.TabIndex = 3;
             btnXoaAllSvChuaNoiTru.Text = "Xóa Tất Cả Sinh Viên Chưa Nội Trú";
             btnXoaAllSvChuaNoiTru.UseVisualStyleBackColor = true;
@@ -619,9 +607,9 @@
             // 
             // btnXoaAllSvChoGiaHan
             // 
-            btnXoaAllSvChoGiaHan.Location = new Point(6, 176);
+            btnXoaAllSvChoGiaHan.Location = new Point(9, 141);
             btnXoaAllSvChoGiaHan.Name = "btnXoaAllSvChoGiaHan";
-            btnXoaAllSvChoGiaHan.Size = new Size(279, 28);
+            btnXoaAllSvChoGiaHan.Size = new Size(279, 35);
             btnXoaAllSvChoGiaHan.TabIndex = 2;
             btnXoaAllSvChoGiaHan.Text = "Xóa Tất Cả Sinh Viên Chờ Gia Hạn";
             btnXoaAllSvChoGiaHan.UseVisualStyleBackColor = true;
@@ -629,7 +617,7 @@
             // 
             // btnChoGiaHanNoiTruAll
             // 
-            btnChoGiaHanNoiTruAll.Location = new Point(6, 60);
+            btnChoGiaHanNoiTruAll.Location = new Point(6, 82);
             btnChoGiaHanNoiTruAll.Name = "btnChoGiaHanNoiTruAll";
             btnChoGiaHanNoiTruAll.Size = new Size(279, 53);
             btnChoGiaHanNoiTruAll.TabIndex = 1;
@@ -641,7 +629,7 @@
             // 
             btnXacNhanNoiTruAll.Location = new Point(6, 26);
             btnXacNhanNoiTruAll.Name = "btnXacNhanNoiTruAll";
-            btnXacNhanNoiTruAll.Size = new Size(279, 28);
+            btnXacNhanNoiTruAll.Size = new Size(279, 50);
             btnXacNhanNoiTruAll.TabIndex = 0;
             btnXacNhanNoiTruAll.Text = "Xác Nhận Nội Trú Cho Tất Cả Sinh Viên ";
             btnXacNhanNoiTruAll.UseVisualStyleBackColor = true;
@@ -904,7 +892,6 @@
         private Button btnXoaAllSvChoGiaHan;
         private Button btnXoaAllSinhVien;
         private Button btnXoaAllSvChuaNoiTru;
-        private Button btnChuaNoiTruAll;
         private TableLayoutPanel tableLayoutPanel3;
         private Label label17;
         private TextBox textBoxTimKiemMSSV;

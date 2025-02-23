@@ -357,7 +357,7 @@
             btnQuanlysinhvien.ShadowDecoration.CustomizableEdges = customizableEdges22;
             btnQuanlysinhvien.Size = new Size(275, 73);
             btnQuanlysinhvien.TabIndex = 23;
-            btnQuanlysinhvien.Text = "QUẢN LÝ SINH VIÊN";
+            btnQuanlysinhvien.Text = "QUẢN LÝ NỘI TRÚ";
             btnQuanlysinhvien.Click += QuanLySinhVien_Click;
             // 
             // panelDisplay
