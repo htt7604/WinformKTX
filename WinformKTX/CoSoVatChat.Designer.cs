@@ -66,6 +66,7 @@
             groupBox4 = new GroupBox();
             buttonXoaAllCSVC = new Button();
             buttonXoaAllCSVCHuHong = new Button();
+            label10 = new Label();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
@@ -83,6 +84,7 @@
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 1);
+            tableLayoutPanel1.Controls.Add(label10, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -517,6 +519,17 @@
             buttonXoaAllCSVCHuHong.UseVisualStyleBackColor = true;
             buttonXoaAllCSVCHuHong.Click += buttonXoaAllCSVCHuHong_Click;
             // 
+            // label10
+            // 
+            label10.Anchor = AnchorStyles.None;
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label10.Location = new Point(594, 16);
+            label10.Name = "label10";
+            label10.Size = new Size(305, 31);
+            label10.TabIndex = 1;
+            label10.Text = "QUẢN LÝ CƠ SỞ VẬT CHẤT";
+            // 
             // CoSoVatChat
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -526,6 +539,7 @@
             Name = "CoSoVatChat";
             Text = "CoSoVatChat";
             tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel3.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -580,5 +594,6 @@
         private ComboBox comboBoxLocTrangThai;
         private Button buttonXoaAllCSVC;
         private Button buttonXoaAllCSVCHuHong;
+        private Label label10;
     }
 }
