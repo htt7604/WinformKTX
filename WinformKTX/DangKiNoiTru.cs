@@ -137,10 +137,12 @@ namespace WinformKTX
                 conn.Open();
 
                 string query = @"
-                SELECT MA_PHONG, TEN_PHONG 
-                FROM PHONG 
-                WHERE MA_TANG = @MaTang 
-                AND SO_GIUONG_CON_TRONG > 0";
+                            SELECT MA_PHONG, TEN_PHONG 
+                            FROM PHONG 
+                            WHERE MA_TANG = @MaTang 
+                            AND SO_GIUONG_CON_TRONG > 0 
+                            AND TINH_TRANG_PHONG IN (N'Trống', N'Đang sử dụng')";
+
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
