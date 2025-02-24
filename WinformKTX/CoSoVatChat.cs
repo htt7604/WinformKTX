@@ -13,7 +13,6 @@ namespace WinformKTX
 {
     public partial class CoSoVatChat : Form
     {
-        // Khởi tạo đối tượng KetnoiCSDL để sử dụng phương thức GetConnection
         KetnoiCSDL ketnoi = new KetnoiCSDL();
         public CoSoVatChat()
         {
