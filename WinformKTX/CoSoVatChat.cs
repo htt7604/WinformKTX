@@ -13,6 +13,7 @@ namespace WinformKTX
 {
     public partial class CoSoVatChat : Form
     {
+        // Khởi tạo đối tượng KetnoiCSDL để sử dụng phương thức GetConnection
         KetnoiCSDL ketnoi = new KetnoiCSDL();
         public CoSoVatChat()
         {
@@ -695,6 +696,11 @@ namespace WinformKTX
 
         private void comboBoxLocTang_Click(object sender, EventArgs e)
         {
+            if(comboBoxLocTang.SelectedValue == null) 
+            {
+                comboBoxLocTang.DataSource = null;
+                return; 
+            }
             // Lấy giá trị thực tế từ comboBoxLocTang
             object tangValue = comboBoxLocTang.SelectedValue;
             string selectedMaTang;
@@ -744,14 +750,23 @@ namespace WinformKTX
                         // Truyền tham số mã tầng
                         cmd.Parameters.AddWithValue("@MaTang", selectedMaTang);
 
-                        // Truyền tham số trạng thái
+                        //// Truyền tham số trạng thái
+                        //if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
+                        //{
+                        //    cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                        //}
+                        //else
+                        //{
+                        //    cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                        //}
+                        // Truyền tham số trạng thái (đảm bảo kiểu dữ liệu là nvarchar)
                         if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
                         {
-                            cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = DBNull.Value;
                         }
                         else
                         {
-                            cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = selectedTrangThai;
                         }
 
                         using (SqlDataAdapter adapter2 = new SqlDataAdapter(cmd))
@@ -831,13 +846,22 @@ namespace WinformKTX
 
                     using (SqlCommand cmd = new SqlCommand(query1, conn))
                     {
+                        //if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
+                        //{
+                        //    cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                        //}
+                        //else
+                        //{
+                        //    cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                        //}
+                        // Truyền tham số trạng thái (đảm bảo kiểu dữ liệu là nvarchar)
                         if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
                         {
-                            cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = DBNull.Value;
                         }
                         else
                         {
-                            cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                            cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = selectedTrangThai;
                         }
                         using (SqlDataAdapter adapter1 = new SqlDataAdapter(cmd))
                         {
@@ -880,7 +904,7 @@ namespace WinformKTX
         }
         private void comboBoxLocPhong_Click(object sender, EventArgs e)
         {
-            if (comboBoxLocPhong.SelectedValue == null) { return; }
+            if (comboBoxLocPhong.SelectedValue == null && comboBoxLocPhong.SelectedIndex!=-1) { return; }
             // Lấy giá trị mã tầng từ comboBoxLocTang (kiểu int?, có thể null)
             int? selectedMaTang = comboBoxLocTang?.SelectedValue as int?;
 
@@ -933,16 +957,24 @@ namespace WinformKTX
                         cmd.Parameters.AddWithValue("@MaPhong", DBNull.Value);
                     }
 
-                    // Thêm tham số Trạng thái
-                    if (string.IsNullOrEmpty(selectedTrangThai) || selectedTrangThai == "Tất Cả Trạng Thái")
+                    //// Thêm tham số Trạng thái
+                    //if (string.IsNullOrEmpty(selectedTrangThai) || selectedTrangThai == "Tất Cả Trạng Thái")
+                    //{
+                    //    cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                    //}
+                    //else
+                    //{
+                    //    cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                    //}
+                    // Truyền tham số trạng thái (đảm bảo kiểu dữ liệu là nvarchar)
+                    if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
                     {
-                        cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                        cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = DBNull.Value;
                     }
                     else
                     {
-                        cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                        cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = selectedTrangThai;
                     }
-
                     // Đổ dữ liệu vào DataGridView
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
@@ -1035,16 +1067,24 @@ namespace WinformKTX
                                 cmd.Parameters.AddWithValue("@TenCSVC", selectedTenCSVC);
                             }
 
-                            // Truyền tham số trạng thái
+                            //// Truyền tham số trạng thái
+                            //if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
+                            //{
+                            //    cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                            //}
+                            //else
+                            //{
+                            //    cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                            //}
+                            // Truyền tham số trạng thái (đảm bảo kiểu dữ liệu là nvarchar)
                             if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
                             {
-                                cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                                cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = DBNull.Value;
                             }
                             else
                             {
-                                cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                                cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = selectedTrangThai;
                             }
-
                             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                             {
                                 DataTable dataTable = new DataTable();
@@ -1094,16 +1134,24 @@ namespace WinformKTX
                                 cmd.Parameters.AddWithValue("@TenCSVC", selectedTenCSVC);
                             }
 
-                            // Truyền tham số trạng thái
+                            //// Truyền tham số trạng thái
+                            //if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
+                            //{
+                            //    cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                            //}
+                            //else
+                            //{
+                            //    cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                            //}
+                            // Truyền tham số trạng thái (đảm bảo kiểu dữ liệu là nvarchar)
                             if (selectedTrangThai == "Tất Cả Trạng Thái" || string.IsNullOrEmpty(selectedTrangThai))
                             {
-                                cmd.Parameters.AddWithValue("@TrangThai", DBNull.Value);
+                                cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = DBNull.Value;
                             }
                             else
                             {
-                                cmd.Parameters.AddWithValue("@TrangThai", selectedTrangThai);
+                                cmd.Parameters.Add("@TrangThai", SqlDbType.NVarChar, 50).Value = selectedTrangThai;
                             }
-
                             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                             {
                                 DataTable dataTable = new DataTable();
