@@ -484,21 +484,21 @@ namespace WinformKTX
                 {
                     conn.Open();
                     string query = @"
-            SELECT TOP 1
-                tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
-                tp.GIA_TIEN, 
-                (SELECT TOP 1 TIEN_DIEN FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_DIEN,
-                (SELECT TOP 1 TIEN_NUOC FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_NUOC,
-                (SELECT MAX(NGAY_THANH_TOAN) FROM THANH_TOAN_PHONG WHERE MA_NOI_TRU = tp.MA_NOI_TRU) AS NGAY_THANH_TOAN, 
-                (SELECT MAX(NGAY_THANH_TOAN_DIEN_NUOC) FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG) AS NGAY_THANH_TOAN_DIEN_NUOC,
-                tp.TRANG_THAI_THANH_TOAN
-            FROM THANH_TOAN_PHONG tp
-            JOIN NOI_TRU nt ON tp.MA_NOI_TRU = nt.MA_NOI_TRU
-            JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
-            JOIN PHONG p ON nt.MA_PHONG = p.MA_PHONG
-            JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
-            WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan
-            ORDER BY NGAY_THANH_TOAN DESC";
+    SELECT TOP 1
+        tp.MA_THANH_TOAN_PHONG, sv.MSSV, sv.HOTEN_SV, p.TEN_PHONG, 
+        tp.GIA_TIEN, 
+        (SELECT TOP 1 TIEN_DIEN FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_DIEN,
+        (SELECT TOP 1 TIEN_NUOC FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG ORDER BY NGAY_THANH_TOAN_DIEN_NUOC DESC) AS TIEN_NUOC,
+        (SELECT MAX(NGAY_THANH_TOAN) FROM THANH_TOAN_PHONG WHERE MA_NOI_TRU = tp.MA_NOI_TRU) AS NGAY_THANH_TOAN, 
+        (SELECT MAX(NGAY_THANH_TOAN_DIEN_NUOC) FROM DIEN_NUOC WHERE MA_PHONG = p.MA_PHONG) AS NGAY_THANH_TOAN_DIEN_NUOC,
+        tp.TRANG_THAI_THANH_TOAN
+    FROM THANH_TOAN_PHONG tp
+    JOIN NOI_TRU nt ON tp.MA_NOI_TRU = nt.MA_NOI_TRU
+    JOIN SINH_VIEN sv ON nt.MSSV = sv.MSSV
+    JOIN PHONG p ON nt.MA_PHONG = p.MA_PHONG
+    JOIN LOAI_PHONG lp ON p.MA_LOAI_PHONG = lp.MA_LOAI_PHONG
+    WHERE tp.MA_THANH_TOAN_PHONG = @maThanhToan
+    ORDER BY NGAY_THANH_TOAN DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
@@ -548,7 +548,7 @@ namespace WinformKTX
                     PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create));
                     document.Open();
 
-                    string fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arialuni.ttf");
+                    string fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
                     BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                     iTextSharp.text.Font titleFont = FontFactory.GetFont(iTextSharp.text.FontFactory.HELVETICA_BOLD, 16);
                     iTextSharp.text.Font normalFont = FontFactory.GetFont(iTextSharp.text.FontFactory.HELVETICA, 12);
