@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX;
 using WinformKTX.Vi_Pham;
 using WinFormsAppKTX;
 
@@ -22,8 +23,9 @@ namespace abc.HoanThanh.ThongKeViPham
             LoadViPhamData();
             LoadViewForm();
         }
-        private SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+        //private SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
         //giao dien ban dau
+        KetnoiCSDL kn = new KetnoiCSDL();
         private void LoadViewForm()
         {
             comboBoxSinhVien.Enabled = false;
@@ -74,8 +76,8 @@ namespace abc.HoanThanh.ThongKeViPham
         //ham du lieu vao data
         private void LoadViPhamData()
         {
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -101,6 +103,7 @@ namespace abc.HoanThanh.ThongKeViPham
         {
             try
             {
+                SqlConnection conn = kn.GetConnection();
                 string query = "SELECT MSSV FROM SINH_VIEN";
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -126,6 +129,7 @@ namespace abc.HoanThanh.ThongKeViPham
         {
             try
             {
+                SqlConnection conn = kn.GetConnection();
                 string query = "SELECT MUC_VI_PHAM.MA_MUC_VP,MUC_VI_PHAM.TEN_VI_PHAM from MUC_VI_PHAM";
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -169,9 +173,9 @@ namespace abc.HoanThanh.ThongKeViPham
                 return;
             }
 
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -328,8 +332,8 @@ namespace abc.HoanThanh.ThongKeViPham
             {
                 query = "SELECT MA_VI_PHAM, MSSV, MUC_VI_PHAM.TEN_VI_PHAM, NGAY_VI_PHAM, NOI_DUNG_VI_PHAM, TRANG_THAI_XU_LY, GHI_CHU_VP FROM VI_PHAM JOIN MUC_VI_PHAM ON VI_PHAM.MA_MUC_VP = MUC_VI_PHAM.MA_MUC_VP ";
             }
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -401,10 +405,10 @@ namespace abc.HoanThanh.ThongKeViPham
                         int viPhamId = Convert.ToInt32(dataGridViewThongTin.SelectedRows[0].Cells["MA_VI_PHAM"].Value);  // Giả sử có cột ViPhamID là khóa chính của vi phạm
 
                         // Câu lệnh SQL để xóa vi phạm theo ID
-                        string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+                        //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
                         string query = "DELETE FROM VI_PHAM WHERE MA_VI_PHAM = @ViPhamID And MSSV=@mssv";
 
-                        using (SqlConnection conn = new SqlConnection(connectionString))
+                        using (SqlConnection conn = kn.GetConnection())
                         {
                             conn.Open();
 
@@ -562,9 +566,9 @@ namespace abc.HoanThanh.ThongKeViPham
         private string GetMaMucViPham(string tenMucViPham)
         {
             string maMucViPham = string.Empty;
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -754,8 +758,8 @@ namespace abc.HoanThanh.ThongKeViPham
         private void SaveViPham()
         {
             // Kiểm tra điều kiện lưu
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
