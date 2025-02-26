@@ -768,21 +768,21 @@ namespace WinformKTX
                         MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Chờ gia hạn'.");
                         return;
                     }
-                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Chờ gia hạn")
-                    {
-                        MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần chú ý'.");
-                        return;
-                    }
-                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đang nội trú")
-                    {
-                        MessageBox.Show("Không thể chuyển từ 'Đang nội trú' sang 'Cần chú ý'.");
-                        return;
-                    }
-                    if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đã đăng ký")
-                    {
-                        MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Cần chú ý'.");
-                        return;
-                    }
+                    //if (trangThaiMoi == "Cần chú ý" && currentStatus == "Chờ gia hạn")
+                    //{
+                    //    MessageBox.Show("Không thể chuyển từ 'Chờ gia hạn' sang 'Cần chú ý'.");
+                    //    return;
+                    //}
+                    //if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đang nội trú")
+                    //{
+                    //    MessageBox.Show("Không thể chuyển từ 'Đang nội trú' sang 'Cần chú ý'.");
+                    //    return;
+                    //}
+                    //if (trangThaiMoi == "Cần chú ý" && currentStatus == "Đã đăng ký")
+                    //{
+                    //    MessageBox.Show("Không thể chuyển từ 'Đã đăng ký' sang 'Cần chú ý'.");
+                    //    return;
+                    //}
                     if (trangThaiMoi == "Đang nội trú" && currentStatus == "Cần chú ý")
                     {
                         MessageBox.Show("Không thể chuyển từ 'Cần chú ý' sang 'Đang nội trú'.");
