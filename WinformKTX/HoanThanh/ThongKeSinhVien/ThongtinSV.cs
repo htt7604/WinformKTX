@@ -31,7 +31,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         {
             try
             {
-
+                SqlConnection conn = kn.GetConnection();
                 string query = "SELECT MSSV FROM SINH_VIEN";
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -56,7 +56,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         {
             try
             {
-
+                SqlConnection conn = kn.GetConnection();
                 string query = "SELECT MSSV ,SINH_VIEN.HOTEN_SV FROM SINH_VIEN";
                 using (var cmd = new SqlCommand(query, conn))
                 {

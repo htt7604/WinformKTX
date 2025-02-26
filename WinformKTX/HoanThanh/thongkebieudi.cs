@@ -18,11 +18,12 @@ namespace WinformKTX.HoanThanh
         {
             InitializeComponent();
         }
+        KetnoiCSDL kn = new KetnoiCSDL();
         private void BieudoTronGiuong()
         {
             // Chuỗi kết nối
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn dữ liệu
             string query = "SELECT COUNT(CASE WHEN GIUONG.TINH_TRANG_GIUONG = N'Trống' THEN 1 END) AS Controng, " +
                            "COUNT(CASE WHEN GIUONG.TINH_TRANG_GIUONG = N'Đang sử dụng' THEN 1 END) AS Dangsudung " +
@@ -101,8 +102,8 @@ namespace WinformKTX.HoanThanh
         private void BieudoCotDien_Nuoc()
         {
             // Chuỗi kết nối cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn dữ liệu (tổng tiền điện và nước theo tháng)
             string query = "SELECT YEAR(DIEN_NUOC.TU_NGAY) AS Year, " +
                 "MONTH(DIEN_NUOC.TU_NGAY) AS Month, " +
@@ -170,8 +171,8 @@ namespace WinformKTX.HoanThanh
         private void thongketopphongdiennuoc()
         {
             // Chuỗi kết nối cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn SQL để lấy top phòng sử dụng nhiều điện hoặc nước nhất
             string query = @"
         SELECT TOP 10
@@ -209,8 +210,8 @@ namespace WinformKTX.HoanThanh
         private void thongkesoluonggiuong()
         {
             // Kết nối đến cơ sở dữ liệu
-            string connString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            SqlConnection conn = new SqlConnection(connString);
+            //string connString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để lấy số lượng giường trống và đang sử dụng theo phòng
             string query = "SELECT PHONG.TEN_PHONG, " +
