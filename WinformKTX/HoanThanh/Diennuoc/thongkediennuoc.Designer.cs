@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             groupBoxThoiGian = new GroupBox();
             dateTimePickerKetThuc = new DateTimePicker();
             label3 = new Label();
@@ -57,8 +57,8 @@
             radioButtonThoiGianSuDung = new RadioButton();
             radioButtonThoiGianThanhToan = new RadioButton();
             groupBox4 = new GroupBox();
-            textBoxDemSVDaTT = new TextBox();
-            textBoxDemSVChuTT = new TextBox();
+            textBoxDemSoDien = new TextBox();
+            textBoxDemSoNuoc = new TextBox();
             buttonTroLai = new Button();
             buttonTimKiem = new Button();
             groupBoxThoiGian.SuspendLayout();
@@ -213,14 +213,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewThongTin.Location = new Point(-8, 279);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -374,8 +374,8 @@
             // 
             // groupBox4
             // 
-            groupBox4.Controls.Add(textBoxDemSVDaTT);
-            groupBox4.Controls.Add(textBoxDemSVChuTT);
+            groupBox4.Controls.Add(textBoxDemSoDien);
+            groupBox4.Controls.Add(textBoxDemSoNuoc);
             groupBox4.Location = new Point(1042, 53);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(200, 171);
@@ -383,23 +383,23 @@
             groupBox4.TabStop = false;
             groupBox4.Text = "Thống kê";
             // 
-            // textBoxDemSVDaTT
+            // textBoxDemSoDien
             // 
-            textBoxDemSVDaTT.Location = new Point(7, 51);
-            textBoxDemSVDaTT.Name = "textBoxDemSVDaTT";
-            textBoxDemSVDaTT.ReadOnly = true;
-            textBoxDemSVDaTT.Size = new Size(193, 23);
-            textBoxDemSVDaTT.TabIndex = 65;
-            textBoxDemSVDaTT.WordWrap = false;
+            textBoxDemSoDien.Location = new Point(6, 28);
+            textBoxDemSoDien.Name = "textBoxDemSoDien";
+            textBoxDemSoDien.ReadOnly = true;
+            textBoxDemSoDien.Size = new Size(193, 23);
+            textBoxDemSoDien.TabIndex = 65;
+            textBoxDemSoDien.WordWrap = false;
             // 
-            // textBoxDemSVChuTT
+            // textBoxDemSoNuoc
             // 
-            textBoxDemSVChuTT.Location = new Point(6, 104);
-            textBoxDemSVChuTT.Name = "textBoxDemSVChuTT";
-            textBoxDemSVChuTT.ReadOnly = true;
-            textBoxDemSVChuTT.Size = new Size(193, 23);
-            textBoxDemSVChuTT.TabIndex = 66;
-            textBoxDemSVChuTT.WordWrap = false;
+            textBoxDemSoNuoc.Location = new Point(6, 94);
+            textBoxDemSoNuoc.Name = "textBoxDemSoNuoc";
+            textBoxDemSoNuoc.ReadOnly = true;
+            textBoxDemSoNuoc.Size = new Size(193, 23);
+            textBoxDemSoNuoc.TabIndex = 66;
+            textBoxDemSoNuoc.WordWrap = false;
             // 
             // buttonTroLai
             // 
@@ -490,8 +490,8 @@
         private RadioButton radioButtonThoiGianSuDung;
         private RadioButton radioButtonThoiGianThanhToan;
         private GroupBox groupBox4;
-        private TextBox textBoxDemSVDaTT;
-        private TextBox textBoxDemSVChuTT;
+        private TextBox textBoxDemSoDien;
+        private TextBox textBoxDemSoNuoc;
         private Button buttonTroLai;
         private Button buttonTimKiem;
         private RadioButton radioButtonTatThoiGian;

@@ -43,6 +43,7 @@
             textBoxDemSVNam = new TextBox();
             textBoxDemSV = new TextBox();
             label1 = new Label();
+            buttonAll = new Button();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).BeginInit();
@@ -167,7 +168,7 @@
             groupBox1.Controls.Add(textBoxDemSVNu);
             groupBox1.Controls.Add(textBoxDemSVNam);
             groupBox1.Controls.Add(textBoxDemSV);
-            groupBox1.Location = new Point(1061, 12);
+            groupBox1.Location = new Point(978, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(219, 134);
             groupBox1.TabIndex = 58;
@@ -211,11 +212,22 @@
             label1.TabIndex = 59;
             label1.Text = "Hồ Sơ Sinh Viên";
             // 
+            // buttonAll
+            // 
+            buttonAll.Location = new Point(1205, 51);
+            buttonAll.Name = "buttonAll";
+            buttonAll.Size = new Size(75, 46);
+            buttonAll.TabIndex = 60;
+            buttonAll.Text = "Hủy ";
+            buttonAll.UseVisualStyleBackColor = true;
+            buttonAll.Click += buttonAll_Click;
+            // 
             // ThongtinSV
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1292, 594);
+            Controls.Add(buttonAll);
             Controls.Add(label1);
             Controls.Add(groupBox1);
             Controls.Add(dataGridViewThongTin);
@@ -251,5 +263,6 @@
         private GroupBox groupBox3;
         private RadioButton radioButtonHoTen;
         private RadioButton radioButtonMSSV;
+        private Button buttonAll;
     }
 }

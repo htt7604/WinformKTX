@@ -177,7 +177,7 @@ namespace abc
                     // Kiểm tra sự tồn tại của bảng GIUONG
 
                         if (comboBoxTinhTrang.SelectedValue != null) { 
-                        query += " PHONG.TINH_TRANG_PHONG= " + comboBoxTinhTrang.SelectedIndex.ToString() + " And ";
+                        query += " PHONG.TINH_TRANG_PHONG= N'" + comboBoxTinhTrang.SelectedValue.ToString() +"' And ";
                         }
 
                         SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'GIUONG'", con);
@@ -308,7 +308,7 @@ namespace abc
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemTongPhong.Text = "Tong so Phong: " + Count.ToString();
+                textBoxDemTongPhong.Text = "Tổng số phòng: " + Count.ToString();
             }
             catch (Exception ex)
             {
@@ -326,7 +326,7 @@ namespace abc
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG='0'";
+            string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG=N'Trống'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -340,7 +340,7 @@ namespace abc
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemPhongTrong.Text = "Số Phong Con Trong: " + Count.ToString();
+                textBoxDemPhongTrong.Text = "Số phòng còn trống: " + Count.ToString();
             }
             catch (Exception ex)
             {
@@ -359,7 +359,7 @@ namespace abc
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG='1'";
+            string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG=N'Đầy'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -373,7 +373,7 @@ namespace abc
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemPhongDay.Text = "Số Phong Day: : " + Count.ToString();
+                textBoxDemPhongDay.Text = "Số Phòng Đầy  : " + Count.ToString();
             }
             catch (Exception ex)
             {

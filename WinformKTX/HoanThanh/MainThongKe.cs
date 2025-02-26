@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX.HoanThanh;
 using WinformKTX.HoanThanh.Diennuoc;
 using WinformKTX.HoanThanh.ThongKeCSVC_HuHong;
 
@@ -176,6 +177,16 @@ namespace abc.HoanThanh
             thongKeDienNuoc.FormBorderStyle = FormBorderStyle.None;
             panelMain.Controls.Add(thongKeDienNuoc);
             thongKeDienNuoc.Show();
+        }
+
+        private void MainThongKe_Load(object sender, EventArgs e)
+        {
+            thongkebieudi thongkebieudi = new thongkebieudi();
+            thongkebieudi.Dock = DockStyle.Fill;
+            thongkebieudi.TopLevel=false;
+            thongkebieudi.FormBorderStyle = FormBorderStyle.None;
+            panelMain.Controls.Add((Control)thongkebieudi);
+            thongkebieudi.Show();
         }
     }
 }

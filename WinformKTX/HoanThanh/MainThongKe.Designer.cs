@@ -48,9 +48,9 @@
             // 
             // panelMain
             // 
-            panelMain.Location = new Point(0, 32);
+            panelMain.Location = new Point(0, 27);
             panelMain.Name = "panelMain";
-            panelMain.Size = new Size(1308, 638);
+            panelMain.Size = new Size(1308, 643);
             panelMain.TabIndex = 9;
             // 
             // menuStrip2
@@ -157,6 +157,7 @@
             Controls.Add(menuStrip2);
             Name = "MainThongKe";
             Text = "MainThongKe";
+            Load += MainThongKe_Load;
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
             ResumeLayout(false);

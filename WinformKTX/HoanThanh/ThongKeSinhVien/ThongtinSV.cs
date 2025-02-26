@@ -96,7 +96,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
                 int studentCount = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSV.Text = "Tong Số sinh viên: " + studentCount.ToString();
+                textBoxDemSV.Text = "Tổng Số sinh viên: " + studentCount.ToString();
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH='Nam'";
+            string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH=N'Nam'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -146,7 +146,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH='Nu'";
+            string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH=N'Nữ'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -160,7 +160,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
                 int studentCount = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSVNu.Text = "Số sinh viên nu: " + studentCount.ToString();
+                textBoxDemSVNu.Text = "Số sinh viên nữ: " + studentCount.ToString();
             }
             catch (Exception ex)
             {
@@ -235,6 +235,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         {
             comboBoxHoTen.Enabled = false;
             comboBoxSinhVien.Enabled = false;
+            LoadAllSV();
         }
 
 
@@ -244,7 +245,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         {
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
-            string query = "SELECT * FROM SINH_VIEN WHERE SINH_VIEN.HOTEN_SV = '"    +   selectedHoTen   +   "'";
+            string query = "SELECT * FROM SINH_VIEN WHERE SINH_VIEN.HOTEN_SV = N'" + selectedHoTen + "'";
             SqlCommand command = new SqlCommand(query, conn);
             //command.Parameters.AddWithValue("@HoTen", selectedHoTen);  // Sử dụng tham số để tránh SQL Injection
 
@@ -278,6 +279,47 @@ namespace abc.HoanThanh.ThongKeSinhVien
                 SearchStudentByHoTen(selectedHoTen);
                 comboBoxSinhVien.Enabled = false;
             }
+        }
+        //ham loy toan bo sinh vien 
+        private void LoadAllSV()
+        {
+            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "SELECT   MSSV,HOTEN_SV, CCCD,NGAY_SINH,GIOI_TINH,SDT_SINHVIEN,SDT_NGUOITHAN,QUE_QUAN,EMAIL FROM SINH_VIEN; ";
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
+                    DataTable dataTable = new DataTable();
+                    dataAdapter.Fill(dataTable);
+
+                    // Gán dữ liệu vào DataGridView
+                    dataGridViewThongTin.DataSource = dataTable;
+
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối: " + ex.Message);
+                }
+            }
+        }
+        private void buttonAll_Click(object sender, EventArgs e)
+        {
+            comboBoxHoTen.SelectedIndex = -1;
+            comboBoxSinhVien.SelectedIndex = -1;
+            if (radioButtonMSSV.Checked == true)
+            {
+                radioButtonMSSV.Checked = false;
+                comboBoxSinhVien.Enabled=false;
+            }
+            else
+            {
+                radioButtonHoTen.Checked = false;
+                comboBoxHoTen.Enabled=false;
+            }
+            LoadAllSV();
         }
     }
 }

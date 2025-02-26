@@ -37,19 +37,18 @@
             radioButtonThem = new RadioButton();
             dataGridViewThongTin = new DataGridView();
             groupBoxThongTin = new GroupBox();
+            buttonHuyBo = new Button();
+            buttonTimKiem = new Button();
+            textBoxNoiDung = new TextBox();
             labelGhichu = new Label();
             textBoxGhiChu = new TextBox();
             comboBoxSinhVien = new ComboBox();
             dateTimePickerNgayViPham = new DateTimePicker();
             comboBoxMucViPham = new ComboBox();
             labelMucvipham = new Label();
-            textBoxNoiDung = new TextBox();
             labelMSSV = new Label();
             labelNoiDung = new Label();
             labelNgay = new Label();
-            groupBoxTrangThai = new GroupBox();
-            radioButtonChuaxuly = new RadioButton();
-            radioButtonDaxuly = new RadioButton();
             buttonLuu = new Button();
             buttonHuy = new Button();
             labelViPham = new Label();
@@ -60,7 +59,6 @@
             GroupBoxChucNang.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).BeginInit();
             groupBoxThongTin.SuspendLayout();
-            groupBoxTrangThai.SuspendLayout();
             groupBoxSuaXoa.SuspendLayout();
             SuspendLayout();
             // 
@@ -71,7 +69,7 @@
             buttonXoa.Name = "buttonXoa";
             buttonXoa.Size = new Size(75, 29);
             buttonXoa.TabIndex = 68;
-            buttonXoa.Text = "Xoa";
+            buttonXoa.Text = "Xóa";
             buttonXoa.UseVisualStyleBackColor = true;
             buttonXoa.Click += buttonXoa_Click;
             // 
@@ -82,10 +80,10 @@
             radioButtonXoa.Location = new Point(163, 19);
             radioButtonXoa.Margin = new Padding(3, 2, 3, 2);
             radioButtonXoa.Name = "radioButtonXoa";
-            radioButtonXoa.Size = new Size(50, 19);
+            radioButtonXoa.Size = new Size(46, 19);
             radioButtonXoa.TabIndex = 2;
             radioButtonXoa.TabStop = true;
-            radioButtonXoa.Text = "XOA";
+            radioButtonXoa.Text = "Xóa";
             radioButtonXoa.UseVisualStyleBackColor = true;
             radioButtonXoa.CheckedChanged += radioButtonXoa_CheckedChanged;
             // 
@@ -96,10 +94,10 @@
             radioButtonSua.Location = new Point(101, 18);
             radioButtonSua.Margin = new Padding(3, 2, 3, 2);
             radioButtonSua.Name = "radioButtonSua";
-            radioButtonSua.Size = new Size(49, 19);
+            radioButtonSua.Size = new Size(46, 19);
             radioButtonSua.TabIndex = 1;
             radioButtonSua.TabStop = true;
-            radioButtonSua.Text = "SUA";
+            radioButtonSua.Text = "Sửa";
             radioButtonSua.UseVisualStyleBackColor = true;
             radioButtonSua.CheckedChanged += radioButtonSua_CheckedChanged;
             // 
@@ -110,7 +108,7 @@
             buttonSua.Name = "buttonSua";
             buttonSua.Size = new Size(75, 29);
             buttonSua.TabIndex = 66;
-            buttonSua.Text = "Sua";
+            buttonSua.Text = "Sửa";
             buttonSua.UseVisualStyleBackColor = true;
             buttonSua.Click += buttonSua_Click;
             // 
@@ -126,7 +124,7 @@
             GroupBoxChucNang.Size = new Size(236, 55);
             GroupBoxChucNang.TabIndex = 67;
             GroupBoxChucNang.TabStop = false;
-            GroupBoxChucNang.Text = "Chuc Nang";
+            GroupBoxChucNang.Text = "Chức Năng";
             // 
             // radioButtonThem
             // 
@@ -135,10 +133,10 @@
             radioButtonThem.Location = new Point(30, 18);
             radioButtonThem.Margin = new Padding(3, 2, 3, 2);
             radioButtonThem.Name = "radioButtonThem";
-            radioButtonThem.Size = new Size(58, 19);
+            radioButtonThem.Size = new Size(57, 19);
             radioButtonThem.TabIndex = 0;
             radioButtonThem.TabStop = true;
-            radioButtonThem.Text = "THEM";
+            radioButtonThem.Text = "Thêm";
             radioButtonThem.UseVisualStyleBackColor = true;
             radioButtonThem.CheckedChanged += radioThem_CheckedChanged;
             // 
@@ -171,44 +169,83 @@
             // 
             // groupBoxThongTin
             // 
+            groupBoxThongTin.Controls.Add(buttonHuyBo);
+            groupBoxThongTin.Controls.Add(buttonTimKiem);
+            groupBoxThongTin.Controls.Add(textBoxNoiDung);
             groupBoxThongTin.Controls.Add(labelGhichu);
             groupBoxThongTin.Controls.Add(textBoxGhiChu);
             groupBoxThongTin.Controls.Add(comboBoxSinhVien);
             groupBoxThongTin.Controls.Add(dateTimePickerNgayViPham);
             groupBoxThongTin.Controls.Add(comboBoxMucViPham);
             groupBoxThongTin.Controls.Add(labelMucvipham);
-            groupBoxThongTin.Controls.Add(textBoxNoiDung);
             groupBoxThongTin.Controls.Add(labelMSSV);
             groupBoxThongTin.Controls.Add(labelNoiDung);
             groupBoxThongTin.Controls.Add(labelNgay);
             groupBoxThongTin.Font = new Font("Segoe UI", 10F);
-            groupBoxThongTin.Location = new Point(35, 83);
+            groupBoxThongTin.Location = new Point(24, 83);
             groupBoxThongTin.Margin = new Padding(3, 2, 3, 2);
             groupBoxThongTin.Name = "groupBoxThongTin";
             groupBoxThongTin.Padding = new Padding(3, 2, 3, 2);
-            groupBoxThongTin.Size = new Size(865, 127);
+            groupBoxThongTin.Size = new Size(1022, 127);
             groupBoxThongTin.TabIndex = 62;
             groupBoxThongTin.TabStop = false;
             groupBoxThongTin.Text = "Thông tin";
+            // 
+            // buttonHuyBo
+            // 
+            buttonHuyBo.BackColor = Color.Magenta;
+            buttonHuyBo.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonHuyBo.ForeColor = SystemColors.ButtonHighlight;
+            buttonHuyBo.Location = new Point(398, 36);
+            buttonHuyBo.Name = "buttonHuyBo";
+            buttonHuyBo.Size = new Size(101, 26);
+            buttonHuyBo.TabIndex = 74;
+            buttonHuyBo.Text = "Hủy Bỏ ";
+            buttonHuyBo.UseVisualStyleBackColor = false;
+            buttonHuyBo.Click += buttonHuyBo_Click;
+            // 
+            // buttonTimKiem
+            // 
+            buttonTimKiem.BackColor = Color.CadetBlue;
+            buttonTimKiem.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            buttonTimKiem.ForeColor = SystemColors.ButtonHighlight;
+            buttonTimKiem.Location = new Point(278, 36);
+            buttonTimKiem.Name = "buttonTimKiem";
+            buttonTimKiem.Size = new Size(101, 26);
+            buttonTimKiem.TabIndex = 73;
+            buttonTimKiem.Text = "Tìm Kiếm ";
+            buttonTimKiem.UseVisualStyleBackColor = false;
+            buttonTimKiem.Click += buttonTimKiem_Click;
+            // 
+            // textBoxNoiDung
+            // 
+            textBoxNoiDung.Font = new Font("Segoe UI", 10F);
+            textBoxNoiDung.Location = new Point(631, 36);
+            textBoxNoiDung.Multiline = true;
+            textBoxNoiDung.Name = "textBoxNoiDung";
+            textBoxNoiDung.ScrollBars = ScrollBars.Vertical;
+            textBoxNoiDung.Size = new Size(178, 69);
+            textBoxNoiDung.TabIndex = 61;
+            textBoxNoiDung.TextChanged += Ketqua;
             // 
             // labelGhichu
             // 
             labelGhichu.AutoSize = true;
             labelGhichu.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            labelGhichu.Location = new Point(664, 14);
+            labelGhichu.Location = new Point(869, 20);
             labelGhichu.Name = "labelGhichu";
             labelGhichu.Size = new Size(68, 15);
             labelGhichu.TabIndex = 60;
-            labelGhichu.Text = "Ghi Chu VP";
+            labelGhichu.Text = "Ghi Chú VP";
             // 
             // textBoxGhiChu
             // 
             textBoxGhiChu.Font = new Font("Segoe UI", 10F);
-            textBoxGhiChu.Location = new Point(570, 32);
+            textBoxGhiChu.Location = new Point(818, 38);
             textBoxGhiChu.Multiline = true;
             textBoxGhiChu.Name = "textBoxGhiChu";
             textBoxGhiChu.ScrollBars = ScrollBars.Vertical;
-            textBoxGhiChu.Size = new Size(269, 69);
+            textBoxGhiChu.Size = new Size(189, 69);
             textBoxGhiChu.TabIndex = 59;
             textBoxGhiChu.TextChanged += Ketqua;
             // 
@@ -217,18 +254,20 @@
             comboBoxSinhVien.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             comboBoxSinhVien.AutoCompleteSource = AutoCompleteSource.ListItems;
             comboBoxSinhVien.FormattingEnabled = true;
-            comboBoxSinhVien.Location = new Point(107, 36);
+            comboBoxSinhVien.Location = new Point(111, 36);
             comboBoxSinhVien.Name = "comboBoxSinhVien";
             comboBoxSinhVien.Size = new Size(132, 25);
             comboBoxSinhVien.TabIndex = 58;
-            comboBoxSinhVien.SelectedIndexChanged += comboBoxSinhVien_SelectedIndexChanged;
             // 
             // dateTimePickerNgayViPham
             // 
+            dateTimePickerNgayViPham.Format = DateTimePickerFormat.Custom;
             dateTimePickerNgayViPham.Location = new Point(107, 79);
+            dateTimePickerNgayViPham.MinDate = new DateTime(1998, 6, 23, 0, 0, 0, 0);
             dateTimePickerNgayViPham.Name = "dateTimePickerNgayViPham";
             dateTimePickerNgayViPham.Size = new Size(197, 25);
             dateTimePickerNgayViPham.TabIndex = 57;
+            dateTimePickerNgayViPham.Value = new DateTime(2025, 2, 25, 0, 0, 0, 0);
             dateTimePickerNgayViPham.ValueChanged += Ketqua;
             // 
             // comboBoxMucViPham
@@ -236,8 +275,9 @@
             comboBoxMucViPham.FormattingEnabled = true;
             comboBoxMucViPham.Location = new Point(411, 79);
             comboBoxMucViPham.Name = "comboBoxMucViPham";
-            comboBoxMucViPham.Size = new Size(132, 25);
+            comboBoxMucViPham.Size = new Size(202, 25);
             comboBoxMucViPham.TabIndex = 50;
+            comboBoxMucViPham.SelectedIndexChanged += Ketqua;
             // 
             // labelMucvipham
             // 
@@ -246,34 +286,27 @@
             labelMucvipham.Name = "labelMucvipham";
             labelMucvipham.Size = new Size(91, 19);
             labelMucvipham.TabIndex = 49;
-            labelMucvipham.Text = "Muc Vi Pham";
-            // 
-            // textBoxNoiDung
-            // 
-            textBoxNoiDung.Location = new Point(411, 35);
-            textBoxNoiDung.Name = "textBoxNoiDung";
-            textBoxNoiDung.Size = new Size(132, 25);
-            textBoxNoiDung.TabIndex = 44;
-            textBoxNoiDung.TextChanged += Ketqua;
+            labelMucvipham.Text = "Mục Vi Phạm";
             // 
             // labelMSSV
             // 
             labelMSSV.AutoSize = true;
-            labelMSSV.Location = new Point(30, 42);
+            labelMSSV.Location = new Point(5, 38);
             labelMSSV.Name = "labelMSSV";
-            labelMSSV.Size = new Size(52, 19);
+            labelMSSV.Size = new Size(105, 19);
             labelMSSV.TabIndex = 41;
-            labelMSSV.Text = "MSSV :";
+            labelMSSV.Text = "MSSV (nội trú) :";
             labelMSSV.UseMnemonic = false;
             // 
             // labelNoiDung
             // 
             labelNoiDung.AutoSize = true;
-            labelNoiDung.Location = new Point(314, 42);
+            labelNoiDung.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            labelNoiDung.Location = new Point(675, 18);
             labelNoiDung.Name = "labelNoiDung";
-            labelNoiDung.Size = new Size(68, 19);
+            labelNoiDung.Size = new Size(72, 19);
             labelNoiDung.TabIndex = 30;
-            labelNoiDung.Text = "Noi Dung";
+            labelNoiDung.Text = "Nội Dung";
             // 
             // labelNgay
             // 
@@ -282,45 +315,7 @@
             labelNgay.Name = "labelNgay";
             labelNgay.Size = new Size(96, 19);
             labelNgay.TabIndex = 29;
-            labelNgay.Text = "Ngay Vi Pham";
-            // 
-            // groupBoxTrangThai
-            // 
-            groupBoxTrangThai.Controls.Add(radioButtonChuaxuly);
-            groupBoxTrangThai.Controls.Add(radioButtonDaxuly);
-            groupBoxTrangThai.Font = new Font("Segoe UI", 10F);
-            groupBoxTrangThai.Location = new Point(906, 84);
-            groupBoxTrangThai.Name = "groupBoxTrangThai";
-            groupBoxTrangThai.Size = new Size(131, 126);
-            groupBoxTrangThai.TabIndex = 60;
-            groupBoxTrangThai.TabStop = false;
-            groupBoxTrangThai.Text = "Trang Thai Xu Ly";
-            // 
-            // radioButtonChuaxuly
-            // 
-            radioButtonChuaxuly.AutoSize = true;
-            radioButtonChuaxuly.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            radioButtonChuaxuly.Location = new Point(19, 68);
-            radioButtonChuaxuly.Name = "radioButtonChuaxuly";
-            radioButtonChuaxuly.Size = new Size(80, 19);
-            radioButtonChuaxuly.TabIndex = 47;
-            radioButtonChuaxuly.TabStop = true;
-            radioButtonChuaxuly.Text = "chua xu ly";
-            radioButtonChuaxuly.UseVisualStyleBackColor = true;
-            radioButtonChuaxuly.CheckedChanged += Ketqua;
-            // 
-            // radioButtonDaxuly
-            // 
-            radioButtonDaxuly.AutoSize = true;
-            radioButtonDaxuly.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            radioButtonDaxuly.Location = new Point(19, 28);
-            radioButtonDaxuly.Name = "radioButtonDaxuly";
-            radioButtonDaxuly.Size = new Size(69, 19);
-            radioButtonDaxuly.TabIndex = 46;
-            radioButtonDaxuly.TabStop = true;
-            radioButtonDaxuly.Text = "Da xu ly";
-            radioButtonDaxuly.UseVisualStyleBackColor = true;
-            radioButtonDaxuly.CheckedChanged += Ketqua;
+            labelNgay.Text = "Ngày Vi Phạm";
             // 
             // buttonLuu
             // 
@@ -331,7 +326,7 @@
             buttonLuu.Name = "buttonLuu";
             buttonLuu.Size = new Size(75, 39);
             buttonLuu.TabIndex = 64;
-            buttonLuu.Text = "Luu";
+            buttonLuu.Text = "Lưu";
             buttonLuu.UseVisualStyleBackColor = false;
             buttonLuu.Click += buttonLuu_Click;
             // 
@@ -340,11 +335,11 @@
             buttonHuy.BackColor = Color.Salmon;
             buttonHuy.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             buttonHuy.ForeColor = SystemColors.ButtonHighlight;
-            buttonHuy.Location = new Point(1078, 233);
+            buttonHuy.Location = new Point(1078, 230);
             buttonHuy.Name = "buttonHuy";
             buttonHuy.Size = new Size(75, 39);
             buttonHuy.TabIndex = 63;
-            buttonHuy.Text = "Huy";
+            buttonHuy.Text = "Hủy";
             buttonHuy.UseVisualStyleBackColor = false;
             buttonHuy.Click += buttonHuy_Click;
             // 
@@ -354,9 +349,9 @@
             labelViPham.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             labelViPham.Location = new Point(501, 24);
             labelViPham.Name = "labelViPham";
-            labelViPham.Size = new Size(232, 37);
+            labelViPham.Size = new Size(256, 37);
             labelViPham.TabIndex = 65;
-            labelViPham.Text = "Quan Ly Vi Pham";
+            labelViPham.Text = "Sinh Viên Vi Phạm ";
             // 
             // label1
             // 
@@ -367,7 +362,7 @@
             label1.Name = "label1";
             label1.Size = new Size(192, 28);
             label1.TabIndex = 69;
-            label1.Text = "Thong Tin Vi Pham";
+            label1.Text = "Thông Tin Vi Phạm";
             // 
             // groupBoxSuaXoa
             // 
@@ -387,7 +382,7 @@
             buttonThem.Name = "buttonThem";
             buttonThem.Size = new Size(75, 29);
             buttonThem.TabIndex = 69;
-            buttonThem.Text = "Them";
+            buttonThem.Text = "Thêm";
             buttonThem.UseVisualStyleBackColor = true;
             buttonThem.Click += buttonThem_Click;
             // 
@@ -400,7 +395,7 @@
             buttonTroLai.Name = "buttonTroLai";
             buttonTroLai.Size = new Size(86, 39);
             buttonTroLai.TabIndex = 71;
-            buttonTroLai.Text = "Hoan Tac";
+            buttonTroLai.Text = "Hoàn Tác";
             buttonTroLai.UseVisualStyleBackColor = false;
             buttonTroLai.Click += buttonTroLai_Click;
             // 
@@ -415,20 +410,17 @@
             Controls.Add(GroupBoxChucNang);
             Controls.Add(dataGridViewThongTin);
             Controls.Add(groupBoxThongTin);
-            Controls.Add(groupBoxTrangThai);
             Controls.Add(buttonLuu);
             Controls.Add(buttonHuy);
             Controls.Add(labelViPham);
             Name = "ViPham";
-            Text = "ViPham";
+            Text = " ";
             Load += ViPham_Load;
             GroupBoxChucNang.ResumeLayout(false);
             GroupBoxChucNang.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).EndInit();
             groupBoxThongTin.ResumeLayout(false);
             groupBoxThongTin.PerformLayout();
-            groupBoxTrangThai.ResumeLayout(false);
-            groupBoxTrangThai.PerformLayout();
             groupBoxSuaXoa.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -450,13 +442,9 @@
         private DateTimePicker dateTimePickerNgayViPham;
         private ComboBox comboBoxMucViPham;
         private Label labelMucvipham;
-        private TextBox textBoxNoiDung;
         private Label labelMSSV;
         private Label labelNoiDung;
         private Label labelNgay;
-        private GroupBox groupBoxTrangThai;
-        private RadioButton radioButtonChuaxuly;
-        private RadioButton radioButtonDaxuly;
         private Button buttonLuu;
         private Button buttonHuy;
         private Label labelViPham;
@@ -464,5 +452,8 @@
         private GroupBox groupBoxSuaXoa;
         private Button buttonThem;
         private Button buttonTroLai;
+        private TextBox textBoxNoiDung;
+        private Button buttonTimKiem;
+        private Button buttonHuyBo;
     }
 }

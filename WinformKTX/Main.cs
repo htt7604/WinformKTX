@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinformKTX;
+using WinformKTX.Vi_Pham;
 
 namespace WinFormsAppKTX
 {
@@ -104,13 +105,13 @@ namespace WinFormsAppKTX
 
         private void QuanLiViPham_Click(object sender, EventArgs e)
         {
-            ViPham quanLiViPham = new ViPham();
-            quanLiViPham.TopLevel = false;
-            quanLiViPham.FormBorderStyle = FormBorderStyle.None;
-            quanLiViPham.Dock = DockStyle.Fill;
+            MainVipham mainVipham = new MainVipham();
+            mainVipham.TopLevel = false;
+            mainVipham.FormBorderStyle = FormBorderStyle.None;
+            mainVipham.Dock = DockStyle.Fill;
             panelDisplay.Controls.Clear();
-            panelDisplay.Controls.Add(quanLiViPham);
-            quanLiViPham.Show();
+            panelDisplay.Controls.Add(mainVipham);
+            mainVipham.Show();
         }
 
         private void ThanhToan_Click(object sender, EventArgs e)

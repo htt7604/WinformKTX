@@ -249,17 +249,17 @@ namespace abc.HoanThanh.ThanhToan
             bool hasCondition = false;
             if (radioButtonAll.Checked)
             {
-                query += "AND ( THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='true' or THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='false') ";
+                query += "AND ( THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN=N'Đã thanh toán' or THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN=N'Chưa thanh toán') ";
                 hasCondition = false;
             }
             else if (radioButtonDaTT.Checked)
             {
-                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='true'";
+                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN=N'Đã thanh toán'";
                 hasCondition = false;
             }
             else if (radioButtonChuaTT.Checked)
             {
-                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN='false'";
+                query += "AND THANH_TOAN_PHONG.TRANG_THAI_THANH_TOAN=N'Chưa thanh toán'";
                 hasCondition = false;
             }
             // Kiểm tra ComboBox loại giường
@@ -489,7 +489,7 @@ namespace abc.HoanThanh.ThanhToan
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN='True'";
+            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN=N'Đã thanh toán'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -503,7 +503,7 @@ namespace abc.HoanThanh.ThanhToan
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSVDaTT.Text = "Số sinh viên da thanh toan: " + Count.ToString();
+                textBoxDemSVDaTT.Text = "Số sinh viên đã thanh toán: " + Count.ToString();
             }
             catch (Exception ex)
             {
@@ -521,7 +521,7 @@ namespace abc.HoanThanh.ThanhToan
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN='false'";
+            string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN=N'Chưa thanh toán'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -535,7 +535,7 @@ namespace abc.HoanThanh.ThanhToan
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemSVChuTT.Text = "Số sinh viên da thanh toan: " + Count.ToString();
+                textBoxDemSVChuTT.Text = "Số sinh viên chưa thanh toán: " + Count.ToString();
             }
             catch (Exception ex)
             {

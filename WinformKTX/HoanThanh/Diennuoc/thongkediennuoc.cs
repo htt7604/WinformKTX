@@ -20,6 +20,8 @@ namespace WinformKTX.HoanThanh.Diennuoc
             InitializeComponent();
             LoadDienNuocData();
             TaidanhsachPhong(conn);
+            DemSoDien();
+            DemSoNuoc();
         }
 
 
@@ -196,17 +198,17 @@ namespace WinformKTX.HoanThanh.Diennuoc
             bool hasCondition = false;
             if (radioButtonAll.Checked)
             {
-                query += "AND ( DIEN_NUOC.TINH_TRANG_TT='true' or DIEN_NUOC.TINH_TRANG_TT='false') ";
+                query += "AND ( DIEN_NUOC.TINH_TRANG_TT=N'Đã thanh toán' or DIEN_NUOC.TINH_TRANG_TT=N'Chưa thanh toán') ";
                 hasCondition = false;
             }
             else if (radioButtonDaTT.Checked)
             {
-                query += "AND DIEN_NUOC.TINH_TRANG_TT='true' ";
+                query += "AND DIEN_NUOC.TINH_TRANG_TT=N'Đã thanh toán' ";
                 hasCondition = false;
             }
             else if (radioButtonChuaTT.Checked)
             {
-                query += "AND DIEN_NUOC.TINH_TRANG_TT='false' ";
+                query += "AND DIEN_NUOC.TINH_TRANG_TT=N'Chưa thanh toán' ";
                 hasCondition = false;
             }
 
@@ -474,6 +476,77 @@ namespace WinformKTX.HoanThanh.Diennuoc
             LoadDienNuocData();
             thongkediennuoc_Load(sender, e);
         }
+
+        //ham tinh tong so dien da su dung 
+        private void DemSoDien()
+        {
+            // Chuỗi kết nối đến cơ sở dữ liệu
+            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+
+            // Truy vấn SQL để đếm số sinh viên
+            string query = "SELECT SUM(DIEN_NUOC.SO_DIEN_DA_SU_DUNG )FROM DIEN_NUOC";
+
+            // Tạo lệnh SQL
+            SqlCommand command = new SqlCommand(query, conn);
+
+            try
+            {
+                // Mở kết nối
+                conn.Open();
+
+                // Thực hiện truy vấn và lấy kết quả đếm
+                int Count = (int)command.ExecuteScalar();
+
+                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
+                textBoxDemSoDien.Text = "Tổng số điện đã sử dụng: " + Count.ToString() +" KW";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
+            }
+            finally
+            {
+                // Đảm bảo đóng kết nối
+                conn.Close();
+            }
+        }
+        private void DemSoNuoc()
+        {
+            // Chuỗi kết nối đến cơ sở dữ liệu
+            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+
+            // Truy vấn SQL để đếm số sinh viên
+            string query = "SELECT SUM(DIEN_NUOC.SO_NUOC_DA_SU_DUNG )FROM DIEN_NUOC";
+
+            // Tạo lệnh SQL
+            SqlCommand command = new SqlCommand(query, conn);
+
+            try
+            {
+                // Mở kết nối
+                conn.Open();
+
+                // Thực hiện truy vấn và lấy kết quả đếm
+                int Count = (int)command.ExecuteScalar();
+
+                // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
+                textBoxDemSoNuoc.Text = "Tổng số nước đã sử dụng: " + Count.ToString() + " M3";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
+            }
+            finally
+            {
+                // Đảm bảo đóng kết nối
+                conn.Close();
+            }
+        }
+
+
+
+
+
     }
 
 }

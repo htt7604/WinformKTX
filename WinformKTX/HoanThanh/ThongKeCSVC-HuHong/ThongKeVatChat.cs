@@ -399,7 +399,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemCSVC.Text = "Tong SL " + TenCSVC +" :"+ Count.ToString();
+                textBoxDemCSVC.Text = "Tổng SL " + TenCSVC +" :"+ Count.ToString();
             }
             catch (Exception ex)
             {
@@ -418,7 +418,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC And TINH_TRANG=N'Tot' ";
+            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC And TINH_TRANG=N'Có thể sử dụng' ";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -433,11 +433,11 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemConTot.Text = "Tong SL " + TenCSVC + " Tot: " + Count.ToString();
+                textBoxDemConTot.Text = "Tổng SL " + TenCSVC + " tốt " + Count.ToString();
             }
             catch (Exception ex)
             {
-                textBoxDemConTot.Text = "Tong SL " + TenCSVC + " tot: 0";
+                textBoxDemConTot.Text = "Tổng SL " + TenCSVC + " tốt: 0";
                 //MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
             }
             finally
@@ -453,7 +453,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC and TINH_TRANG=N'hong'";
+            string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC and TINH_TRANG=N'Hư hỏng'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -467,11 +467,11 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemHuHong.Text = "Tong SL " + TenCSVC + " hong: " + Count.ToString();
+                textBoxDemHuHong.Text = "Tổng SL " + TenCSVC + " hỏng: " + Count.ToString();
             }
             catch (Exception ex)
             {
-                textBoxDemHuHong.Text = "Tong SL " + TenCSVC + " hong: 0";
+                textBoxDemHuHong.Text = "Tổng SL " + TenCSVC + " hỏng: 0";
                 //MessageBox.Show("Có lỗi xảy ra: " + ex.Message);
             }
             finally

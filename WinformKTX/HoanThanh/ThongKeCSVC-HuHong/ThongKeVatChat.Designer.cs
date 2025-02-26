@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             groupBoxThongTin = new GroupBox();
             comboBoxLoaiTang = new ComboBox();
             labelLoaiPhong = new Label();
@@ -37,10 +37,6 @@
             labelTenPhong = new Label();
             label10 = new Label();
             dataGridViewThongTin = new DataGridView();
-            groupBox1 = new GroupBox();
-            textBoxDemHuHong = new TextBox();
-            textBoxDemConTot = new TextBox();
-            textBoxDemCSVC = new TextBox();
             label1 = new Label();
             buttonTimKiem = new Button();
             groupBox2 = new GroupBox();
@@ -48,11 +44,15 @@
             groupBox3 = new GroupBox();
             comboBoxTinhTrang = new ComboBox();
             buttonDatLai = new Button();
+            groupBox1 = new GroupBox();
+            textBoxDemConTot = new TextBox();
+            textBoxDemCSVC = new TextBox();
+            textBoxDemHuHong = new TextBox();
             groupBoxThongTin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).BeginInit();
-            groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBoxThongTin
@@ -142,14 +142,14 @@
             dataGridViewThongTin.BackgroundColor = Color.FromArgb(250, 255, 255);
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewThongTin.Location = new Point(-8, 220);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -158,45 +158,6 @@
             dataGridViewThongTin.ScrollBars = ScrollBars.Vertical;
             dataGridViewThongTin.Size = new Size(1306, 378);
             dataGridViewThongTin.TabIndex = 54;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(textBoxDemHuHong);
-            groupBox1.Controls.Add(textBoxDemConTot);
-            groupBox1.Controls.Add(textBoxDemCSVC);
-            groupBox1.Location = new Point(837, 62);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(217, 154);
-            groupBox1.TabIndex = 59;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Thông tin thống kê";
-            // 
-            // textBoxDemHuHong
-            // 
-            textBoxDemHuHong.Location = new Point(6, 80);
-            textBoxDemHuHong.Name = "textBoxDemHuHong";
-            textBoxDemHuHong.ReadOnly = true;
-            textBoxDemHuHong.Size = new Size(185, 23);
-            textBoxDemHuHong.TabIndex = 3;
-            textBoxDemHuHong.WordWrap = false;
-            // 
-            // textBoxDemConTot
-            // 
-            textBoxDemConTot.Location = new Point(6, 125);
-            textBoxDemConTot.Name = "textBoxDemConTot";
-            textBoxDemConTot.ReadOnly = true;
-            textBoxDemConTot.Size = new Size(185, 23);
-            textBoxDemConTot.TabIndex = 2;
-            textBoxDemConTot.WordWrap = false;
-            // 
-            // textBoxDemCSVC
-            // 
-            textBoxDemCSVC.Location = new Point(6, 31);
-            textBoxDemCSVC.Name = "textBoxDemCSVC";
-            textBoxDemCSVC.ReadOnly = true;
-            textBoxDemCSVC.Size = new Size(185, 23);
-            textBoxDemCSVC.TabIndex = 1;
-            textBoxDemCSVC.WordWrap = false;
             // 
             // label1
             // 
@@ -210,7 +171,7 @@
             // 
             // buttonTimKiem
             // 
-            buttonTimKiem.Location = new Point(1109, 93);
+            buttonTimKiem.Location = new Point(1077, 93);
             buttonTimKiem.Name = "buttonTimKiem";
             buttonTimKiem.Size = new Size(75, 102);
             buttonTimKiem.TabIndex = 61;
@@ -260,7 +221,7 @@
             // 
             // buttonDatLai
             // 
-            buttonDatLai.Location = new Point(1205, 89);
+            buttonDatLai.Location = new Point(1175, 92);
             buttonDatLai.Name = "buttonDatLai";
             buttonDatLai.Size = new Size(75, 102);
             buttonDatLai.TabIndex = 64;
@@ -268,17 +229,56 @@
             buttonDatLai.UseVisualStyleBackColor = true;
             buttonDatLai.Click += buttonDatLai_Click;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(textBoxDemHuHong);
+            groupBox1.Controls.Add(textBoxDemCSVC);
+            groupBox1.Controls.Add(textBoxDemConTot);
+            groupBox1.Location = new Point(871, 62);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(200, 139);
+            groupBox1.TabIndex = 63;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Tên cơ sở vật chất ";
+            // 
+            // textBoxDemConTot
+            // 
+            textBoxDemConTot.Location = new Point(7, 71);
+            textBoxDemConTot.Name = "textBoxDemConTot";
+            textBoxDemConTot.ReadOnly = true;
+            textBoxDemConTot.Size = new Size(193, 23);
+            textBoxDemConTot.TabIndex = 66;
+            textBoxDemConTot.WordWrap = false;
+            // 
+            // textBoxDemCSVC
+            // 
+            textBoxDemCSVC.Location = new Point(7, 27);
+            textBoxDemCSVC.Name = "textBoxDemCSVC";
+            textBoxDemCSVC.ReadOnly = true;
+            textBoxDemCSVC.Size = new Size(193, 23);
+            textBoxDemCSVC.TabIndex = 67;
+            textBoxDemCSVC.WordWrap = false;
+            // 
+            // textBoxDemHuHong
+            // 
+            textBoxDemHuHong.Location = new Point(6, 104);
+            textBoxDemHuHong.Name = "textBoxDemHuHong";
+            textBoxDemHuHong.ReadOnly = true;
+            textBoxDemHuHong.Size = new Size(193, 23);
+            textBoxDemHuHong.TabIndex = 68;
+            textBoxDemHuHong.WordWrap = false;
+            // 
             // ThongKeVatChat
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1292, 594);
+            Controls.Add(groupBox1);
             Controls.Add(buttonDatLai);
             Controls.Add(groupBox3);
             Controls.Add(groupBox2);
             Controls.Add(buttonTimKiem);
             Controls.Add(label1);
-            Controls.Add(groupBox1);
             Controls.Add(dataGridViewThongTin);
             Controls.Add(groupBoxThongTin);
             Name = "ThongKeVatChat";
@@ -287,10 +287,10 @@
             groupBoxThongTin.ResumeLayout(false);
             groupBoxThongTin.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -305,10 +305,6 @@
         private Label labelTenPhong;
         private Label label10;
         private DataGridView dataGridViewThongTin;
-        private GroupBox groupBox1;
-        private TextBox textBoxDemHuHong;
-        private TextBox textBoxDemConTot;
-        private TextBox textBoxDemCSVC;
         private Label label1;
         private Button buttonTimKiem;
         private GroupBox groupBox2;
@@ -316,5 +312,9 @@
         private GroupBox groupBox3;
         private ComboBox comboBoxTinhTrang;
         private Button buttonDatLai;
+        private GroupBox groupBox1;
+        private TextBox textBoxDemHuHong;
+        private TextBox textBoxDemCSVC;
+        private TextBox textBoxDemConTot;
     }
 }

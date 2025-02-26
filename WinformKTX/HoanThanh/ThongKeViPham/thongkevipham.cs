@@ -43,7 +43,7 @@ namespace abc.HoanThanh.ThongKeViPham
                 try
                 {
                     conn.Open();
-                    string query = "select SINH_VIEN.MSSV,SINH_VIEN.HOTEN_SV,MUC_VI_PHAM.TEN_MUC_VI_PHAM,VI_PHAM.NGAY_VI_PHAM,VI_PHAM.NOI_DUNG_VI_PHAM,VI_PHAM.GHI_CHU_VP,VI_PHAM.TRANG_THAI_XU_LY from VI_PHAM join SINH_VIEN on VI_PHAM.MSSV =SINH_VIEN.MSSV join MUC_VI_PHAM on VI_PHAM.MA_MUC_VP=MUC_VI_PHAM.MA_MUC_VP";
+                    string query = "select SINH_VIEN.MSSV,SINH_VIEN.HOTEN_SV,MUC_VI_PHAM.TEN_VI_PHAM,VI_PHAM.NGAY_VI_PHAM,VI_PHAM.NOI_DUNG_VI_PHAM,VI_PHAM.GHI_CHU_VP,VI_PHAM.TRANG_THAI_XU_LY from VI_PHAM join SINH_VIEN on VI_PHAM.MSSV =SINH_VIEN.MSSV join MUC_VI_PHAM on VI_PHAM.MA_MUC_VP=MUC_VI_PHAM.MA_MUC_VP";
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
@@ -65,7 +65,7 @@ namespace abc.HoanThanh.ThongKeViPham
         {
             try
             {
-                string query = "select MUC_VI_PHAM.TEN_MUC_VI_PHAM , MUC_VI_PHAM.MA_MUC_VP from MUC_VI_PHAM";
+                string query = "select MUC_VI_PHAM.TEN_VI_PHAM , MUC_VI_PHAM.MA_MUC_VP from MUC_VI_PHAM";
                 using (var cmd = new SqlCommand(query, conn))
                 {
 
@@ -74,7 +74,7 @@ namespace abc.HoanThanh.ThongKeViPham
                     var table = new DataTable();
                     da.Fill(table);
                     comboBoxMucViPham.DataSource = table;
-                    comboBoxMucViPham.DisplayMember = "TEN_MUC_VI_PHAM";
+                    comboBoxMucViPham.DisplayMember = "TEN_VI_PHAM";
                     comboBoxMucViPham.ValueMember = "MA_MUC_VP";
 
                     comboBoxMucViPham.SelectedIndex = -1;
@@ -141,23 +141,23 @@ namespace abc.HoanThanh.ThongKeViPham
         //cau sql
         private string CreateSqlQuery(string mssv, string mucvipham, DateTime? ngayStart, DateTime? ngayEnd, string trangthai)
         {
-            string query = "select SINH_VIEN.MSSV,SINH_VIEN.HOTEN_SV,MUC_VI_PHAM.TEN_MUC_VI_PHAM,VI_PHAM.NGAY_VI_PHAM,VI_PHAM.NOI_DUNG_VI_PHAM,VI_PHAM.GHI_CHU_VP,VI_PHAM.TRANG_THAI_XU_LY from VI_PHAM join SINH_VIEN on VI_PHAM.MSSV =SINH_VIEN.MSSV join MUC_VI_PHAM on VI_PHAM.MA_MUC_VP=MUC_VI_PHAM.MA_MUC_VP " +
+            string query = "select SINH_VIEN.MSSV,SINH_VIEN.HOTEN_SV,MUC_VI_PHAM.TEN_VI_PHAM,VI_PHAM.NGAY_VI_PHAM,VI_PHAM.NOI_DUNG_VI_PHAM,VI_PHAM.GHI_CHU_VP,VI_PHAM.TRANG_THAI_XU_LY from VI_PHAM join SINH_VIEN on VI_PHAM.MSSV =SINH_VIEN.MSSV join MUC_VI_PHAM on VI_PHAM.MA_MUC_VP=MUC_VI_PHAM.MA_MUC_VP " +
                            "WHERE 1=1 ";  // Thêm điều kiện cơ bản (dễ dàng thêm các điều kiện khác sau này)
 
             bool hasCondition = false;
             if (radioButtonAll.Checked)
             {
-                query += "AND ( VI_PHAM.TRANG_THAI_XU_LY='true' or VI_PHAM.TRANG_THAI_XU_LY ='false') ";
+                query += "AND ( VI_PHAM.TRANG_THAI_XU_LY=N'Đã xử lý' or VI_PHAM.TRANG_THAI_XU_LY =N'Chưa xử lý') ";
                 hasCondition = false;
             }
             else if (radioButtonDaxuly.Checked)
             {
-                query += "AND VI_PHAM.TRANG_THAI_XU_LY='true' ";
+                query += "AND VI_PHAM.TRANG_THAI_XU_LY=N'Đã xử lý' ";
                 hasCondition = false;
             }
             else if (radioButtonChuaxuly.Checked)
             {
-                query += "AND VI_PHAM.TRANG_THAI_XU_LY='false' ";
+                query += "AND VI_PHAM.TRANG_THAI_XU_LY=N'Chưa xử lý' ";
                 hasCondition = false;
             }
             // Kiểm tra ComboBox loại giường
@@ -357,7 +357,7 @@ namespace abc.HoanThanh.ThongKeViPham
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemViPham.Text = "Số vi pham: " + Count.ToString();
+                textBoxDemViPham.Text = "Số vi phạm: " + Count.ToString();
             }
             catch (Exception ex)
             {
@@ -376,7 +376,7 @@ namespace abc.HoanThanh.ThongKeViPham
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM VI_PHAM  where VI_PHAM.TRANG_THAI_XU_LY='false' ";
+            string query = "SELECT COUNT(*) FROM VI_PHAM  where VI_PHAM.TRANG_THAI_XU_LY=N'Chưa xử lý'";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -390,7 +390,7 @@ namespace abc.HoanThanh.ThongKeViPham
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemChuaXL.Text = "Số vi pham chua xu ly: " + Count.ToString();
+                textBoxDemChuaXL.Text = "Số vi phạm chưa xử lý: " + Count.ToString();
             }
             catch (Exception ex)
             {
@@ -408,7 +408,7 @@ namespace abc.HoanThanh.ThongKeViPham
             var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "SELECT COUNT(*) FROM VI_PHAM  where VI_PHAM.TRANG_THAI_XU_LY='true' ";
+            string query = "SELECT COUNT(*) FROM VI_PHAM  where VI_PHAM.TRANG_THAI_XU_LY=N'Đã xử lý' ";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -422,7 +422,7 @@ namespace abc.HoanThanh.ThongKeViPham
                 int Count = (int)command.ExecuteScalar();
 
                 // Hiển thị số sinh viên lên form (ví dụ, gán vào một Label)
-                textBoxDemDaXL.Text = "Số vi Pham Da xu ly: " + Count.ToString();
+                textBoxDemDaXL.Text = "Số vi phạm đã xử lý: " + Count.ToString();
             }
             catch (Exception ex)
             {
