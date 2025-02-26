@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             dataGridViewThongTin = new DataGridView();
             labelViPham = new Label();
             buttonXuLy = new Button();
@@ -38,7 +38,6 @@
             buttonTimKiem = new Button();
             comboBoxSinhVien = new ComboBox();
             labelMSSV = new Label();
-            MagentXacNhanAll = new Button();
             buttonXem = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewThongTin).BeginInit();
             groupBoxThongTin.SuspendLayout();
@@ -53,14 +52,14 @@
             dataGridViewThongTin.BackgroundColor = SystemColors.ButtonHighlight;
             dataGridViewThongTin.BorderStyle = BorderStyle.None;
             dataGridViewThongTin.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewThongTin.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridViewThongTin.Location = new Point(-9, 213);
             dataGridViewThongTin.Margin = new Padding(3, 2, 3, 2);
             dataGridViewThongTin.Name = "dataGridViewThongTin";
@@ -68,7 +67,7 @@
             dataGridViewThongTin.RowHeadersWidth = 51;
             dataGridViewThongTin.ScrollBars = ScrollBars.Vertical;
             dataGridViewThongTin.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewThongTin.Size = new Size(1324, 466);
+            dataGridViewThongTin.Size = new Size(1324, 460);
             dataGridViewThongTin.TabIndex = 64;
             // 
             // labelViPham
@@ -167,18 +166,6 @@
             labelMSSV.Text = "MSSV (nội trú) :";
             labelMSSV.UseMnemonic = false;
             // 
-            // MagentXacNhanAll
-            // 
-            MagentXacNhanAll.BackColor = Color.SpringGreen;
-            MagentXacNhanAll.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            MagentXacNhanAll.ForeColor = SystemColors.ButtonHighlight;
-            MagentXacNhanAll.Location = new Point(817, 98);
-            MagentXacNhanAll.Name = "MagentXacNhanAll";
-            MagentXacNhanAll.Size = new Size(126, 64);
-            MagentXacNhanAll.TabIndex = 78;
-            MagentXacNhanAll.Text = "Xác Nhận Xử Lý Tất Cả";
-            MagentXacNhanAll.UseVisualStyleBackColor = false;
-            // 
             // buttonXem
             // 
             buttonXem.BackColor = Color.Honeydew;
@@ -198,7 +185,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1308, 672);
             Controls.Add(buttonXem);
-            Controls.Add(MagentXacNhanAll);
             Controls.Add(groupBoxThongTin);
             Controls.Add(buttonXuLy);
             Controls.Add(label1);
@@ -223,7 +209,6 @@
         private Button buttonTimKiem;
         private ComboBox comboBoxSinhVien;
         private Label labelMSSV;
-        private Button MagentXacNhanAll;
         private Button buttonXem;
     }
 }

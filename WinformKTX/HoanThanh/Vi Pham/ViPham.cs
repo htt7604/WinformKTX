@@ -82,8 +82,8 @@ namespace abc.HoanThanh.ThongKeViPham
                 try
                 {
                     conn.Open();
-                    string query = "SELECT MA_VI_PHAM, MSSV, MUC_VI_PHAM.TEN_VI_PHAM, NGAY_VI_PHAM, NOI_DUNG_VI_PHAM, TRANG_THAI_XU_LY, GHI_CHU_VP " +
-                                   "FROM VI_PHAM JOIN MUC_VI_PHAM ON VI_PHAM.MA_MUC_VP = MUC_VI_PHAM.MA_MUC_VP";
+                    string query = "SELECT MA_VI_PHAM, MSSV, MUC_VI_PHAM.TEN_VI_PHAM, NGAY_VI_PHAM, NOI_DUNG_VI_PHAM, TRANG_THAI_XU_LY, GHI_CHU_VP,MUC_VI_PHAM.HINH_THUC_XU_LI "+
+                                  " FROM VI_PHAM JOIN MUC_VI_PHAM ON VI_PHAM.MA_MUC_VP = MUC_VI_PHAM.MA_MUC_VP ";
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
                     DataTable dataTable = new DataTable();
                     dataAdapter.Fill(dataTable);
@@ -455,9 +455,19 @@ namespace abc.HoanThanh.ThongKeViPham
 
         private void buttonXoa_Click(object sender, EventArgs e)
         {
-            XoaViPham();
-            comboBoxSinhVien.SelectedIndex = -1;
-            LoadViPhamData();
+            DataGridViewRow row = dataGridViewThongTin.SelectedRows[0];
+            string trangthai = row.Cells["TRANG_THAI_XU_LY"].Value.ToString();
+            if(trangthai!="Đã xử lý")
+            {
+
+                XoaViPham();
+                comboBoxSinhVien.SelectedIndex = -1;
+                LoadViPhamData();
+            }
+            else
+            {
+                MessageBox.Show("Không thể xóa vì đã xử lý");
+            }
         }
 
 
@@ -665,15 +675,17 @@ namespace abc.HoanThanh.ThongKeViPham
             buttonSua.Enabled = true;
             buttonXoa.Enabled = false;
             buttonThem.Enabled = false;
-            buttonTimKiem.Enabled = true;
-            buttonTimKiem.BackColor = Color.CadetBlue;
-            buttonHuyBo.Enabled = true;
-            buttonHuyBo.BackColor = Color.Magenta;
+            buttonTimKiem.Enabled = false;
+            buttonTimKiem.BackColor = Color.Gray;
+            buttonHuyBo.Enabled = false;
+            buttonHuyBo.BackColor = Color.Gray;
         }
         private void buttonSua_Click(object sender, EventArgs e)
         {
+            DataGridViewRow row = dataGridViewThongTin.SelectedRows[0];
+            string trangthai = row.Cells["TRANG_THAI_XU_LY"].Value.ToString();
 
-            if (dataGridViewThongTin.SelectedRows.Count > 0)
+            if (dataGridViewThongTin.SelectedRows.Count > 0 && trangthai !="Đã xử lý")
             {
                 GiaodienSua();
                 CoDangSua = true;
@@ -683,7 +695,10 @@ namespace abc.HoanThanh.ThongKeViPham
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn sinh viên để sửa");
+                if(trangthai == "Đã xử lý")
+                {
+                    MessageBox.Show(" Đã xử lý Không thể thay đổi thông tin ");
+                }
             }
         }
 

@@ -164,7 +164,7 @@
             dataGridViewThongTin.RowHeadersWidth = 51;
             dataGridViewThongTin.ScrollBars = ScrollBars.Vertical;
             dataGridViewThongTin.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewThongTin.Size = new Size(1324, 411);
+            dataGridViewThongTin.Size = new Size(1324, 387);
             dataGridViewThongTin.TabIndex = 61;
             // 
             // groupBoxThongTin

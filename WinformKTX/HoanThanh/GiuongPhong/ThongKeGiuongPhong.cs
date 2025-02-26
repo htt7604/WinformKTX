@@ -210,16 +210,23 @@ namespace abc
                             else
                             {
                             //MessageBox.Show("Vui lòng chọn loại phòng.");
-                                string TinhTrang = comboBoxTinhTrang.SelectedValue.ToString();
+                            string TinhTrang = comboBoxTinhTrang.SelectedValue != null ? comboBoxTinhTrang.SelectedValue.ToString() : string.Empty;
+                            if (TinhTrang == null)
+                                {
+                                    query += " ";
+                                }
+                                else
+                                {                              
+                                    query += "  PHONG.TINH_TRANG_PHONG= @TinhTrang";
 
-                                query += "  PHONG.TINH_TRANG_PHONG= @TinhTrang";
+                                        SqlCommand command = new SqlCommand(query, conn);
+                                        command.Parameters.AddWithValue("@TinhTrang", TinhTrang);
+                                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+                                        DataSet set = new DataSet();
+                                        adapter.Fill(set, "WinFormKTX");
+                                        dataGridViewThongTin.DataSource = set.Tables["WinFormKTX"];
+                                }
 
-                                SqlCommand command = new SqlCommand(query, conn);
-                                command.Parameters.AddWithValue("@TinhTrang", TinhTrang);
-                                SqlDataAdapter adapter = new SqlDataAdapter(command);
-                                DataSet set = new DataSet();
-                                adapter.Fill(set, "WinFormKTX");
-                                dataGridViewThongTin.DataSource = set.Tables["WinFormKTX"];
                             }
                         }
                         // Kiểm tra nếu chọn theo tầng

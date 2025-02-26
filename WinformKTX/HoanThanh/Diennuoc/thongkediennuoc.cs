@@ -327,7 +327,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
                 //MessageBox.Show("Vui lòng chọn ít nhất một điều kiện tìm kiếm.");
             }
 
-            MessageBox.Show(query);
+            //MessageBox.Show(query);
             return query;
         }
 
