@@ -16,7 +16,8 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         public ThongKeVatChat()
         {
             InitializeComponent();
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
             taidanhsachPhong(conn);
             LoadcomboBoxTinhTrang();
             LoadcomboBoxTenCSVC();

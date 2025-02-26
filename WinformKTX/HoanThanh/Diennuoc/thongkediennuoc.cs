@@ -16,7 +16,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
     {
         public thongkediennuoc()
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             InitializeComponent();
             LoadDienNuocData();
             TaidanhsachPhong(conn);

@@ -210,7 +210,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
                 }
 
                 // Mở kết nối cơ sở dữ liệu
-                using (var con = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection con = kn.GetConnection())
                 {
                     con.Open();
 
