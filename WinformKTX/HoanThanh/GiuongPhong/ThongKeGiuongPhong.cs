@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX;
 
 namespace abc
 {
@@ -17,22 +18,24 @@ namespace abc
     {
         public ThongKeGiuongPhong()
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
             InitializeComponent();
+            SqlConnection conn = kn.GetConnection();
             taidanhsachPhong(conn);
             LoadData();
             LoadcomboBoxTinhTrang();
             comboBoxTang.Enabled = false;
             comboBoxPhong.Enabled = false;
         }
+        KetnoiCSDL kn = new KetnoiCSDL();
         private void LoadData()
         {
             DemALLPhong();
             DemPhongDay();
             DemPhongTrong();
             // Khởi tạo kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn dữ liệu
             string query = "SELECT DISTINCT LOAI_PHONG.TEN_LOAI_PHONG, TANG.TEN_TANG, PHONG.TEN_PHONG, PHONG.TINH_TRANG_PHONG " +
                " FROM GIUONG " +
@@ -90,7 +93,7 @@ namespace abc
             if (selectedRow != null)
             {
                 string loaitang = selectedRow["MA_LOAI_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_TANG,TEN_TANG FROM LOAI_PHONG join TANG on TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG WHERE tang.MA_LOAI_PHONG = @loaitang";
@@ -120,7 +123,7 @@ namespace abc
             if (selectedRow != null)
             {
                 string tang = selectedRow["MA_TANG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_PHONG,TEN_PHONG FROM PHONG WHERE MA_TANG = @tang";
@@ -142,7 +145,7 @@ namespace abc
         //tai combobox TinhTrang
         private void LoadcomboBoxTinhTrang()
         {
-            using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
                 string query = "SELECT DISTINCT PHONG.TINH_TRANG_PHONG FROM PHONG ";
@@ -169,9 +172,9 @@ namespace abc
                 }
 
                 // Mở kết nối cơ sở dữ liệu
-                using (var con = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
-                    con.Open();
+                    conn.Open();
                     string query = "SELECT  LOAI_PHONG.TEN_LOAI_PHONG, TANG. TEN_TANG, PHONG.TEN_PHONG, PHONG. TINH_TRANG_PHONG FROM PHONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG=LOAI_PHONG.MA_LOAI_PHONG " +
                                                "WHERE  1=1  And  ";
                     // Kiểm tra sự tồn tại của bảng GIUONG
@@ -180,7 +183,7 @@ namespace abc
                         query += " PHONG.TINH_TRANG_PHONG= N'" + comboBoxTinhTrang.SelectedValue.ToString() +"' And ";
                         }
 
-                        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'GIUONG'", con);
+                        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'GIUONG'", conn);
                         int tableCount = (int)cmd.ExecuteScalar();
                         if (tableCount != 1)
                         {
@@ -197,7 +200,7 @@ namespace abc
 
                                 query += " PHONG.MA_LOAI_PHONG = @MaLoai";
 
-                                SqlCommand command = new SqlCommand(query, con);
+                                SqlCommand command = new SqlCommand(query, conn);
                                 command.Parameters.AddWithValue("@MaLoai", MaLoai);
                                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                                 DataSet set = new DataSet();
@@ -211,7 +214,7 @@ namespace abc
 
                                 query += "  PHONG.TINH_TRANG_PHONG= @TinhTrang";
 
-                                SqlCommand command = new SqlCommand(query, con);
+                                SqlCommand command = new SqlCommand(query, conn);
                                 command.Parameters.AddWithValue("@TinhTrang", TinhTrang);
                                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                                 DataSet set = new DataSet();
@@ -228,7 +231,7 @@ namespace abc
 
                                 query += " PHONG.MA_TANG = @MaTang";
 
-                                SqlCommand command = new SqlCommand(query, con);
+                                SqlCommand command = new SqlCommand(query, conn);
                                 command.Parameters.AddWithValue("@MaTang", MaTang);
                                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                                 DataSet set = new DataSet();
@@ -242,7 +245,7 @@ namespace abc
 
                                 query += " PHONG.MA_PHONG = @MaPhong";
 
-                                SqlCommand command = new SqlCommand(query, con);
+                                SqlCommand command = new SqlCommand(query, conn);
                                 command.Parameters.AddWithValue("@MaPhong", MaPhong);
                                 SqlDataAdapter adapter = new SqlDataAdapter(command);
                                 DataSet set = new DataSet();
@@ -291,7 +294,7 @@ namespace abc
         private void DemALLPhong()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG  ";
@@ -323,7 +326,7 @@ namespace abc
         private void DemPhongTrong()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG=N'Trống'";
@@ -356,7 +359,7 @@ namespace abc
         private void DemPhongDay()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(PHONG.MA_PHONG) FROM PHONG WHERE PHONG.TINH_TRANG_PHONG=N'Đầy'";

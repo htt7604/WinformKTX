@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX;
 
 namespace abc.HoanThanh.ThanhToan
 {
@@ -16,19 +17,20 @@ namespace abc.HoanThanh.ThanhToan
     {
         public ThongKeThanhToan()
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             InitializeComponent();
             TaidanhsachPhong(conn);
             LoadcomboBoxMSSV();
         }
         //ham load mssv
-
+        KetnoiCSDL kn = new KetnoiCSDL();
         private void LoadcomboBoxMSSV()
         {
             try
             {
                 radioButtonAll.Checked = true;
-                var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+                SqlConnection conn = kn.GetConnection();
+                //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
                 string query = "select DISTINCT NOI_TRU.MSSV from THANH_TOAN_PHONG join NOI_TRU on THANH_TOAN_PHONG.MA_NOI_TRU=NOI_TRU.MA_NOI_TRU";
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -61,8 +63,8 @@ namespace abc.HoanThanh.ThanhToan
         {
             DemSVDaThanhToan();
             DemSVChuaThanhToan();
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -119,7 +121,7 @@ namespace abc.HoanThanh.ThanhToan
             if (selectedRow != null)
             {
                 string loaitang = selectedRow["MA_LOAI_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_TANG,TEN_TANG FROM LOAI_PHONG join TANG on TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG WHERE tang.MA_LOAI_PHONG = @loaitang";
@@ -148,7 +150,7 @@ namespace abc.HoanThanh.ThanhToan
             if (selectedRow != null)
             {
                 string tang = selectedRow["MA_TANG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_PHONG,TEN_PHONG FROM PHONG WHERE MA_TANG = @tang";
@@ -178,7 +180,7 @@ namespace abc.HoanThanh.ThanhToan
             if (selectedRow != null)
             {
                 string MaPhong = selectedRow["MA_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_GIUONG,TEN_GIUONG FROM GIUONG where GIUONG.MA_PHONG= @MaPhong";
@@ -391,8 +393,9 @@ namespace abc.HoanThanh.ThanhToan
             try
             {
                 // Kết nối đến cơ sở dữ liệu
-                string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-                using (SqlConnection conn = new SqlConnection(connectionString))
+
+                //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
 
@@ -423,8 +426,7 @@ namespace abc.HoanThanh.ThanhToan
             // Xây dựng câu lệnh SQL với các điều kiện động
             string query = CreateSqlQuery(mssv, loaiTangGiuong, phong, tang, loaiTang, ngayStart, ngayEnd);
 
-            using (SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
-            {
+            using (SqlConnection conn = kn.GetConnection())
                 try
                 {
                     conn.Open();
@@ -444,7 +446,6 @@ namespace abc.HoanThanh.ThanhToan
                 {
                     MessageBox.Show("Lỗi: " + ex.Message);
                 }
-            }
         }
 
 
@@ -486,7 +487,8 @@ namespace abc.HoanThanh.ThanhToan
         private void DemSVDaThanhToan()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN=N'Đã thanh toán'";
@@ -518,7 +520,8 @@ namespace abc.HoanThanh.ThanhToan
         private void DemSVChuaThanhToan()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(*) FROM THANH_TOAN_PHONG WHERE TRANG_THAI_THANH_TOAN=N'Chưa thanh toán'";

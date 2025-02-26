@@ -22,7 +22,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             LoadcomboBoxTenCSVC();
             LoadVatChatData();
         }
-
+        KetnoiCSDL kn = new KetnoiCSDL();
 
 
         private void taidanhsachPhong(SqlConnection conn)
@@ -61,7 +61,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             if (selectedRow != null)
             {
                 string loaitang = selectedRow["MA_LOAI_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_TANG,TEN_TANG FROM LOAI_PHONG join TANG on TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG WHERE tang.MA_LOAI_PHONG = @loaitang";
@@ -91,7 +91,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             if (selectedRow != null)
             {
                 string tang = selectedRow["MA_TANG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_PHONG,TEN_PHONG FROM PHONG WHERE MA_TANG = @tang";
@@ -114,7 +114,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         //tai combobox TinhTrang
         private void LoadcomboBoxTinhTrang()
         {
-            using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
                 string query = "SELECT DISTINCT CO_SO_VAT_CHAT.TINH_TRANG FROM CO_SO_VAT_CHAT where TINH_TRANG is not null ";
@@ -135,7 +135,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         //tai combobox TinhTrang
         private void LoadcomboBoxTenCSVC()
         {
-            using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 conn.Open();
                 string query = "SELECT DISTINCT CO_SO_VAT_CHAT.TEN_CSVC FROM CO_SO_VAT_CHAT where TEN_CSVC is not null ";
@@ -158,8 +158,9 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         {
             //DemSVDaThanhToan();
             //DemSVChuaThanhToan();
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -302,8 +303,8 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             try
             {
                 // Kết nối đến cơ sở dữ liệu
-                string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
 
@@ -333,7 +334,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
             // Xây dựng câu lệnh SQL với các điều kiện động
             string query = CreateSqlQuery(phong, tang, loaiTang, TenCSVC, TinhTrang);
 
-            using (SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -382,7 +383,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         private void DemCSVC(string TenCSVC)
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC";
@@ -415,7 +416,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         private void DemCSVCTot(string TenCSVC)
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC And TINH_TRANG=N'Có thể sử dụng' ";
@@ -450,7 +451,7 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
         private void DemCSVC_Hong(string TenCSVC)
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "select Sum(CO_SO_VAT_CHAT.SO_LUONG) from CO_SO_VAT_CHAT where CO_SO_VAT_CHAT.TEN_CSVC =@TenCSVC and TINH_TRANG=N'Hư hỏng'";

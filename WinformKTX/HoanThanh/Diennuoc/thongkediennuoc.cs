@@ -23,6 +23,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
             DemSoDien();
             DemSoNuoc();
         }
+        KetnoiCSDL kn = new KetnoiCSDL();
 
 
         //ham du lieu vao data
@@ -30,8 +31,8 @@ namespace WinformKTX.HoanThanh.Diennuoc
         {
             //DemSVDaThanhToan();
             //DemSVChuaThanhToan();
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -88,7 +89,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
             if (selectedRow != null)
             {
                 string loaitang = selectedRow["MA_LOAI_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_TANG,TEN_TANG FROM LOAI_PHONG join TANG on TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG WHERE tang.MA_LOAI_PHONG = @loaitang";
@@ -117,7 +118,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
             if (selectedRow != null)
             {
                 string tang = selectedRow["MA_TANG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_PHONG,TEN_PHONG FROM PHONG WHERE MA_TANG = @tang";
@@ -390,8 +391,8 @@ namespace WinformKTX.HoanThanh.Diennuoc
             try
             {
                 // Kết nối đến cơ sở dữ liệu
-                string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
 
@@ -421,7 +422,7 @@ namespace WinformKTX.HoanThanh.Diennuoc
             // Xây dựng câu lệnh SQL với các điều kiện động
             string query = CreateSqlQuery(sonuoc, sodien, phong, tang, loaiTang, ngayStart, ngayEnd);
 
-            using (SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {
@@ -481,11 +482,11 @@ namespace WinformKTX.HoanThanh.Diennuoc
         private void DemSoDien()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT SUM(DIEN_NUOC.SO_DIEN_DA_SU_DUNG )FROM DIEN_NUOC";
-
+            SqlConnection conn = kn.GetConnection();
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
 
@@ -513,8 +514,8 @@ namespace WinformKTX.HoanThanh.Diennuoc
         private void DemSoNuoc()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT SUM(DIEN_NUOC.SO_NUOC_DA_SU_DUNG )FROM DIEN_NUOC";
 

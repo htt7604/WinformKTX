@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX;
 
 namespace abc.HoanThanh.ThongKeSinhVien
 {
@@ -18,12 +19,13 @@ namespace abc.HoanThanh.ThongKeSinhVien
             InitializeComponent();
             LoaddataMssv();
             LoaddataHoTen();
+
             CountStudents();
             CountStudentsNam();
             CountStudentsNu();
         }
-        private SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+        //private SqlConnection conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+        KetnoiCSDL kn = new KetnoiCSDL();
         //load mssv
         private void LoaddataMssv()
         {
@@ -79,8 +81,8 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void CountStudents()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(*) FROM SINH_VIEN";
 
@@ -111,7 +113,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void CountStudentsNam()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH=N'Nam'";
@@ -143,7 +145,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void CountStudentsNu()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "SELECT COUNT(*) FROM SINH_VIEN Where SINH_VIEN.GIOI_TINH=N'Nữ'";
@@ -190,7 +192,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
 
         private void SearchStudentByMSSV(string mssv)
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             string query = "SELECT * FROM SINH_VIEN WHERE MSSV = @MSSV";
             SqlCommand command = new SqlCommand(query, conn);
@@ -243,7 +245,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         //tim theo ten 
         private void SearchStudentByHoTen(string selectedHoTen)
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             string query = "SELECT * FROM SINH_VIEN WHERE SINH_VIEN.HOTEN_SV = N'" + selectedHoTen + "'";
             SqlCommand command = new SqlCommand(query, conn);
@@ -283,8 +285,8 @@ namespace abc.HoanThanh.ThongKeSinhVien
         //ham loy toan bo sinh vien 
         private void LoadAllSV()
         {
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
             {
                 try
                 {

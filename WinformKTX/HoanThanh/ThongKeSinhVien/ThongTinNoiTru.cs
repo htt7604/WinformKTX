@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WinformKTX;
 
 
 namespace abc.HoanThanh.ThongKeSinhVien
@@ -16,13 +17,15 @@ namespace abc.HoanThanh.ThongKeSinhVien
     {
         public ThongTinNoiTru()
         {
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
             InitializeComponent();
+            SqlConnection conn = kn.GetConnection();
             TaidanhsachPhong(conn);
             DemSVChuaNoiTru();
             DemSVNoiTru();
             DemSV();
         }
+        KetnoiCSDL kn = new KetnoiCSDL();
         private void TaidanhsachPhong(SqlConnection conn)
         {
             try
@@ -58,7 +61,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             if (selectedRow != null)
             {
                 string loaitang = selectedRow["MA_LOAI_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_TANG,TEN_TANG FROM LOAI_PHONG join TANG on TANG.MA_LOAI_PHONG = LOAI_PHONG.MA_LOAI_PHONG WHERE tang.MA_LOAI_PHONG = @loaitang";
@@ -87,7 +90,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             if (selectedRow != null)
             {
                 string tang = selectedRow["MA_TANG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_PHONG,TEN_PHONG FROM PHONG WHERE MA_TANG = @tang";
@@ -116,7 +119,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             if (selectedRow != null)
             {
                 string MaPhong = selectedRow["MA_PHONG"].ToString();
-                using (var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                using (SqlConnection conn = kn.GetConnection())
                 {
                     conn.Open();
                     string query = "SELECT MA_GIUONG,TEN_GIUONG FROM GIUONG where GIUONG.MA_PHONG= @MaPhong";
@@ -188,15 +191,15 @@ namespace abc.HoanThanh.ThongKeSinhVien
             {
                 if (comboBoxLoaiTang.SelectedValue == null && comboBoxTang.SelectedValue == null && comboBoxPhong.SelectedValue == null)
                 {
-                    using (var con = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True"))
+                    using (SqlConnection conn = kn.GetConnection())
                     {
-                        con.Open();
+                        conn.Open();
 
                         // Kiểm tra sự tồn tại của bảng GIUONG
-                        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'GIUONG'", con);
+                        SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'GIUONG'", conn);
                         int tableCount = (int)cmd.ExecuteScalar();
                         string query = " select SINH_VIEN.MSSV, SINH_VIEN.HOTEN_SV,SINH_VIEN.NGAY_SINH,SINH_VIEN.GIOI_TINH,SINH_VIEN.SDT_SINHVIEN,SINH_VIEN.SDT_NGUOITHAN,SINH_VIEN.QUE_QUAN,SINH_VIEN.EMAIL,NOI_TRU.NGAY_BAT_DAU_NOI_TRU,NOI_TRU.NGAY_KET_THUC_NOI_TRU,LOAI_PHONG.TEN_LOAI_PHONG,TANG.TEN_TANG,PHONG.TEN_PHONG,GIUONG.TEN_GIUONG,NOI_TRU.TRANG_THAI_NOI_TRU,LOAI_PHONG.GIA_PHONG from SINH_VIEN join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV join PHONG on NOI_TRU.MA_PHONG=PHONG.MA_PHONG join GIUONG on NOI_TRU.MA_GIUONG=GIUONG.MA_GIUONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG =LOAI_PHONG.MA_LOAI_PHONG  WHERE  NOI_TRU.TRANG_THAI_NOI_TRU=N'Đang nội trú'";
-                        SqlCommand command = new SqlCommand(query, con);
+                        SqlCommand command = new SqlCommand(query, conn);
                         SqlDataAdapter adapter = new SqlDataAdapter(command);
                         DataSet set = new DataSet();
                         adapter.Fill(set, "WinFormKTX");
@@ -306,11 +309,11 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void TimkiemSinhVienChuaNoiTru()
         {
             //chuoi ket noi
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
             //chuoi query
             string query = "select SINH_VIEN.MSSV, SINH_VIEN.HOTEN_SV,SINH_VIEN.NGAY_SINH,SINH_VIEN.GIOI_TINH,SINH_VIEN.SDT_SINHVIEN,SINH_VIEN.SDT_NGUOITHAN,SINH_VIEN.QUE_QUAN,SINH_VIEN.EMAIL,NOI_TRU.NGAY_BAT_DAU_NOI_TRU,NOI_TRU.NGAY_KET_THUC_NOI_TRU from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV  where NOI_TRU.TRANG_THAI_NOI_TRU is null";
             //tao ket noi
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = kn.GetConnection())
             {
                 //mo ket noi
                 connection.Open();
@@ -335,11 +338,11 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void TimkiemSinhVienChoGianHan()
         {
             //chuoi ket noi
-            string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
             //chuoi query
             string query = "select SINH_VIEN.MSSV, SINH_VIEN.HOTEN_SV,SINH_VIEN.NGAY_SINH,SINH_VIEN.GIOI_TINH,SINH_VIEN.SDT_SINHVIEN,SINH_VIEN.SDT_NGUOITHAN,SINH_VIEN.QUE_QUAN,SINH_VIEN.EMAIL,NOI_TRU.NGAY_BAT_DAU_NOI_TRU,NOI_TRU.NGAY_KET_THUC_NOI_TRU,LOAI_PHONG.TEN_LOAI_PHONG,TANG.TEN_TANG,PHONG.TEN_PHONG,GIUONG.TEN_GIUONG,NOI_TRU.TRANG_THAI_NOI_TRU,LOAI_PHONG.GIA_PHONG from SINH_VIEN join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV join PHONG on NOI_TRU.MA_PHONG=PHONG.MA_PHONG join GIUONG on NOI_TRU.MA_GIUONG=GIUONG.MA_GIUONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG=LOAI_PHONG.MA_LOAI_PHONG where NOI_TRU.TRANG_THAI_NOI_TRU= N'Chờ gia hạn'";
             //tao ket noi
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = kn.GetConnection())
             {
                 //mo ket noi
                 connection.Open();
@@ -412,8 +415,8 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void DemSV()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
-
+            //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
             // Truy vấn SQL để đếm số sinh viên
             string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN  ";
 
@@ -444,7 +447,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void DemSVChuaNoiTru()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is null";
@@ -477,7 +480,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         private void DemSVNoiTru()
         {
             // Chuỗi kết nối đến cơ sở dữ liệu
-            var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
+            SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
             string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is not null\r\n";
