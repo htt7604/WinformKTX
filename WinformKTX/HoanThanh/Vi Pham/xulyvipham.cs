@@ -354,42 +354,46 @@ namespace WinformKTX.Vi_Pham
         // Hàm xử lý khi nhấn nút xử lý vi phạm
         private void buttonXuLy_Click(object sender, EventArgs e)
         {
-            // Kiểm tra trạng thái xử lý và các hình thức xử lý
-            DataGridViewRow row = dataGridViewThongTin.SelectedRows[0];
-            initialMaViPham = row.Cells["MA_VI_PHAM"].Value.ToString();
-            string mssv = row.Cells["MSSV"].Value.ToString();
-            int kt = DemKiemTraViPham(mssv);
-
-            if (row.Cells["TRANG_THAI_XU_LY"].Value.ToString() != "Đã xử lý")
+            if (dataGridViewThongTin.SelectedRows.Count > 0)
             {
-                SaveViPham();
-                string hinhThucXuLya = GetHinhThucXuLybyMA_VI_PHAM(initialMaViPham);
+                DataGridViewRow row = dataGridViewThongTin.SelectedRows[0];
+                initialMaViPham = row.Cells["MA_VI_PHAM"].Value.ToString();
+                string mssv = row.Cells["MSSV"].Value.ToString();
+                int kt = DemKiemTraViPham(mssv);
 
-                if (hinhThucXuLya == "Cảnh cáo" && kt == 0)
+                if (row.Cells["TRANG_THAI_XU_LY"].Value.ToString() != "Đã xử lý")
                 {
-                    // Lưu vào lịch sử là cảnh cáo
-                    Luuviphamvaolichsu("Cảnh cáo");
+                    SaveViPham();
+                    string hinhThucXuLya = GetHinhThucXuLybyMA_VI_PHAM(initialMaViPham);
+
+                    if (hinhThucXuLya == "Cảnh cáo" && kt == 0)
+                    {
+                        Luuviphamvaolichsu("Cảnh cáo");
+                    }
+                    else
+                    {
+                        if (hinhThucXuLya == "Hủy nội trú" || kt == 1)
+                        {
+                            Luuviphamvaolichsu("Hủy nội trú");
+                        }
+                        else if (hinhThucXuLya == "Hủy gia hạn nội trú" || kt == 2)
+                        {
+                            Luuviphamvaolichsu("Hủy gia hạn nội trú");
+                        }
+                    }
+                    LoadViPhamData();
                 }
                 else
                 {
-                    if (hinhThucXuLya == "Hủy nội trú" || kt == 1)
-                    {
-                        // Lưu vào lịch sử là hủy nội trú
-                        Luuviphamvaolichsu("Hủy nội trú");
-                    }
-                    else if (hinhThucXuLya == "Hủy gia hạn nội trú" || kt == 2)
-                    {
-                        // Lưu vào lịch sử là hủy gia hạn nội trú
-                        Luuviphamvaolichsu("Hủy gia hạn nội trú");
-                    }
+                    MessageBox.Show("Vi phạm đã được xử lý từ trước");
                 }
-                LoadViPhamData(); // Tải lại dữ liệu sau khi xử lý
             }
             else
             {
-                MessageBox.Show("Vi phạm đã được xử lý từ trước");
+                MessageBox.Show("Vui lòng chọn một hàng để xử lý.");
             }
         }
+
 
 
 

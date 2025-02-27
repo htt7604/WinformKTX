@@ -26,6 +26,30 @@ namespace abc.HoanThanh.ThongKeSinhVien
             DemSV();
         }
         KetnoiCSDL kn = new KetnoiCSDL();
+        private void LoadData()
+        {
+            //string connectionString = "Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True";
+            using (SqlConnection conn = kn.GetConnection())
+            {
+                try
+                {
+                    conn.Open();
+                    string query = "select SINH_VIEN.MSSV, SINH_VIEN.HOTEN_SV,SINH_VIEN.NGAY_SINH,SINH_VIEN.GIOI_TINH,SINH_VIEN.SDT_SINHVIEN,SINH_VIEN.SDT_NGUOITHAN,SINH_VIEN.QUE_QUAN,SINH_VIEN.EMAIL,NOI_TRU.NGAY_BAT_DAU_NOI_TRU,NOI_TRU.NGAY_KET_THUC_NOI_TRU,LOAI_PHONG.TEN_LOAI_PHONG,TANG.TEN_TANG,PHONG.TEN_PHONG,GIUONG.TEN_GIUONG,NOI_TRU.TRANG_THAI_NOI_TRU,LOAI_PHONG.GIA_PHONG from SINH_VIEN join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV join PHONG on NOI_TRU.MA_PHONG=PHONG.MA_PHONG join GIUONG on NOI_TRU.MA_GIUONG=GIUONG.MA_GIUONG join TANG on PHONG.MA_TANG=TANG.MA_TANG join LOAI_PHONG on TANG.MA_LOAI_PHONG =LOAI_PHONG.MA_LOAI_PHONG  ";
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(query, conn);
+                    DataTable dataTable = new DataTable();
+                    dataAdapter.Fill(dataTable);
+
+                    // Gán dữ liệu vào DataGridView
+                    dataGridViewThongTin.DataSource = dataTable;
+
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi kết nối: " + ex.Message);
+                }
+            }
+        }
         private void TaidanhsachPhong(SqlConnection conn)
         {
             try
@@ -398,6 +422,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
         {
             //dat lai cac gia tri cua cac field
             ClearFields();
+            LoadData();
         }
 
         //ham set lai toan bo gia tri cua field
@@ -418,7 +443,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             //var conn = new SqlConnection("Data Source=Win_byTai;Initial Catalog=WinFormKTX;Integrated Security=True;Trust Server Certificate=True");
             SqlConnection conn = kn.GetConnection();
             // Truy vấn SQL để đếm số sinh viên
-            string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN  ";
+            string query = "select COUNT( DISTINCT SINH_VIEN.MSSV) from SINH_VIEN  ";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -450,7 +475,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is null";
+            string query = "select  COUNT( DISTINCT SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is null ";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);
@@ -483,7 +508,7 @@ namespace abc.HoanThanh.ThongKeSinhVien
             SqlConnection conn = kn.GetConnection();
 
             // Truy vấn SQL để đếm số sinh viên
-            string query = "select COUNT(SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is not null\r\n";
+            string query = "select  COUNT( DISTINCT SINH_VIEN.MSSV) from SINH_VIEN left join NOI_TRU on SINH_VIEN.MSSV=NOI_TRU.MSSV where NOI_TRU.MSSV is not null ";
 
             // Tạo lệnh SQL
             SqlCommand command = new SqlCommand(query, conn);

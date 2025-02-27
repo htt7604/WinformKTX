@@ -224,7 +224,7 @@ namespace abc.HoanThanh.ThanhToan
         {
             // Lấy giá trị từ các điều khiển giao diện người dùng
             string mssv = comboBoxMSSV.SelectedValue != null ? comboBoxMSSV.SelectedValue.ToString() : null; // Mã sinh viên
-            string loaiTangGiuong = comboBoxLoaiTang.SelectedValue != null ? comboBoxLoaiTang.SelectedValue.ToString() : null; // Loại giường
+            string loaiTangGiuong = comboBoxGiuong.SelectedValue != null ? comboBoxGiuong.SelectedValue.ToString() : null; // Loại giường
             string phong = comboBoxPhong.SelectedValue != null ? comboBoxPhong.SelectedValue.ToString() : null; // Phòng
             string tang = comboBoxTang.SelectedValue != null ? comboBoxTang.SelectedValue.ToString() : null; // Tầng
             string loaiTang = comboBoxLoaiTang.SelectedValue != null ? comboBoxLoaiTang.SelectedValue.ToString() : null; // Loại tầng

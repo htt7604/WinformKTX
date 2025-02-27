@@ -375,6 +375,9 @@ namespace WinformKTX.HoanThanh.ThongKeCSVC_HuHong
 
         private void buttonDatLai_Click(object sender, EventArgs e)
         {
+            textBoxDemConTot.Text = "";
+            textBoxDemCSVC.Text = "";
+            textBoxDemHuHong.Text = "";
             Clear();
             LoadVatChatData();
         }
