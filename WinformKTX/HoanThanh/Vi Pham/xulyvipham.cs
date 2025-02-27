@@ -374,7 +374,7 @@ namespace WinformKTX.Vi_Pham
                     {
                         if (hinhThucXuLya == "Hủy nội trú" || kt == 1)
                         {
-                            Luuviphamvaolichsu("Hủy nội trú");
+                            Luuviphamvaolichsu("Cần chú ý");
                         }
                         else if (hinhThucXuLya == "Hủy gia hạn nội trú" || kt == 2)
                         {
